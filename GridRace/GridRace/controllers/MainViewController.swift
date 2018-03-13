@@ -92,12 +92,15 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
     }
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return 4
+       return AppResources.ObjectiveData.sharedObjectives.objectives.count
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "objectiveCell", for: indexPath) as! ObjectiveInformationCollectionViewCell
-        cell.titleLabel.text = "hey"
+        let objective = AppResources.ObjectiveData.sharedObjectives.objectives[indexPath.row]
+        cell.titleLabel.text = objective.name
+        cell.pointsLabel.text = "\(objective.points) Points"
+        cell.descriptionLabel.text = objective.desc
         return cell
     }
     

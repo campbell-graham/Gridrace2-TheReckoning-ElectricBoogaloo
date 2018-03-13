@@ -11,6 +11,9 @@ import UIKit
 class ObjectiveInformationCollectionViewCell: UICollectionViewCell {
     
     let titleLabel = UILabel()
+    let pointsLabel = UILabel()
+    let descriptionLabel = UILabel()
+    
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -22,6 +25,13 @@ class ObjectiveInformationCollectionViewCell: UICollectionViewCell {
         //label set up
         titleLabel.font = UIFont.systemFont(ofSize: 16, weight: .medium)
         titleLabel.textColor = AppColors.textPrimaryColor
+        titleLabel.setContentHuggingPriority(.required, for: .vertical)
+        pointsLabel.font = UIFont.systemFont(ofSize: 14, weight: .ultraLight)
+        pointsLabel.textColor = AppColors.orangeHighlightColor
+        pointsLabel.setContentHuggingPriority(.required, for: .vertical)
+        descriptionLabel.font = UIFont.systemFont(ofSize: 14, weight: .ultraLight)
+        descriptionLabel.textColor = AppColors.textSecondaryColor
+        descriptionLabel.numberOfLines = 0
         
         //shadow
         contentView.layer.cornerRadius = 10
@@ -36,13 +46,30 @@ class ObjectiveInformationCollectionViewCell: UICollectionViewCell {
         layer.shadowPath = UIBezierPath(roundedRect: bounds, cornerRadius: contentView.layer.cornerRadius).cgPath
         
         contentView.addSubview(titleLabel)
+        contentView.addSubview(pointsLabel)
+        contentView.addSubview(descriptionLabel)
         
         //layout constraints
         titleLabel.translatesAutoresizingMaskIntoConstraints = false
+        pointsLabel.translatesAutoresizingMaskIntoConstraints = false
+        descriptionLabel.translatesAutoresizingMaskIntoConstraints = false
         
         NSLayoutConstraint.activate([
+            //title label
+            titleLabel.topAnchor.constraint(equalTo: topAnchor, constant: 8),
             titleLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 8),
-            titleLabel.topAnchor.constraint(equalTo: topAnchor, constant: 8)
+            titleLabel.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -8),
+            
+            //points label
+            pointsLabel.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 8),
+            pointsLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 8),
+            pointsLabel.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -8),
+            
+            //description label
+            descriptionLabel.topAnchor.constraint(equalTo: pointsLabel.bottomAnchor, constant: 8),
+            descriptionLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 8),
+            descriptionLabel.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -8),
+            descriptionLabel.bottomAnchor.constraint(lessThanOrEqualTo: bottomAnchor, constant: -8)
         ])
     }
     
