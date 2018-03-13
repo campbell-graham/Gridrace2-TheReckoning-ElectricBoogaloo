@@ -40,7 +40,7 @@ class MapViewController: UIViewController, CLLocationManagerDelegate, MKMapViewD
     init(objective: Objective, data: ObjectiveUserData) {
 
         self.objective = objective
-        self.objectives = AppResources.ObjectiveData.sharedPlaces.objectives
+        self.objectives = AppResources.ObjectiveData.sharedObjectives.objectives
         self.detailViewController = DetailViewController(objective: objective, data: data )
         super.init(nibName: nil, bundle: nil)
 
@@ -341,7 +341,7 @@ class MapViewController: UIViewController, CLLocationManagerDelegate, MKMapViewD
 
         if !isCollapsed {
 
-            let newY = view.bounds.height - self.tabBarController!.tabBar.bounds.height - detailViewController.panView.bounds.height - detailViewController.pointBorderImageView.bounds.height - 32
+            let newY = view.bounds.height - detailViewController.panView.bounds.height - detailViewController.pointBorderImageView.bounds.height - 32
 
             targetFrame = CGRect(x: oldFrame.minX, y: newY, width: oldFrame.size.width, height: oldFrame.size.height)
 

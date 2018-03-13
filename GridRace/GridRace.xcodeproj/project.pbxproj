@@ -14,7 +14,6 @@
 		376A5F852043A08D00D69090 /* (null) in Sources */ = {isa = PBXBuildFile; };
 		377D9B88204646B8001E7466 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 377D9B87204646B8001E7466 /* GoogleService-Info.plist */; };
 		377EFC25204FADD900B0D723 /* StartScreenViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 377EFC24204FADD900B0D723 /* StartScreenViewController.swift */; };
-		377EFC27204FBD7200B0D723 /* CustomTabBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 377EFC26204FBD7200B0D723 /* CustomTabBarController.swift */; };
 		379AD944204CCD5D00250582 /* ObjectiveUserData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 379AD943204CCD5D00250582 /* ObjectiveUserData.swift */; };
 		37F2A7EE2043CD0A00BA283B /* AppResources.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37F2A7ED2043CD0A00BA283B /* AppResources.swift */; };
 		37F2A7F22043DA7E00BA283B /* ObjectiveTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37F2A7F12043DA7E00BA283B /* ObjectiveTableViewCell.swift */; };
@@ -48,7 +47,6 @@
 		3712BDEE2045174100B4C9B3 /* Objective.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Objective.swift; sourceTree = "<group>"; };
 		377D9B87204646B8001E7466 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		377EFC24204FADD900B0D723 /* StartScreenViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StartScreenViewController.swift; sourceTree = "<group>"; };
-		377EFC26204FBD7200B0D723 /* CustomTabBarController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomTabBarController.swift; sourceTree = "<group>"; };
 		379AD943204CCD5D00250582 /* ObjectiveUserData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ObjectiveUserData.swift; sourceTree = "<group>"; };
 		37F2A7ED2043CD0A00BA283B /* AppResources.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppResources.swift; sourceTree = "<group>"; };
 		37F2A7F12043DA7E00BA283B /* ObjectiveTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ObjectiveTableViewCell.swift; sourceTree = "<group>"; };
@@ -149,7 +147,6 @@
 				3712BDE82044D9A300B4C9B3 /* ObjectiveTableViewController.swift */,
 				AA29C93A204763FE00BE0BAE /* TextFieldViewController.swift */,
 				377EFC24204FADD900B0D723 /* StartScreenViewController.swift */,
-				377EFC26204FBD7200B0D723 /* CustomTabBarController.swift */,
 				AA23AB22204E11FE00F6CCEF /* PasswordViewController.swift */,
 				AAD4B5D9204FB5DA005FBB24 /* SummaryViewController.swift */,
 			);
@@ -326,7 +323,6 @@
 				3712BDEB2044E9EB00B4C9B3 /* CustomTableHeaderView.swift in Sources */,
 				3712BDE92044D9A300B4C9B3 /* ObjectiveTableViewController.swift in Sources */,
 				37F2A7F22043DA7E00BA283B /* ObjectiveTableViewCell.swift in Sources */,
-				377EFC27204FBD7200B0D723 /* CustomTabBarController.swift in Sources */,
 				AA25AD7020521DB200A983BD /* customFlowLayout.swift in Sources */,
 				3712BDEF2045174100B4C9B3 /* Objective.swift in Sources */,
 				AA29A1382043D0CF00DF3A1C /* DetailViewController.swift in Sources */,

@@ -33,19 +33,16 @@ class SummaryViewController: UIViewController, UICollectionViewDelegate, UIColle
 
     // all places and bonus objectives minus 'last'/ 'password' objective
     var allObjectives: [Objective] {
-        var objs = AppResources.ObjectiveData.sharedPlaces.objectives + AppResources.ObjectiveData.sharedBonus.objectives
-        objs.remove(at: AppResources.ObjectiveData.sharedPlaces.objectives.count - 1)
-
+        var objs = AppResources.ObjectiveData.sharedObjectives.objectives
         return objs
     }
-    var allData = AppResources.ObjectiveData.sharedPlaces.data + AppResources.ObjectiveData.sharedBonus.data
-
+    var allData = AppResources.ObjectiveData.sharedObjectives.data
     var placesObjectives: [Objective] {
-        return AppResources.ObjectiveData.sharedPlaces.objectives
+        return AppResources.ObjectiveData.sharedObjectives.objectives
     }
 
     var bonusObjectives: [Objective] {
-        return AppResources.ObjectiveData.sharedBonus.objectives
+        return AppResources.ObjectiveData.sharedObjectives.objectives
     }
 
     var completedObjectives: Int {
@@ -62,7 +59,7 @@ class SummaryViewController: UIViewController, UICollectionViewDelegate, UIColle
     var completedPlacesObjectives: Int {
 
         var result = 0
-        for data in AppResources.ObjectiveData.sharedPlaces.data {
+        for data in AppResources.ObjectiveData.sharedObjectives.data {
             if data.completed == true {
                 result += 1
             }
@@ -73,7 +70,7 @@ class SummaryViewController: UIViewController, UICollectionViewDelegate, UIColle
     var completedBonusObjectives: Int {
 
         var result = 0
-        for data in AppResources.ObjectiveData.sharedBonus.data {
+        for data in AppResources.ObjectiveData.sharedObjectives.data {
             if data.completed == true {
                 result += 1
             }
