@@ -7,12 +7,14 @@
 //
 
 import UIKit
+import MapKit
 import Firebase
 import FirebaseDatabase
 
 class MainViewController: UIViewController, ObjectiveTableViewControllerDelegate  {
     
     let segmentedControl: UISegmentedControl
+    let mapView: MKMapView
     var incompleteObjectives = [Objective]()
     var completeObjectives = [Objective]()
     
@@ -24,8 +26,11 @@ class MainViewController: UIViewController, ObjectiveTableViewControllerDelegate
         segmentedControl.selectedSegmentIndex = 0
         segmentedControl.tintColor = AppColors.greenHighlightColor
         
+        //map set up
+        mapView = MKMapView()
+        
         super.init(nibName: nil, bundle: nil)
-        title = "Main page"
+        title = "Objectives"
         //start a load of local data which will also make comparisons with the data that firebase has
         loadLocalData()
     }
@@ -35,24 +40,25 @@ class MainViewController: UIViewController, ObjectiveTableViewControllerDelegate
         
         //styling
         view.backgroundColor = AppColors.backgroundColor
-        navigationController?.navigationBar.prefersLargeTitles = true
+        //navigationController?.navigationBar.prefersLargeTitles = true
         
         //add items to view
-        view.addSubview(segmentedControl)
+        self.navigationItem.titleView = segmentedControl
+        view.addSubview(mapView)
+       
         
         //layout constraints
-        segmentedControl.translatesAutoresizingMaskIntoConstraints = false
-        
-        NSLayoutConstraint.activate([
-            segmentedControl.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 8),
-            segmentedControl.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 30),
-            segmentedControl.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -30),
-        ])
-        
-    }
+        mapView.translatesAutoresizingMaskIntoConstraints = false
     
-    override func viewDidAppear(_ animated: Bool) {
-        navigationController?.navigationBar.prefersLargeTitles = true
+        NSLayoutConstraint.activate([
+            //map view
+            mapView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            mapView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            mapView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
+            mapView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor),
+            
+            ])
+        
     }
     
     func sortObjectives() {
