@@ -12,16 +12,43 @@ import FirebaseDatabase
 
 class MainViewController: UIViewController, ObjectiveTableViewControllerDelegate  {
     
+    let segmentedControl: UISegmentedControl
     var incompleteObjectives = [Objective]()
-    
     var completeObjectives = [Objective]()
     
     //will eventually take in data
     init() {
+        //segmented control set up
+        let items = ["Main", "Bonus"]
+        segmentedControl = UISegmentedControl(items: items)
+        segmentedControl.selectedSegmentIndex = 0
+        segmentedControl.tintColor = AppColors.greenHighlightColor
+        
         super.init(nibName: nil, bundle: nil)
         title = "Main page"
         //start a load of local data which will also make comparisons with the data that firebase has
         loadLocalData()
+    }
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        
+        //styling
+        view.backgroundColor = AppColors.backgroundColor
+        navigationController?.navigationBar.prefersLargeTitles = true
+        
+        //add items to view
+        view.addSubview(segmentedControl)
+        
+        //layout constraints
+        segmentedControl.translatesAutoresizingMaskIntoConstraints = false
+        
+        NSLayoutConstraint.activate([
+            segmentedControl.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 8),
+            segmentedControl.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 30),
+            segmentedControl.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -30),
+        ])
+        
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -167,15 +194,6 @@ class MainViewController: UIViewController, ObjectiveTableViewControllerDelegate
         
         //save this information
         saveLocalData()
-    }
-    
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        
-        //styling
-        view.backgroundColor = AppColors.backgroundColor
-        navigationController?.navigationBar.prefersLargeTitles = true
-
     }
 }
 
