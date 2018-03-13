@@ -15,11 +15,13 @@ class ObjectiveInformationCollectionViewCell: UICollectionViewCell {
     override init(frame: CGRect) {
         super.init(frame: frame)
         
-        titleLabel.text = "Hey how's it going"
-        
         layer.cornerRadius = 10
         
         backgroundColor = AppColors.backgroundColor
+        
+        //label set up
+        titleLabel.font = UIFont.systemFont(ofSize: 16, weight: .medium)
+        titleLabel.textColor = AppColors.textPrimaryColor
         
         //shadow
         contentView.layer.cornerRadius = 10
@@ -34,6 +36,14 @@ class ObjectiveInformationCollectionViewCell: UICollectionViewCell {
         layer.shadowPath = UIBezierPath(roundedRect: bounds, cornerRadius: contentView.layer.cornerRadius).cgPath
         
         contentView.addSubview(titleLabel)
+        
+        //layout constraints
+        titleLabel.translatesAutoresizingMaskIntoConstraints = false
+        
+        NSLayoutConstraint.activate([
+            titleLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 8),
+            titleLabel.topAnchor.constraint(equalTo: topAnchor, constant: 8)
+        ])
     }
     
     required init?(coder aDecoder: NSCoder) {
