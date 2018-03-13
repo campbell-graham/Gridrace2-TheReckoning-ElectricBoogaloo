@@ -341,7 +341,7 @@ class MapViewController: UIViewController, CLLocationManagerDelegate, MKMapViewD
 
         if !isCollapsed {
 
-            let newY = view.bounds.height - detailViewController.panView.bounds.height - detailViewController.pointBorderImageView.bounds.height - 32
+            let newY = view.bounds.height - detailViewController.panView.bounds.height - 128
 
             targetFrame = CGRect(x: oldFrame.minX, y: newY, width: oldFrame.size.width, height: oldFrame.size.height)
 

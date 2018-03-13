@@ -12,12 +12,14 @@ class DetailViewController: UIViewController {
 
     var objective: Objective
     var data: ObjectiveUserData
+
     let panView = PanView()
-    private let descLabel = UITextView()
-    let pointBorderImageView = UIImageView()
+
+    private let titleLabel = UILabel()
+    private let descTextView = UITextView()
     private let pointLabel = UILabel()
+    private let responseTextLabel = UILabel()
     private let answerView: UIView
-    private let interactImageView = UIImageView()
     private let hintImageView = UIImageView()
     private let hintPointDeductionValue = 2
     private var passwordViewController: PasswordViewController?
@@ -57,7 +59,7 @@ class DetailViewController: UIViewController {
     }
 
     func updateLabel(attempt: String) {
-        self.descLabel.text = "\(objective.desc) \n attempt: \(attempt) "
+        self.descTextView.text = "\(objective.desc) \n attempt: \(attempt) "
     }
 
 
@@ -93,23 +95,24 @@ class DetailViewController: UIViewController {
 
         //Colors
         view.backgroundColor = AppColors.backgroundColor
-        descLabel.textColor = AppColors.textPrimaryColor
-        pointLabel.textColor = AppColors.greenHighlightColor
-        pointBorderImageView.tintColor = AppColors.greenHighlightColor
-        interactImageView.tintColor = AppColors.greenHighlightColor
+        titleLabel.textColor = AppColors.textPrimaryColor
         hintImageView.tintColor = AppColors.greenHighlightColor
+        pointLabel.textColor = AppColors.greenHighlightColor
+        descTextView.textColor = AppColors.textPrimaryColor
+        descTextView.backgroundColor = AppColors.backgroundColor
+        responseTextLabel.textColor = AppColors.textPrimaryColor
 
         updateViewsData()
 
         // misc stuff
-        descLabel.backgroundColor = AppColors.backgroundColor
-        descLabel.font = UIFont.systemFont(ofSize: 16)
-        descLabel.isEditable = false
-
-        pointBorderImageView.isUserInteractionEnabled = true
-        pointBorderImageView.contentMode = .scaleAspectFit
+        titleLabel.font = UIFont.boldSystemFont(ofSize: 20)
 
         pointLabel.font = UIFont.boldSystemFont(ofSize: 16)
+
+        descTextView.font = UIFont.systemFont(ofSize: 14)
+        descTextView.isEditable = false
+
+        responseTextLabel.font = UIFont.boldSystemFont(ofSize: 20)
 
         let interactGestureRecogniser: UITapGestureRecognizer
 
@@ -122,9 +125,8 @@ class DetailViewController: UIViewController {
             interactGestureRecogniser = UITapGestureRecognizer(target: self, action: nil)
         }
 
-        interactImageView.addGestureRecognizer(interactGestureRecogniser)
-        interactImageView.isUserInteractionEnabled = true
-        interactImageView.contentMode = .scaleAspectFit
+        answerView.addGestureRecognizer(interactGestureRecogniser)
+        answerView.isUserInteractionEnabled = true
 
         let hintGestureRecogniser = UITapGestureRecognizer(target: self, action: #selector(clueButtonHandler))
         hintImageView.addGestureRecognizer(hintGestureRecogniser)
@@ -134,34 +136,30 @@ class DetailViewController: UIViewController {
 
     private func updateViewsData() {
 
-        if objective.answerType == .password {
-            descLabel.text = "\(objective.desc) \n attempt: "
-        } else {
-            descLabel.text = objective.desc
-        }
-        pointBorderImageView.image = #imageLiteral(resourceName: "circle")
-        pointLabel.text = data.adjustedPoints != nil ? "\(data.adjustedPoints!)" : "\(objective.points)"
+        titleLabel.text = "Overview"
         hintImageView.image = #imageLiteral(resourceName: "hint")
+        if objective.answerType == .password {
+            descTextView.text = "\(objective.desc) \n attempt: "
+        } else {
+            descTextView.text = objective.desc
+        }
+        pointLabel.text = (data.adjustedPoints != nil ? "\(data.adjustedPoints!)" : "\(objective.points)") + " Points"
 
-        switch  answerView {
-        case is UIImageView:
-            interactImageView.image = #imageLiteral(resourceName: "camera")
-        case is TextResponseView:
-            interactImageView.image = #imageLiteral(resourceName: "textCursor")
-        default:
-            interactImageView.image = #imageLiteral(resourceName: "flag")
+        responseTextLabel.text = "Your Response"
+
+        if let answerView = answerView as? UIImageView{
+            answerView.image = #imageLiteral(resourceName: "camera")
         }
     }
 
     private func setUpLayout() {
 
-        for view in [panView, descLabel, pointBorderImageView, answerView, interactImageView, hintImageView] {
+        for view in [panView, titleLabel, hintImageView, pointLabel, descTextView, responseTextLabel, answerView] {
             view.translatesAutoresizingMaskIntoConstraints = false
             self.view.addSubview(view)
         }
-
-        pointLabel.translatesAutoresizingMaskIntoConstraints = false
-        pointBorderImageView.addSubview(pointLabel)
+        titleLabel.setContentCompressionResistancePriority(.required, for: .horizontal)
+        titleLabel.setContentCompressionResistancePriority(.required, for: .vertical)
 
         var constraints = ([
 
@@ -170,62 +168,50 @@ class DetailViewController: UIViewController {
             panView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             panView.heightAnchor.constraint(equalToConstant: 30),
 
-            descLabel.topAnchor.constraint(equalTo: panView.bottomAnchor, constant: 16),
-            descLabel.leadingAnchor.constraint(equalTo: pointBorderImageView.trailingAnchor, constant: 16),
-            descLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
-            descLabel.heightAnchor.constraint(equalTo: view.heightAnchor, multiplier: 0.2),
+            titleLabel.topAnchor.constraint(equalTo: panView.bottomAnchor, constant: 16),
+            titleLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
+            titleLabel.trailingAnchor.constraint(lessThanOrEqualTo: view.trailingAnchor, constant: -16),
 
-            pointBorderImageView.topAnchor.constraint(equalTo: descLabel.topAnchor),
-            pointBorderImageView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
-            pointBorderImageView.heightAnchor.constraint(equalToConstant: 64),
-            pointBorderImageView.widthAnchor.constraint(equalToConstant: 64),
+            hintImageView.leadingAnchor.constraint(equalTo: titleLabel.trailingAnchor, constant: 16),
+            hintImageView.centerYAnchor.constraint(equalTo: titleLabel.centerYAnchor),
+            hintImageView.widthAnchor.constraint(equalToConstant: 32),
+            hintImageView.heightAnchor.constraint(equalTo: hintImageView.widthAnchor),
 
-            pointLabel.centerXAnchor.constraint(equalTo: pointBorderImageView.centerXAnchor),
-            pointLabel.centerYAnchor.constraint(equalTo: pointBorderImageView.centerYAnchor),
+            pointLabel.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 8),
+            pointLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
+            pointLabel.trailingAnchor.constraint(lessThanOrEqualTo: view.trailingAnchor, constant: -16),
+
+            descTextView.topAnchor.constraint(equalTo: pointLabel.bottomAnchor, constant: 8),
+            descTextView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
+            descTextView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
+            descTextView.heightAnchor.constraint(equalTo: view.heightAnchor, multiplier: 0.2),
+
+            responseTextLabel.topAnchor.constraint(equalTo: descTextView.bottomAnchor, constant: 8),
+            responseTextLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
+            responseTextLabel.trailingAnchor.constraint(lessThanOrEqualTo: view.trailingAnchor, constant: -16),
         ])
 
         switch answerView {
         case is UIImageView:
             constraints += [
-                answerView.topAnchor.constraint(greaterThanOrEqualTo: descLabel.bottomAnchor, constant: 16),
+                answerView.topAnchor.constraint(greaterThanOrEqualTo: responseTextLabel.bottomAnchor, constant: 16),
                 answerView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-                answerView.bottomAnchor.constraint(lessThanOrEqualTo: interactImageView.topAnchor, constant: -16),
+                answerView.bottomAnchor.constraint(lessThanOrEqualTo: view.bottomAnchor, constant: -16),
                 answerView.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: 0.4),
                 answerView.heightAnchor.constraint(equalTo: answerView.widthAnchor),
-
-                interactImageView.topAnchor.constraint(greaterThanOrEqualTo: answerView.bottomAnchor, constant: 16),]
+            ]
         case is TextResponseView:
             constraints += [
-                answerView.topAnchor.constraint(equalTo: descLabel.bottomAnchor),
+                answerView.topAnchor.constraint(greaterThanOrEqualTo: responseTextLabel.bottomAnchor, constant: 16),
                 answerView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
                 answerView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-                answerView.bottomAnchor.constraint(equalTo: interactImageView.topAnchor)]
+                answerView.bottomAnchor.constraint(lessThanOrEqualTo: view.bottomAnchor, constant: -16),]
         default:
             constraints += [
-                answerView.topAnchor.constraint(equalTo: descLabel.bottomAnchor),
+                answerView.topAnchor.constraint(equalTo: responseTextLabel.bottomAnchor),
                 answerView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
                 answerView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
                 answerView.bottomAnchor.constraint(equalTo: view.bottomAnchor)]
-        }
-
-        if objective.answerType != .password {
-            constraints += [
-
-                interactImageView.centerXAnchor.constraint(equalTo: view.centerXAnchor, constant: -(view.center.x / 2) ),
-                interactImageView.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -16),
-                interactImageView.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: 0.2),
-                interactImageView.heightAnchor.constraint(equalTo: interactImageView.widthAnchor),
-
-                hintImageView.topAnchor.constraint(equalTo: interactImageView.topAnchor),
-                hintImageView.centerXAnchor.constraint(equalTo: view.centerXAnchor, constant: (view.center.x / 2) ),
-                hintImageView.bottomAnchor.constraint(equalTo: interactImageView.bottomAnchor),
-                hintImageView.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: 0.2),
-                hintImageView.heightAnchor.constraint(equalTo: hintImageView.widthAnchor)
-            ]
-        } else {
-
-            interactImageView.isHidden = true
-            hintImageView.isHidden = true
         }
 
         NSLayoutConstraint.activate(constraints)
@@ -299,7 +285,7 @@ class DetailViewController: UIViewController {
     //set textView to be scrolled to top
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
-        descLabel.setContentOffset(CGPoint.zero, animated: false)
+        descTextView.setContentOffset(CGPoint.zero, animated: false)
 
         if let VC = childViewControllers.last as? PasswordViewController {
 
