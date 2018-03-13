@@ -18,6 +18,15 @@ class MainViewController: UIViewController, ObjectiveTableViewControllerDelegate
     var incompleteObjectives = [Objective]()
     var completeObjectives = [Objective]()
     
+    lazy var collectionView: UICollectionView = {
+        
+        let collectionView = UICollectionView(frame: view.frame, collectionViewLayout: UICollectionViewFlowLayout())
+        collectionView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+        collectionView.showsHorizontalScrollIndicator = false
+        
+        return collectionView
+    }()
+    
     //will eventually take in data
     init() {
         //segmented control set up
@@ -46,10 +55,12 @@ class MainViewController: UIViewController, ObjectiveTableViewControllerDelegate
         //add items to view
         self.navigationItem.titleView = segmentedControl
         view.addSubview(mapView)
+        view.addSubview(collectionView)
        
         
         //layout constraints
         mapView.translatesAutoresizingMaskIntoConstraints = false
+        collectionView.translatesAutoresizingMaskIntoConstraints = false
     
         NSLayoutConstraint.activate([
             //map view
@@ -57,8 +68,17 @@ class MainViewController: UIViewController, ObjectiveTableViewControllerDelegate
             mapView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
             mapView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
             mapView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor),
+            
+            collectionView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -8),
+            collectionView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
+            collectionView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor),
+            collectionView.heightAnchor.constraint(equalToConstant: 200)
             ])
         
+    }
+    
+    override func viewDidLayoutSubviews() {
+        collectionView.collectionViewLayout = customFlowLayout(collectionViewWidth: collectionView.frame.width, collectionViewHeigth: collectionView.frame.height)
     }
     
     func sortObjectives() {
