@@ -15,9 +15,10 @@
 		377D9B88204646B8001E7466 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 377D9B87204646B8001E7466 /* GoogleService-Info.plist */; };
 		377EFC25204FADD900B0D723 /* StartScreenViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 377EFC24204FADD900B0D723 /* StartScreenViewController.swift */; };
 		379AD944204CCD5D00250582 /* ObjectiveUserData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 379AD943204CCD5D00250582 /* ObjectiveUserData.swift */; };
+		37A8B93B20588E65000BC310 /* ObjectiveInformationCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37A8B93A20588E65000BC310 /* ObjectiveInformationCollectionViewCell.swift */; };
 		37F2A7EE2043CD0A00BA283B /* AppResources.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37F2A7ED2043CD0A00BA283B /* AppResources.swift */; };
 		37F2A7F22043DA7E00BA283B /* ObjectiveTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37F2A7F12043DA7E00BA283B /* ObjectiveTableViewCell.swift */; };
-		AA090A9D2050BFC60086C3CD /* ObjectiveCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA090A9C2050BFC60086C3CD /* ObjectiveCollectionViewCell.swift */; };
+		AA090A9D2050BFC60086C3CD /* ObjectiveSummaryCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA090A9C2050BFC60086C3CD /* ObjectiveSummaryCollectionViewCell.swift */; };
 		AA1CD2BE2044C6DA0007A0C1 /* ClueViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA1CD2BD2044C6DA0007A0C1 /* ClueViewController.swift */; };
 		AA1CD2C02044D29B0007A0C1 /* GradientView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA1CD2BF2044D29A0007A0C1 /* GradientView.swift */; };
 		AA1CD2C2204513820007A0C1 /* UIImageExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA1CD2C1204513820007A0C1 /* UIImageExtension.swift */; };
@@ -48,9 +49,10 @@
 		377D9B87204646B8001E7466 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		377EFC24204FADD900B0D723 /* StartScreenViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StartScreenViewController.swift; sourceTree = "<group>"; };
 		379AD943204CCD5D00250582 /* ObjectiveUserData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ObjectiveUserData.swift; sourceTree = "<group>"; };
+		37A8B93A20588E65000BC310 /* ObjectiveInformationCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ObjectiveInformationCollectionViewCell.swift; sourceTree = "<group>"; };
 		37F2A7ED2043CD0A00BA283B /* AppResources.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppResources.swift; sourceTree = "<group>"; };
 		37F2A7F12043DA7E00BA283B /* ObjectiveTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ObjectiveTableViewCell.swift; sourceTree = "<group>"; };
-		AA090A9C2050BFC60086C3CD /* ObjectiveCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ObjectiveCollectionViewCell.swift; sourceTree = "<group>"; };
+		AA090A9C2050BFC60086C3CD /* ObjectiveSummaryCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ObjectiveSummaryCollectionViewCell.swift; sourceTree = "<group>"; };
 		AA1CD2BD2044C6DA0007A0C1 /* ClueViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClueViewController.swift; sourceTree = "<group>"; };
 		AA1CD2BF2044D29A0007A0C1 /* GradientView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GradientView.swift; sourceTree = "<group>"; };
 		AA1CD2C1204513820007A0C1 /* UIImageExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIImageExtension.swift; sourceTree = "<group>"; };
@@ -163,8 +165,9 @@
 				AA1CD2C3204519E10007A0C1 /* HudView.swift */,
 				AA23CECD2048F5FD0003E1D2 /* PanView.swift */,
 				370BBB01204E16D2005C4A56 /* TimerView.swift */,
-				AA090A9C2050BFC60086C3CD /* ObjectiveCollectionViewCell.swift */,
+				AA090A9C2050BFC60086C3CD /* ObjectiveSummaryCollectionViewCell.swift */,
 				AA25AD6F20521DB200A983BD /* customFlowLayout.swift */,
+				37A8B93A20588E65000BC310 /* ObjectiveInformationCollectionViewCell.swift */,
 			);
 			path = views;
 			sourceTree = "<group>";
@@ -314,7 +317,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				AA090A9D2050BFC60086C3CD /* ObjectiveCollectionViewCell.swift in Sources */,
+				AA090A9D2050BFC60086C3CD /* ObjectiveSummaryCollectionViewCell.swift in Sources */,
 				AA23AB23204E11FE00F6CCEF /* PasswordViewController.swift in Sources */,
 				370BBB02204E16D2005C4A56 /* TimerView.swift in Sources */,
 				AA1CD2BE2044C6DA0007A0C1 /* ClueViewController.swift in Sources */,
@@ -337,6 +340,7 @@
 				379AD944204CCD5D00250582 /* ObjectiveUserData.swift in Sources */,
 				AA1CD2C4204519E10007A0C1 /* HudView.swift in Sources */,
 				377EFC25204FADD900B0D723 /* StartScreenViewController.swift in Sources */,
+				37A8B93B20588E65000BC310 /* ObjectiveInformationCollectionViewCell.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

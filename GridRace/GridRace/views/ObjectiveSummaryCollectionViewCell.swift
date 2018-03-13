@@ -8,7 +8,7 @@
 
 import UIKit
 
-class ObjectiveCollectionViewCell: UICollectionViewCell {
+class ObjectiveSummaryCollectionViewCell: UICollectionViewCell {
 
     let nameLabel = UILabel()
     let descLabel = UITextView()

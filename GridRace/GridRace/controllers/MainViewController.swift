@@ -11,7 +11,7 @@ import MapKit
 import Firebase
 import FirebaseDatabase
 
-class MainViewController: UIViewController, ObjectiveTableViewControllerDelegate  {
+class MainViewController: UIViewController, UICollectionViewDelegate, UICollectionViewDataSource, ObjectiveTableViewControllerDelegate  {
     
     let segmentedControl: UISegmentedControl
     let mapView: MKMapView
@@ -57,6 +57,11 @@ class MainViewController: UIViewController, ObjectiveTableViewControllerDelegate
         view.addSubview(mapView)
         view.addSubview(collectionView)
        
+        //collection view st up
+        collectionView.delegate = self
+        collectionView.dataSource = self
+        collectionView.backgroundColor = #colorLiteral(red: 1, green: 1, blue: 1, alpha: 0)
+        collectionView.register(ObjectiveInformationCollectionViewCell.self, forCellWithReuseIdentifier: "objectiveCell")
         
         //layout constraints
         mapView.translatesAutoresizingMaskIntoConstraints = false
@@ -69,16 +74,30 @@ class MainViewController: UIViewController, ObjectiveTableViewControllerDelegate
             mapView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
             mapView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor),
             
-            collectionView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -8),
+            collectionView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
             collectionView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
             collectionView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor),
-            collectionView.heightAnchor.constraint(equalToConstant: 200)
+            collectionView.heightAnchor.constraint(equalToConstant: 300)
             ])
         
     }
     
     override func viewDidLayoutSubviews() {
         collectionView.collectionViewLayout = customFlowLayout(collectionViewWidth: collectionView.frame.width, collectionViewHeigth: collectionView.frame.height)
+        collectionView.layoutIfNeeded()
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        collectionView.reloadData()
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        return 4
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "objectiveCell", for: indexPath) as! ObjectiveInformationCollectionViewCell
+        return cell
     }
     
     func sortObjectives() {
