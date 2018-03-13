@@ -24,7 +24,9 @@ class MainViewController: UIViewController, ObjectiveTableViewControllerDelegate
         let items = ["Main", "Bonus"]
         segmentedControl = UISegmentedControl(items: items)
         segmentedControl.selectedSegmentIndex = 0
-        segmentedControl.tintColor = AppColors.greenHighlightColor
+        segmentedControl.tintColor = AppColors.orangeHighlightColor
+        segmentedControl.setTitleTextAttributes([NSAttributedStringKey.font: UIFont.systemFont(ofSize: 15, weight: .medium)],
+                                                for: .normal)
         
         //map set up
         mapView = MKMapView()
@@ -40,7 +42,6 @@ class MainViewController: UIViewController, ObjectiveTableViewControllerDelegate
         
         //styling
         view.backgroundColor = AppColors.backgroundColor
-        //navigationController?.navigationBar.prefersLargeTitles = true
         
         //add items to view
         self.navigationItem.titleView = segmentedControl
@@ -56,7 +57,6 @@ class MainViewController: UIViewController, ObjectiveTableViewControllerDelegate
             mapView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
             mapView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
             mapView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor),
-            
             ])
         
     }
