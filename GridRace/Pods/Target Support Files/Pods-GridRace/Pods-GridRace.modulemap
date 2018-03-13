@@ -1,0 +1,6 @@
+framework module Pods_GridRace {
+  umbrella header "Pods-GridRace-umbrella.h"
+
+  export *
+  module * { export * }
+}
