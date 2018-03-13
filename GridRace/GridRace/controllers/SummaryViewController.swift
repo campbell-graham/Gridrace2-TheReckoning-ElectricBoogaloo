@@ -215,7 +215,7 @@ class SummaryViewController: UIViewController, UICollectionViewDelegate, UIColle
         cell.nameLabel.text = objective.name
         cell.descLabel.text = objective.desc
 
-        if objective.objectiveType == .photo {
+        if objective.answerType == .photo {
 
             cell.responseImageView.isHidden = false
             cell.responseTextView.isHidden = true
@@ -231,7 +231,7 @@ class SummaryViewController: UIViewController, UICollectionViewDelegate, UIColle
             cell.responseImageView.contentMode = .scaleAspectFit
         }
 
-        if objective.objectiveType == .text {
+        if objective.answerType == .text {
 
             cell.responseTextView.isHidden = false
             cell.responseImageView.isHidden = true

@@ -36,7 +36,7 @@ class Objective: Codable, Equatable {
         if lhs.longitude != rhs.longitude {
             return false
         }
-        if lhs.objectiveType != rhs.objectiveType {
+        if lhs.answerType != rhs.answerType {
             return false
         }
         
@@ -52,14 +52,14 @@ class Objective: Codable, Equatable {
     var points: Int
     let latitude: Double?
     let longitude: Double?
+    let answerType: AnswerType
     let objectiveType: ObjectiveType
-    var coordinate: CLLocationCoordinate2D? {
-
+    var coordinate: CLLocationCoordinate2D?
+    {
         if let lat = latitude, let long = longitude {
             let cord = CLLocationCoordinate2D(latitude: lat, longitude: long)
             return cord
         }
-
         return nil
     }
     
@@ -67,12 +67,16 @@ class Objective: Codable, Equatable {
 }
 
 struct ObjectList: Codable {
-    var places: [Objective]
-    var bonus: [Objective]
+    var data: [Objective]
 }
 
-enum ObjectiveType: String, Codable {
+enum AnswerType: String, Codable {
     case photo
     case text
     case password
+}
+
+enum ObjectiveType: String, Codable {
+    case main
+    case bonus
 }

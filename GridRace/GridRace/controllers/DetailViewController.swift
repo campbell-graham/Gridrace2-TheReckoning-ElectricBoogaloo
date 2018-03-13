@@ -30,7 +30,7 @@ class DetailViewController: UIViewController {
         self.objective = objective
         self.data = data
 
-        switch  objective.objectiveType {
+        switch  objective.answerType {
         case .photo: // imageview
             answerView = UIImageView()
         case .text: // textField
@@ -73,7 +73,7 @@ class DetailViewController: UIViewController {
     
         //present old data if it exists
         if data.completed {
-            switch objective.objectiveType {
+            switch objective.answerType {
             case .text:
                 if (data.textResponse != nil) {
                     (answerView as! TextResponseView).textLabel.text = data.textResponse
@@ -134,7 +134,7 @@ class DetailViewController: UIViewController {
 
     private func updateViewsData() {
 
-        if objective.objectiveType == .password {
+        if objective.answerType == .password {
             descLabel.text = "\(objective.desc) \n attempt: "
         } else {
             descLabel.text = objective.desc
@@ -208,7 +208,7 @@ class DetailViewController: UIViewController {
                 answerView.bottomAnchor.constraint(equalTo: view.bottomAnchor)]
         }
 
-        if objective.objectiveType != .password {
+        if objective.answerType != .password {
             constraints += [
 
                 interactImageView.centerXAnchor.constraint(equalTo: view.centerXAnchor, constant: -(view.center.x / 2) ),

@@ -46,7 +46,7 @@ struct AppResources {
                 if let dict = snapshot.value as? [String: Any] {
                     let data = try JSONSerialization.data(withJSONObject: dict, options: JSONSerialization.WritingOptions.prettyPrinted)
                     let jsonDecoder = JSONDecoder()
-                    downloadedObjectives = dataCategory == .places ? try jsonDecoder.decode(ObjectList.self, from: data).places : try jsonDecoder.decode(ObjectList.self, from: data).bonus
+                    downloadedObjectives = try jsonDecoder.decode(ObjectList.self, from: data).data
                     completion(downloadedObjectives)
                 }
             } catch {
