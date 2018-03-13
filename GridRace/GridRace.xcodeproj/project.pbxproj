@@ -8,7 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		370BBB02204E16D2005C4A56 /* TimerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 370BBB01204E16D2005C4A56 /* TimerView.swift */; };
-		3712BDE92044D9A300B4C9B3 /* ObjectiveTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3712BDE82044D9A300B4C9B3 /* ObjectiveTableViewController.swift */; };
+		3712BDE92044D9A300B4C9B3 /* MainViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3712BDE82044D9A300B4C9B3 /* MainViewController.swift */; };
 		3712BDEB2044E9EB00B4C9B3 /* CustomTableHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3712BDEA2044E9EB00B4C9B3 /* CustomTableHeaderView.swift */; };
 		3712BDEF2045174100B4C9B3 /* Objective.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3712BDEE2045174100B4C9B3 /* Objective.swift */; };
 		376A5F852043A08D00D69090 /* (null) in Sources */ = {isa = PBXBuildFile; };
@@ -42,7 +42,7 @@
 		13733228498CCA006EAA6DCA /* Pods-GridRace.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-GridRace.debug.xcconfig"; path = "Pods/Target Support Files/Pods-GridRace/Pods-GridRace.debug.xcconfig"; sourceTree = "<group>"; };
 		2727F62BE70A41A8EF9B4686 /* Pods-GridRace.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-GridRace.release.xcconfig"; path = "Pods/Target Support Files/Pods-GridRace/Pods-GridRace.release.xcconfig"; sourceTree = "<group>"; };
 		370BBB01204E16D2005C4A56 /* TimerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimerView.swift; sourceTree = "<group>"; };
-		3712BDE82044D9A300B4C9B3 /* ObjectiveTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ObjectiveTableViewController.swift; sourceTree = "<group>"; };
+		3712BDE82044D9A300B4C9B3 /* MainViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainViewController.swift; sourceTree = "<group>"; };
 		3712BDEA2044E9EB00B4C9B3 /* CustomTableHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomTableHeaderView.swift; sourceTree = "<group>"; };
 		3712BDEE2045174100B4C9B3 /* Objective.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Objective.swift; sourceTree = "<group>"; };
 		377D9B87204646B8001E7466 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
@@ -144,7 +144,7 @@
 				AA23CECB2048E6450003E1D2 /* MapViewController copy.swift */,
 				AA29A1372043D0CF00DF3A1C /* DetailViewController.swift */,
 				AA1CD2BD2044C6DA0007A0C1 /* ClueViewController.swift */,
-				3712BDE82044D9A300B4C9B3 /* ObjectiveTableViewController.swift */,
+				3712BDE82044D9A300B4C9B3 /* MainViewController.swift */,
 				AA29C93A204763FE00BE0BAE /* TextFieldViewController.swift */,
 				377EFC24204FADD900B0D723 /* StartScreenViewController.swift */,
 				AA23AB22204E11FE00F6CCEF /* PasswordViewController.swift */,
@@ -321,7 +321,7 @@
 				37F2A7EE2043CD0A00BA283B /* AppResources.swift in Sources */,
 				AA23CECE2048F5FD0003E1D2 /* PanView.swift in Sources */,
 				3712BDEB2044E9EB00B4C9B3 /* CustomTableHeaderView.swift in Sources */,
-				3712BDE92044D9A300B4C9B3 /* ObjectiveTableViewController.swift in Sources */,
+				3712BDE92044D9A300B4C9B3 /* MainViewController.swift in Sources */,
 				37F2A7F22043DA7E00BA283B /* ObjectiveTableViewCell.swift in Sources */,
 				AA25AD7020521DB200A983BD /* customFlowLayout.swift in Sources */,
 				3712BDEF2045174100B4C9B3 /* Objective.swift in Sources */,

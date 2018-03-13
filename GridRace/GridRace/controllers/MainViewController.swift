@@ -10,20 +10,11 @@ import UIKit
 import Firebase
 import FirebaseDatabase
 
-class ObjectiveTableViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, ObjectiveTableViewControllerDelegate  {
+class MainViewController: UIViewController, ObjectiveTableViewControllerDelegate  {
     
-    var tableView = UITableView()
+    var incompleteObjectives = [Objective]()
     
-    var incompleteObjectives = [Objective]() {
-        didSet {
-            tableView.reloadData()
-        }
-    }
-    var completeObjectives = [Objective]() {
-        didSet {
-            tableView.reloadData()
-        }
-    }
+    var completeObjectives = [Objective]()
     
     //will eventually take in data
     init() {
@@ -35,7 +26,6 @@ class ObjectiveTableViewController: UIViewController, UITableViewDelegate, UITab
     
     override func viewDidAppear(_ animated: Bool) {
         navigationController?.navigationBar.prefersLargeTitles = true
-        tableView.reloadData()
     }
     
     func sortObjectives() {
@@ -177,7 +167,6 @@ class ObjectiveTableViewController: UIViewController, UITableViewDelegate, UITab
         
         //save this information
         saveLocalData()
-        tableView.reloadData()
     }
     
     override func viewDidLoad() {
@@ -186,116 +175,7 @@ class ObjectiveTableViewController: UIViewController, UITableViewDelegate, UITab
         //styling
         view.backgroundColor = AppColors.backgroundColor
         navigationController?.navigationBar.prefersLargeTitles = true
-        tableView.backgroundColor = AppColors.backgroundColor
-        tableView.separatorStyle = .singleLine
-        tableView.separatorColor = AppColors.textSecondaryColor
-        
-        //table view setup
-        tableView.dataSource = self
-        tableView.delegate = self
-        tableView.register(ObjectiveTableViewCell.self, forCellReuseIdentifier: "ObjectiveCell")
-        tableView.register(CustomTableHeaderView.self, forHeaderFooterViewReuseIdentifier: "CustomHeaderView")
-        tableView.rowHeight = 60
-        tableView.tableFooterView = UIView()
-        
-        //add items to view
-        view.addSubview(tableView)
-        
-        //layout constraints
-        tableView.translatesAutoresizingMaskIntoConstraints = false
-        
-        NSLayoutConstraint.activate([
-            tableView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
-            tableView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor),
-            tableView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
-            tableView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
-            ])
-        
-    }
-    
-    func numberOfSections(in tableView: UITableView) -> Int {
-        return 2
-    }
-    
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        switch section {
-        case 0:
-            return incompleteObjectives.count
-        case 1:
-            return completeObjectives.count
-        default:
-            return 0
-        }
-        
-    }
-    
-    func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
-        //return a blank view for the header if that section does not have any objectives
-        if section == 0 && incompleteObjectives.count == 0 {
-            return UIView()
-        } else if section == 1 && completeObjectives.count == 0 {
-            return UIView()
-        }
-        let headerView = tableView.dequeueReusableHeaderFooterView(withIdentifier: "CustomHeaderView") as! CustomTableHeaderView
-        switch section {
-        case 0:
-            headerView.titleLabel.text = "Incomplete"
-        case 1:
-            headerView.titleLabel.text = "Complete"
-        default:
-            break
-        }
-        return headerView
-    }
-    
-    func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
-        return 44
-    }
-    
-    
-    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        
-        tableView.deselectRow(at: indexPath, animated: true)
-        var objective: Objective?
-        
-        switch indexPath.section {
-        case 0 :
-            objective = incompleteObjectives[indexPath.row]
-        case 1 :
-            objective = completeObjectives[indexPath.row]
-        default:
-            print("invalid section")
-        }
-        
-        //ensure that it found a valid object
-        guard let obj = objective else {
-            return
-        }
-        
-        let data = AppResources.ObjectiveData.sharedObjectives.data.first(where: {$0.objectiveID == obj.id})
-        let destination = MapViewController(objective: obj, data: data!)
-        destination.delegate = self
-        navigationController?.pushViewController(destination, animated: true)
-        
-    }
-    
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "ObjectiveCell", for: indexPath) as! ObjectiveTableViewCell
-        let objective = indexPath.section == 0 ? incompleteObjectives[indexPath.row] : completeObjectives[indexPath.row]
-        
-        cell.titleLabel.text = objective.name
-        if let points = AppResources.ObjectiveData.sharedObjectives.data.first(where: {$0.objectiveID == objective.id})?.adjustedPoints {
-            cell.pointsLabel.text = String(points)
-        } else {
-            cell.pointsLabel.text = String(objective.points)
-        }
-        
-        
-        //set font to heavy if complete
-        
-        cell.titleLabel.font = indexPath.section == 0 ? UIFont.systemFont(ofSize: 16, weight: .ultraLight) : UIFont.systemFont(ofSize: 16, weight: .medium)
-        
-        return cell
+
     }
 }
 
