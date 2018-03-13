@@ -33,7 +33,7 @@ struct AppResources {
     static var timeToDisplay: String = "00:00:00"
     
     
-    static func returnDownloadedObjectives(dataCategory: ObjectiveCategory, completion: @escaping (([Objective]) -> ())) {
+    static func returnDownloadedObjectives(completion: @escaping (([Objective]) -> ())) {
         //download if doesn't exist already
         
         var downloadedObjectives = [Objective]()
@@ -46,7 +46,7 @@ struct AppResources {
                 if let dict = snapshot.value as? [String: Any] {
                     let data = try JSONSerialization.data(withJSONObject: dict, options: JSONSerialization.WritingOptions.prettyPrinted)
                     let jsonDecoder = JSONDecoder()
-                    downloadedObjectives = dataCategory == .places ? try jsonDecoder.decode(ObjectList.self, from: data).places : try jsonDecoder.decode(ObjectList.self, from: data).bonus
+                    downloadedObjectives = try jsonDecoder.decode(ObjectList.self, from: data).data
                     completion(downloadedObjectives)
                 }
             } catch {
@@ -54,20 +54,17 @@ struct AppResources {
             }
         })
         
-       
-    
+        
+        
     }
     
     class ObjectiveData {
         var objectives = [Objective]()
         var data = [ObjectiveUserData]()
         
-        private init() {
-            
-        }
+        private init() {}
         
-       static let sharedPlaces = ObjectiveData()
-       static let sharedBonus = ObjectiveData()
+        static let sharedObjectives = ObjectiveData()
     }
     
 }

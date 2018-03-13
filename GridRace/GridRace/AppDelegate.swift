@@ -36,7 +36,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             UserDefaults.standard.set(true, forKey: "HasLaunchedOnce")
             window?.rootViewController = StartScreenViewController()
         } else {
-            window?.rootViewController = CustomTabBarController()
+            window?.rootViewController = UINavigationController(rootViewController: ObjectiveTableViewController())
         }
         
         window?.makeKeyAndVisible()
