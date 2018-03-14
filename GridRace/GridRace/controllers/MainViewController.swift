@@ -11,12 +11,13 @@ import MapKit
 import Firebase
 import FirebaseDatabase
 
-class MainViewController: UIViewController, UICollectionViewDelegate, UICollectionViewDataSource, ObjectiveTableViewControllerDelegate  {
+class MainViewController: UIViewController, UICollectionViewDelegate, UICollectionViewDataSource, ObjectiveTableViewControllerDelegate, CLLocationManagerDelegate, MKMapViewDelegate  {
     
     let segmentItems = [ObjectiveType.main.rawValue.capitalized, ObjectiveType.bonus.rawValue.capitalized]
     let segmentedControl: UISegmentedControl
     let mapView: MKMapView
     var objectivesToDisplay = [Objective]()
+    var currentAnnotations = [MKAnnotation]()
     
     lazy var collectionView: UICollectionView = {
         
@@ -40,6 +41,8 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
         mapView = MKMapView()
         
         super.init(nibName: nil, bundle: nil)
+        
+        mapView.delegate = self
         
         //tell segmented control to update every time selected value is changed
         segmentedControl.addTarget(self, action: #selector(handleSegmentedChanged), for: .valueChanged)
@@ -89,7 +92,7 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
         
         //give the map time to load
         DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(5)) {
-            self.setMapPins()
+            self.addMapCircles()
         }
         
     }
@@ -120,21 +123,53 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
         collectionView.setContentOffset(CGPoint(x:0,y:0), animated: true)
     }
     
-    func setMapPins() {
-        //zoom map to show new locations
-        var locationsToShow = [MKAnnotation]()
-        for (objective) in objectivesToDisplay.filter({$0.latitude != nil && $0.longitude != nil}) {
-            let annotation = MKPointAnnotation()
-            annotation.coordinate = CLLocationCoordinate2D(latitude: objective.latitude!, longitude: objective.longitude!)
-            mapView.addAnnotation(annotation)
-            locationsToShow.append(annotation)
+    func addMapCircles() {
+        let radius: Double = 150
+        
+        //remove all old pins
+        for (pin) in currentAnnotations {
+            mapView.remove(pin as! MKOverlay)
         }
-        mapView.setRegion(region(for: locationsToShow), animated: true)
+        //zoom map to show new locations
+        for (objective) in objectivesToDisplay.filter({$0.latitude != nil && $0.longitude != nil}) {
+            let coordinate = CLLocationCoordinate2D(latitude: objective.latitude!, longitude: objective.longitude!)
+            // generate a random offset in meters that is within the radius (so that the objective location will fall in new circle)
+            let randOffset = coordinate.latitude + (randBetween(lower: 20, upper: Int(radius - 10) ) as CLLocationDistance)
+            
+            // use offset to create a new random center for the overlay circle
+            let randCenter = locationWithBearing(bearing: randOffset, distanceMeters: randOffset, origin: coordinate)
+            
+            let circle = MKCircle(center: randCenter, radius: radius as CLLocationDistance)
+            self.mapView.add(circle)
+            mapView.add(circle)
+            currentAnnotations.append(circle)
+        }
+        mapView.setRegion(region(for: currentAnnotations), animated: true)
+    }
+    
+    func randBetween(lower: Int, upper: Int) -> Double {
+        
+        return Double( Int(arc4random_uniform(UInt32(upper - lower))) + lower)
+    }
+    
+    // magic from internet to offset a location coordinate by meters (bearing is the direction to offset [in degress])
+    func locationWithBearing(bearing:Double, distanceMeters:Double, origin:CLLocationCoordinate2D) -> CLLocationCoordinate2D {
+        let distRadians = distanceMeters / (6372797.6)
+        
+        let rbearing = bearing * Double.pi / 180.0
+        
+        let lat1 = origin.latitude * Double.pi / 180
+        let lon1 = origin.longitude * Double.pi / 180
+        
+        let lat2 = asin(sin(lat1) * cos(distRadians) + cos(lat1) * sin(distRadians) * cos(rbearing))
+        let lon2 = lon1 + atan2(sin(rbearing) * sin(distRadians) * cos(lat1), cos(distRadians) - sin(lat1) * sin(lat2))
+        
+        return CLLocationCoordinate2D(latitude: lat2 * 180 / Double.pi, longitude: lon2 * 180 / Double.pi)
     }
     
     @objc func handleSegmentedChanged() {
         updateSelectedObjectiveType()
-        setMapPins()
+        addMapCircles()
     }
     
     func region(for annotations: [MKAnnotation]) ->
@@ -299,6 +334,18 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
         
         //save this information
         saveLocalData()
+    }
+    
+    func mapView(_ mapView: MKMapView!, rendererFor overlay: MKOverlay!) -> MKOverlayRenderer! {
+        if overlay is MKCircle {
+            let circle = MKCircleRenderer(overlay: overlay)
+            circle.strokeColor = AppColors.cellColor
+            circle.fillColor = AppColors.orangeHighlightColor.withAlphaComponent(0.7)
+            circle.lineWidth = 1
+            return circle
+        } else {
+            return nil
+        }
     }
 }
 
