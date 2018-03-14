@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import RSKImageCropper
 
 class DetailViewController: UIViewController {
 
@@ -78,7 +79,7 @@ class DetailViewController: UIViewController {
             switch objective.answerType {
             case .text:
                 if (data.textResponse != nil) {
-                    (answerView as! TextResponseView).textLabel.text = data.textResponse
+                    (answerView as! TextResponseView).textView.text = data.textResponse
                 }
             case .password:
                 print("Not implemented yet")
@@ -171,6 +172,7 @@ class DetailViewController: UIViewController {
             titleLabel.topAnchor.constraint(equalTo: panView.bottomAnchor, constant: 16),
             titleLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
             titleLabel.trailingAnchor.constraint(lessThanOrEqualTo: view.trailingAnchor, constant: -16),
+            titleLabel.heightAnchor.constraint(equalToConstant: 20),
 
             hintImageView.leadingAnchor.constraint(equalTo: titleLabel.trailingAnchor, constant: 16),
             hintImageView.centerYAnchor.constraint(equalTo: titleLabel.centerYAnchor),
@@ -180,6 +182,7 @@ class DetailViewController: UIViewController {
             pointLabel.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 8),
             pointLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
             pointLabel.trailingAnchor.constraint(lessThanOrEqualTo: view.trailingAnchor, constant: -16),
+            pointLabel.heightAnchor.constraint(equalToConstant: 20),
 
             descTextView.topAnchor.constraint(equalTo: pointLabel.bottomAnchor, constant: 8),
             descTextView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
@@ -189,23 +192,23 @@ class DetailViewController: UIViewController {
             responseTextLabel.topAnchor.constraint(equalTo: descTextView.bottomAnchor, constant: 8),
             responseTextLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
             responseTextLabel.trailingAnchor.constraint(lessThanOrEqualTo: view.trailingAnchor, constant: -16),
+            responseTextLabel.heightAnchor.constraint(equalToConstant: 20),
         ])
 
         switch answerView {
         case is UIImageView:
             constraints += [
-                answerView.topAnchor.constraint(greaterThanOrEqualTo: responseTextLabel.bottomAnchor, constant: 16),
-                answerView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-                answerView.bottomAnchor.constraint(lessThanOrEqualTo: view.bottomAnchor, constant: -16),
-                answerView.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: 0.4),
-                answerView.heightAnchor.constraint(equalTo: answerView.widthAnchor),
+                answerView.topAnchor.constraint(equalTo: responseTextLabel.bottomAnchor, constant: 16),
+                answerView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
+                answerView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
+                answerView.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -16),
             ]
         case is TextResponseView:
             constraints += [
-                answerView.topAnchor.constraint(greaterThanOrEqualTo: responseTextLabel.bottomAnchor, constant: 16),
+                answerView.topAnchor.constraint(equalTo: responseTextLabel.bottomAnchor),
                 answerView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
                 answerView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-                answerView.bottomAnchor.constraint(lessThanOrEqualTo: view.bottomAnchor, constant: -16),]
+                answerView.bottomAnchor.constraint(equalTo: view.bottomAnchor)]
         default:
             constraints += [
                 answerView.topAnchor.constraint(equalTo: responseTextLabel.bottomAnchor),
@@ -263,7 +266,7 @@ class DetailViewController: UIViewController {
     func enterAnswerCompletion(answer: String) {
 
         if let answerView = answerView as? TextResponseView {
-            answerView.textLabel.text = answer
+            answerView.textView.text = answer
             playHudAnimation()
             data.textResponse = answer
             delegate?.initiateSave()
@@ -313,7 +316,6 @@ UIImagePickerControllerDelegate, UINavigationControllerDelegate {
         let imagePicker = UIImagePickerController()
         imagePicker.sourceType = .camera
         imagePicker.delegate = self
-        imagePicker.allowsEditing = true
         present(imagePicker, animated: true, completion: nil)
     }
 
@@ -322,7 +324,6 @@ UIImagePickerControllerDelegate, UINavigationControllerDelegate {
         let imagePicker = UIImagePickerController()
         imagePicker.sourceType = .photoLibrary
         imagePicker.delegate = self
-        imagePicker.allowsEditing = true
         present(imagePicker, animated: true, completion: nil)
     }
 
@@ -331,15 +332,44 @@ UIImagePickerControllerDelegate, UINavigationControllerDelegate {
     // MARK:- Image Picker Delegates
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : Any]) {
 
-        let retrivedImage = info[UIImagePickerControllerEditedImage] as? UIImage
+        if let image = info[UIImagePickerControllerOriginalImage] as? UIImage {
+
+        let imageCropperViewController = RSKImageCropViewController(image: image)
+
+            imageCropperViewController.cropMode = RSKImageCropMode.custom
+            imageCropperViewController.delegate = self
+            imageCropperViewController.dataSource = self
+            imageCropperViewController.alwaysBounceVertical = true
+            imageCropperViewController.avoidEmptySpaceAroundImage = true
+            picker.pushViewController(imageCropperViewController, animated: true)
+        }
+    }
+
+    func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
+
+        dismiss(animated: true, completion: nil)
+    }
+    
+}
+
+extension DetailViewController:
+RSKImageCropViewControllerDelegate, RSKImageCropViewControllerDataSource {
+
+    func imageCropViewController(_ controller: RSKImageCropViewController, didCropImage croppedImage: UIImage, usingCropRect cropRect: CGRect, rotationAngle: CGFloat) {
+        // crop and resize chosen image (for optimial space, as we are storing image data in core data)
+
+        let resizedImage = croppedImage.resized(withBounds:  CGSize(width: answerView.frame.width, height: answerView.frame.height))
         if let answerView = answerView as? UIImageView {
+
+            answerView.image = resizedImage
             answerView.contentMode = .scaleAspectFit
-            answerView.image = retrivedImage?.resized(withBounds:  CGSize(width: 200, height: 200))
+            answerView.layer.cornerRadius = 16
+            answerView.layer.masksToBounds = true
         }
         dismiss(animated: true, completion: nil)
-        
+
         //save image
-        let imageData = UIImageJPEGRepresentation(retrivedImage!, 1)
+        let imageData = UIImageJPEGRepresentation(resizedImage, 1)
         let imageFilePath = AppResources.documentsDirectory().appendingPathComponent("Photo_\(objective.id).jpeg")
         do {
             try imageData?.write(to: imageFilePath)
@@ -352,9 +382,29 @@ UIImagePickerControllerDelegate, UINavigationControllerDelegate {
         delegate?.initiateSave()
     }
 
-    func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
+    func imageCropViewControllerCustomMovementRect(_ controller: RSKImageCropViewController) -> CGRect {
+        return maskRect(controller: controller)
+    }
 
+    func imageCropViewControllerCustomMaskRect(_ controller: RSKImageCropViewController) -> CGRect {
+        return maskRect(controller: controller)
+    }
+
+    func maskRect(controller: RSKImageCropViewController) -> CGRect {
+        let maskSize = CGSize(width: view.frame.width, height: answerView.bounds.height)
+        let viewHeight = controller.view.frame.height
+
+        // create and return shape for cropping image
+        return CGRect(x: 0, y: viewHeight * 0.5 - maskSize.height / 2.0, width: maskSize.width, height: maskSize.height)
+    }
+
+    func imageCropViewControllerCustomMaskPath(_ controller: RSKImageCropViewController) -> UIBezierPath {
+
+        // return path from mask shape
+        return UIBezierPath(rect: controller.maskRect);
+    }
+
+    func imageCropViewControllerDidCancelCrop(_ controller: RSKImageCropViewController) {
         dismiss(animated: true, completion: nil)
     }
-    
 }

@@ -11,7 +11,7 @@
 		3712BDE92044D9A300B4C9B3 /* ObjectiveTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3712BDE82044D9A300B4C9B3 /* ObjectiveTableViewController.swift */; };
 		3712BDEB2044E9EB00B4C9B3 /* CustomTableHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3712BDEA2044E9EB00B4C9B3 /* CustomTableHeaderView.swift */; };
 		3712BDEF2045174100B4C9B3 /* Objective.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3712BDEE2045174100B4C9B3 /* Objective.swift */; };
-		376A5F852043A08D00D69090 /* (null) in Sources */ = {isa = PBXBuildFile; };
+		376A5F852043A08D00D69090 /* BuildFile in Sources */ = {isa = PBXBuildFile; };
 		377D9B88204646B8001E7466 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 377D9B87204646B8001E7466 /* GoogleService-Info.plist */; };
 		377EFC25204FADD900B0D723 /* StartScreenViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 377EFC24204FADD900B0D723 /* StartScreenViewController.swift */; };
 		379AD944204CCD5D00250582 /* ObjectiveUserData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 379AD943204CCD5D00250582 /* ObjectiveUserData.swift */; };
@@ -278,12 +278,14 @@
 			inputPaths = (
 				"${SRCROOT}/Pods/Target Support Files/Pods-GridRace/Pods-GridRace-frameworks.sh",
 				"${BUILT_PRODUCTS_DIR}/GoogleToolboxForMac/GoogleToolboxForMac.framework",
+				"${BUILT_PRODUCTS_DIR}/RSKImageCropper/RSKImageCropper.framework",
 				"${BUILT_PRODUCTS_DIR}/leveldb-library/leveldb.framework",
 				"${BUILT_PRODUCTS_DIR}/nanopb/nanopb.framework",
 			);
 			name = "[CP] Embed Pods Frameworks";
 			outputPaths = (
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/GoogleToolboxForMac.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/RSKImageCropper.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/leveldb.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/nanopb.framework",
 			);
@@ -331,7 +333,7 @@
 				AA29A12420438BC500DF3A1C /* AppDelegate.swift in Sources */,
 				AA23CECC2048E6450003E1D2 /* MapViewController copy.swift in Sources */,
 				AA29C93B204763FE00BE0BAE /* TextFieldViewController.swift in Sources */,
-				376A5F852043A08D00D69090 /* (null) in Sources */,
+				376A5F852043A08D00D69090 /* BuildFile in Sources */,
 				AA1CD2C2204513820007A0C1 /* UIImageExtension.swift in Sources */,
 				AA29C93D2047644300BE0BAE /* TextResponseView.swift in Sources */,
 				379AD944204CCD5D00250582 /* ObjectiveUserData.swift in Sources */,

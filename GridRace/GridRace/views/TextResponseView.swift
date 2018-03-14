@@ -10,24 +10,25 @@ import UIKit
 
 class TextResponseView: UIView {
 
-    let textLabel = UILabel()
+    let textView = UITextView()
 
     override init(frame: CGRect) {
         super.init(frame: frame)
 
-        textLabel.textAlignment = .center
-        textLabel.backgroundColor = AppColors.cellColor
-        textLabel.textColor = AppColors.textPrimaryColor
-        textLabel.font = UIFont.boldSystemFont(ofSize: 16)
+        textView.backgroundColor = AppColors.textPrimaryColor
+        textView.font = UIFont.systemFont(ofSize: 14)
+        textView.layer.cornerRadius = 16
+        textView.layer.masksToBounds = false
+        textView.textContainerInset = .init(top: 32, left: 32, bottom: 32, right: 32)
 
-        textLabel.translatesAutoresizingMaskIntoConstraints = false
-        self.addSubview(textLabel)
+        textView.translatesAutoresizingMaskIntoConstraints = false
+        self.addSubview(textView)
 
         NSLayoutConstraint.activate([
-            textLabel.centerYAnchor.constraint(equalTo: self.centerYAnchor),
-            textLabel.leadingAnchor.constraint(equalTo: self.leadingAnchor),
-            textLabel.trailingAnchor.constraint(equalTo: self.trailingAnchor),
-            textLabel.heightAnchor.constraint(equalToConstant: 44)
+            textView.topAnchor.constraint(equalTo: self.topAnchor, constant: 16),
+            textView.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: 16),
+            textView.trailingAnchor.constraint(equalTo: self.trailingAnchor, constant: -16),
+            textView.bottomAnchor.constraint(equalTo: self.bottomAnchor, constant: -16)
         ])
 
     }
