@@ -90,7 +90,7 @@ class MapViewController: UIViewController, CLLocationManagerDelegate, MKMapViewD
             collapsableDetailsView.heightAnchor.constraint(equalToConstant: view.frame.height * 0.6),
             collapsableDetailsView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             collapsableDetailsView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            collapsableDetailsView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
+            collapsableDetailsView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
         ])
     }
 
@@ -198,7 +198,7 @@ class MapViewController: UIViewController, CLLocationManagerDelegate, MKMapViewD
 
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         let newLocation = locations.last!
-        print("didUpdateLocations \(newLocation)")
+        //print("didUpdateLocations \(newLocation)")
         // only update location if its been at least 5 seconds from last update
         guard newLocation.timestamp.timeIntervalSinceNow > -5 else { return }
         // filter out invalid location updates

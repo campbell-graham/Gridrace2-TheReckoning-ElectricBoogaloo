@@ -35,7 +35,7 @@ class DetailViewController: UIViewController {
 
         switch  objective.answerType {
         case .photo: // imageview
-            answerView = UIImageView()
+            answerView = ImageResponseView()
         case .text: // textField
             answerView = TextResponseView()
         case .password: // pin view
@@ -71,8 +71,8 @@ class DetailViewController: UIViewController {
         navigationController?.navigationBar.prefersLargeTitles = false
         title = objective.name
 
-        initialiseViews()
         setUpLayout()
+        initialiseViews()
     
         //present old data if it exists
         if data.completed {
@@ -81,13 +81,15 @@ class DetailViewController: UIViewController {
                 if (data.textResponse != nil) {
                     (answerView as! TextResponseView).textView.text = data.textResponse
                 }
-            case .password:
-                print("Not implemented yet")
             case .photo:
-                if let answerView = answerView as? UIImageView, let imageURL = data.imageResponseURL {
-                    answerView.contentMode = .scaleAspectFit
-                    answerView.image = UIImage(contentsOfFile: imageURL.path)?.resized(withBounds:  CGSize(width: 200, height: 200))
+                if let answerView = answerView as? ImageResponseView, let imageURL = data.imageResponseURL {
+
+                    if let image = UIImage(contentsOfFile: imageURL.path) {
+                        answerView.setImage(image: image)
+                    }
                 }
+            default:
+                break
             }
         }
     }
@@ -116,9 +118,8 @@ class DetailViewController: UIViewController {
         responseTextLabel.font = UIFont.boldSystemFont(ofSize: 20)
 
         let interactGestureRecogniser: UITapGestureRecognizer
-
         switch answerView {
-        case is UIImageView :
+        case is ImageResponseView :
             interactGestureRecogniser = UITapGestureRecognizer(target: self, action: #selector(selectPhoto))
         case is TextResponseView :
             interactGestureRecogniser = UITapGestureRecognizer(target: self, action: #selector(enterAnswer))
@@ -148,9 +149,6 @@ class DetailViewController: UIViewController {
 
         responseTextLabel.text = "Your Response"
 
-        if let answerView = answerView as? UIImageView{
-            answerView.image = #imageLiteral(resourceName: "camera")
-        }
     }
 
     private func setUpLayout() {
@@ -196,25 +194,25 @@ class DetailViewController: UIViewController {
         ])
 
         switch answerView {
-        case is UIImageView:
+        case is ImageResponseView:
             constraints += [
                 answerView.topAnchor.constraint(equalTo: responseTextLabel.bottomAnchor, constant: 16),
                 answerView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
                 answerView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
-                answerView.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -16),
-            ]
+                answerView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -16)]
         case is TextResponseView:
             constraints += [
                 answerView.topAnchor.constraint(equalTo: responseTextLabel.bottomAnchor),
                 answerView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
                 answerView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-                answerView.bottomAnchor.constraint(equalTo: view.bottomAnchor)]
+                answerView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
+            ]
         default:
             constraints += [
                 answerView.topAnchor.constraint(equalTo: responseTextLabel.bottomAnchor),
                 answerView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
                 answerView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-                answerView.bottomAnchor.constraint(equalTo: view.bottomAnchor)]
+                answerView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor)]
         }
 
         NSLayoutConstraint.activate(constraints)
@@ -359,12 +357,9 @@ RSKImageCropViewControllerDelegate, RSKImageCropViewControllerDataSource {
         // crop and resize chosen image (for optimial space, as we are storing image data in core data)
 
         let resizedImage = croppedImage.resized(withBounds:  CGSize(width: answerView.frame.width, height: answerView.frame.height))
-        if let answerView = answerView as? UIImageView {
+        if let answerView = answerView as? ImageResponseView {
 
-            answerView.image = resizedImage
-            answerView.contentMode = .scaleAspectFit
-            answerView.layer.cornerRadius = 16
-            answerView.layer.masksToBounds = true
+            answerView.setImage(image: resizedImage)
         }
         dismiss(animated: true, completion: nil)
 
