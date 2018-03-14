@@ -110,6 +110,7 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
         let objectiveTypeToFilter = ObjectiveType(rawValue: selectedObjectiveTypeAsString!)
         objectivesToDisplay = AppResources.ObjectiveData.sharedObjectives.objectives.filter({$0.objectiveType == objectiveTypeToFilter})
         collectionView.reloadData()
+        collectionView.setContentOffset(CGPoint(x:0,y:0), animated: true)
     }
     
     required init?(coder aDecoder: NSCoder) {
