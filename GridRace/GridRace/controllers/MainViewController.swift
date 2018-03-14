@@ -13,10 +13,10 @@ import FirebaseDatabase
 
 class MainViewController: UIViewController, UICollectionViewDelegate, UICollectionViewDataSource, ObjectiveTableViewControllerDelegate  {
     
+    let segmentItems = [ObjectiveType.main.rawValue.capitalized, ObjectiveType.bonus.rawValue.capitalized]
     let segmentedControl: UISegmentedControl
     let mapView: MKMapView
-    var incompleteObjectives = [Objective]()
-    var completeObjectives = [Objective]()
+    var objectivesToDisplay = [Objective]()
     
     lazy var collectionView: UICollectionView = {
         
@@ -30,8 +30,7 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
     //will eventually take in data
     init() {
         //segmented control set up
-        let items = ["Main", "Bonus"]
-        segmentedControl = UISegmentedControl(items: items)
+        segmentedControl = UISegmentedControl(items: segmentItems)
         segmentedControl.selectedSegmentIndex = 0
         segmentedControl.tintColor = AppColors.orangeHighlightColor
         segmentedControl.setTitleTextAttributes([NSAttributedStringKey.font: UIFont.systemFont(ofSize: 15, weight: .medium)],
@@ -41,7 +40,12 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
         mapView = MKMapView()
         
         super.init(nibName: nil, bundle: nil)
+        
+        //tell segmented control to update every time selected value is changed
+        segmentedControl.addTarget(self, action: #selector(updateSelectedObjectiveType), for: .valueChanged)
+        
         title = "Objectives"
+        
         //start a load of local data which will also make comparisons with the data that firebase has
         loadLocalData()
     }
@@ -80,6 +84,7 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
             collectionView.heightAnchor.constraint(equalToConstant: 300)
             ])
         
+          updateSelectedObjectiveType()
     }
     
     override func viewDidLayoutSubviews() {
@@ -87,37 +92,24 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
         collectionView.layoutIfNeeded()
     }
     
-    override func viewDidAppear(_ animated: Bool) {
-        collectionView.reloadData()
-    }
-    
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-       return AppResources.ObjectiveData.sharedObjectives.objectives.count
+       return objectivesToDisplay.count
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "objectiveCell", for: indexPath) as! ObjectiveInformationCollectionViewCell
-        let objective = AppResources.ObjectiveData.sharedObjectives.objectives[indexPath.row]
+        let objective = objectivesToDisplay[indexPath.row]
         cell.titleLabel.text = objective.name
         cell.pointsLabel.text = "\(objective.points) Points"
         cell.descriptionLabel.text = objective.desc
         return cell
     }
     
-    func sortObjectives() {
-        completeObjectives.removeAll()
-        incompleteObjectives.removeAll()
-        for (objective) in AppResources.ObjectiveData.sharedObjectives.objectives {
-            if let x = AppResources.ObjectiveData.sharedObjectives.data.first(where: {$0.objectiveID == objective.id})  {
-                if x.completed {
-                    completeObjectives.append(objective)
-                } else {
-                    incompleteObjectives.append(objective)
-                }
-            } else {
-                incompleteObjectives.append(objective)
-            }
-        }
+    @objc func updateSelectedObjectiveType() {
+        let selectedObjectiveTypeAsString = segmentedControl.titleForSegment(at: segmentedControl.selectedSegmentIndex)?.lowercased()
+        let objectiveTypeToFilter = ObjectiveType(rawValue: selectedObjectiveTypeAsString!)
+        objectivesToDisplay = AppResources.ObjectiveData.sharedObjectives.objectives.filter({$0.objectiveType == objectiveTypeToFilter})
+        collectionView.reloadData()
     }
     
     required init?(coder aDecoder: NSCoder) {
@@ -146,9 +138,7 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
         } catch {
             print ("Something went wrong when saving")
         }
-        
-        //sort at the end of saving
-        sortObjectives()
+    
     }
     
     func initiateSave() {
@@ -164,7 +154,6 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
             do {
                 AppResources.ObjectiveData.sharedObjectives.objectives = try decoder.decode([Objective].self, from: objectivesDataToRead)
                 AppResources.ObjectiveData.sharedObjectives.data = try decoder.decode([ObjectiveUserData].self, from: userDataToRead)
-                sortObjectives()
             } catch {
                 print("Error decoding the local array, will re-download")
                 //delete local files if there are issues assiging to local variables
