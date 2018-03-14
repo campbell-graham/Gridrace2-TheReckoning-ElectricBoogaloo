@@ -15,7 +15,8 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
     
     let segmentItems = [ObjectiveType.main.rawValue.capitalized, ObjectiveType.bonus.rawValue.capitalized]
     let segmentedControl: UISegmentedControl
-    let mapView: MKMapView
+    let mapView: MKMapView = MKMapView()
+    let locationManager = CLLocationManager()
     var objectivesToDisplay = [Objective]()
     var currentAnnotations = [MKAnnotation]()
     
@@ -37,12 +38,9 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
         segmentedControl.setTitleTextAttributes([NSAttributedStringKey.font: UIFont.systemFont(ofSize: 15, weight: .medium)],
                                                 for: .normal)
         
-        //map set up
-        mapView = MKMapView()
+        
         
         super.init(nibName: nil, bundle: nil)
-        
-        mapView.delegate = self
         
         //tell segmented control to update every time selected value is changed
         segmentedControl.addTarget(self, action: #selector(handleSegmentedChanged), for: .valueChanged)
@@ -58,6 +56,14 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
         
         //styling
         view.backgroundColor = AppColors.backgroundColor
+        
+        //map set up
+        locationManager.requestAlwaysAuthorization()
+        locationManager.startUpdatingLocation()
+        locationManager.delegate = self
+        mapView.userTrackingMode = .none
+        mapView.showsUserLocation = true
+        mapView.delegate = self
         
         //add items to view
         self.navigationItem.titleView = segmentedControl
@@ -130,6 +136,10 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
         for (pin) in currentAnnotations {
             mapView.remove(pin as! MKOverlay)
         }
+        
+        //empty current annotations
+        currentAnnotations.removeAll()
+        
         //zoom map to show new locations
         for (objective) in objectivesToDisplay.filter({$0.latitude != nil && $0.longitude != nil}) {
             let coordinate = CLLocationCoordinate2D(latitude: objective.latitude!, longitude: objective.longitude!)
