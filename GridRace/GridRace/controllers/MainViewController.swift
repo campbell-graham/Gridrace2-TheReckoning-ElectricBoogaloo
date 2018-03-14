@@ -42,7 +42,7 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
         super.init(nibName: nil, bundle: nil)
         
         //tell segmented control to update every time selected value is changed
-        segmentedControl.addTarget(self, action: #selector(updateSelectedObjectiveType), for: .valueChanged)
+        segmentedControl.addTarget(self, action: #selector(handleSegmentedChanged), for: .valueChanged)
         
         title = "Objectives"
         
@@ -84,7 +84,14 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
             collectionView.heightAnchor.constraint(equalToConstant: 300)
             ])
         
-          updateSelectedObjectiveType()
+        
+        updateSelectedObjectiveType()
+        
+        //give the map time to load
+        DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(5)) {
+            self.setMapPins()
+        }
+        
     }
     
     override func viewDidLayoutSubviews() {
@@ -111,6 +118,65 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
         objectivesToDisplay = AppResources.ObjectiveData.sharedObjectives.objectives.filter({$0.objectiveType == objectiveTypeToFilter})
         collectionView.reloadData()
         collectionView.setContentOffset(CGPoint(x:0,y:0), animated: true)
+    }
+    
+    func setMapPins() {
+        //zoom map to show new locations
+        var locationsToShow = [MKAnnotation]()
+        for (objective) in objectivesToDisplay.filter({$0.latitude != nil && $0.longitude != nil}) {
+            let annotation = MKPointAnnotation()
+            annotation.coordinate = CLLocationCoordinate2D(latitude: objective.latitude!, longitude: objective.longitude!)
+            mapView.addAnnotation(annotation)
+            locationsToShow.append(annotation)
+        }
+        mapView.setRegion(region(for: locationsToShow), animated: true)
+    }
+    
+    @objc func handleSegmentedChanged() {
+        updateSelectedObjectiveType()
+        setMapPins()
+    }
+    
+    func region(for annotations: [MKAnnotation]) ->
+        MKCoordinateRegion {
+            let region: MKCoordinateRegion
+            switch annotations.count {
+            case 0:
+                region = MKCoordinateRegionMakeWithDistance(
+                    mapView.userLocation.coordinate, 1000, 1000)
+            case 1:
+                let annotation = annotations[annotations.count - 1]
+                region = MKCoordinateRegionMakeWithDistance(
+                    annotation.coordinate, 1000, 1000)
+            default:
+                var topLeft = CLLocationCoordinate2D(latitude: -90,
+                                                     longitude: 180)
+                var bottomRight = CLLocationCoordinate2D(latitude: 90,
+                                                         longitude: -180)
+                for annotation in annotations {
+                    topLeft.latitude = max(topLeft.latitude,
+                                           annotation.coordinate.latitude)
+                    topLeft.longitude = min(topLeft.longitude,
+                                            annotation.coordinate.longitude)
+                    bottomRight.latitude = min(bottomRight.latitude,
+                                               annotation.coordinate.latitude)
+                    bottomRight.longitude = max(bottomRight.longitude,
+                                                annotation.coordinate.longitude)
+                }
+                let center = CLLocationCoordinate2D(
+                    latitude: topLeft.latitude -
+                        (topLeft.latitude - bottomRight.latitude) / 2,
+                    longitude: topLeft.longitude -
+                        (topLeft.longitude - bottomRight.longitude) / 2)
+                let extraSpace = 1.1
+                let span = MKCoordinateSpan(
+                    latitudeDelta: abs(topLeft.latitude -
+                        bottomRight.latitude) * extraSpace,
+                    longitudeDelta: abs(topLeft.longitude -
+                        bottomRight.longitude) * extraSpace)
+                region = MKCoordinateRegion(center: center, span: span)
+            }
+            return mapView.regionThatFits(region)
     }
     
     required init?(coder aDecoder: NSCoder) {
