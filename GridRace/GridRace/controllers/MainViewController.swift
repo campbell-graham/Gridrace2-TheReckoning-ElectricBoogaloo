@@ -106,6 +106,7 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
     override func viewDidLayoutSubviews() {
         collectionView.collectionViewLayout = customFlowLayout(collectionViewWidth: collectionView.frame.width, collectionViewHeigth: collectionView.frame.height)
         collectionView.layoutIfNeeded()
+        mapView.layoutMargins = UIEdgeInsets(top: 16, left: 16, bottom: collectionView.frame.height, right: 16)
     }
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
