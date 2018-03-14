@@ -175,7 +175,7 @@ class SummaryViewController: UIViewController, UICollectionViewDelegate, UIColle
     }
     
     override func viewDidLayoutSubviews() {
-        collectionView.collectionViewLayout = customFlowLayout(collectionViewWidth: collectionView.frame.width, collectionViewHeigth: collectionView.frame.height)
+        collectionView.collectionViewLayout = CustomFlowLayout(collectionViewWidth: collectionView.frame.width, collectionViewHeigth: collectionView.frame.height)
     }
     
     override func viewDidAppear(_ animated: Bool) {

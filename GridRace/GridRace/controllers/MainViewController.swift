@@ -68,7 +68,7 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
         self.navigationItem.titleView = segmentedControl
         view.addSubview(mapView)
         view.addSubview(collectionView)
-       
+        
         //collection view st up
         collectionView.delegate = self
         collectionView.dataSource = self
@@ -78,7 +78,7 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
         //layout constraints
         mapView.translatesAutoresizingMaskIntoConstraints = false
         collectionView.translatesAutoresizingMaskIntoConstraints = false
-    
+        
         NSLayoutConstraint.activate([
             //map view
             mapView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
@@ -97,7 +97,7 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
     }
     
     override func viewDidLayoutSubviews() {
-        collectionView.collectionViewLayout = customFlowLayout(collectionViewWidth: collectionView.frame.width, collectionViewHeigth: collectionView.frame.height)
+        collectionView.collectionViewLayout = CustomFlowLayout(collectionViewWidth: collectionView.frame.width, collectionViewHeigth: collectionView.frame.height)
         collectionView.layoutIfNeeded()
         mapView.layoutMargins = UIEdgeInsets(top: 16, left: 16, bottom: collectionView.frame.height, right: 16)
     }
@@ -105,11 +105,43 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         self.addMapCircles()
+        self.jumpToSelectedObjective()
         self.mapView.showsUserLocation = true
     }
     
+    func jumpToSelectedObjective() {
+        
+        if let layout = collectionView.collectionViewLayout as? CustomFlowLayout {
+            let pageWidth = layout.pageWidth()
+            let index: Int = Int(round(collectionView.contentOffset.x / pageWidth))
+            let indexForVisibleCell = IndexPath(item: index, section: 0)
+            let indexForPreviousCell = IndexPath(item: index - 1, section: 0)
+            let indexForNextCell = IndexPath(item: index + 1, section: 0)
+            
+            
+            if let cellToZoom = collectionView.cellForItem(at: indexForVisibleCell) as? ObjectiveInformationCollectionViewCell, let previousCell = collectionView.cellForItem(at: indexForPreviousCell) as? ObjectiveInformationCollectionViewCell, let nextCell = collectionView.cellForItem(at: indexForNextCell) as? ObjectiveInformationCollectionViewCell {
+                UIView.animate(withDuration: 0.2, animations: {
+                    cellToZoom.transform = CGAffineTransform(scaleX: 1.1, y: 1.1)
+                    previousCell.transform = CGAffineTransform(scaleX: 1, y: 1)
+                    nextCell.transform = CGAffineTransform(scaleX: 1, y: 1)
+                })
+            } else if let cellToZoom = collectionView.cellForItem(at: indexForVisibleCell) as? ObjectiveInformationCollectionViewCell, let previousCell = collectionView.cellForItem(at: indexForPreviousCell) as? ObjectiveInformationCollectionViewCell {
+                UIView.animate(withDuration: 0.2, animations: {
+                    cellToZoom.transform = CGAffineTransform(scaleX: 1.1, y: 1.1)
+                    previousCell.transform = CGAffineTransform(scaleX: 1, y: 1)
+                })
+            } else if let cellToZoom = collectionView.cellForItem(at: indexForVisibleCell) as? ObjectiveInformationCollectionViewCell, let nextCell = collectionView.cellForItem(at: indexForNextCell) as? ObjectiveInformationCollectionViewCell {
+                UIView.animate(withDuration: 0.2, animations: {
+                    cellToZoom.transform = CGAffineTransform(scaleX: 1.1, y: 1.1)
+                    nextCell.transform = CGAffineTransform(scaleX: 1, y: 1)
+                })
+            }
+        }
+        
+    }
+    
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-       return objectivesToDisplay.count
+        return objectivesToDisplay.count
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
@@ -250,7 +282,7 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
         } catch {
             print ("Something went wrong when saving")
         }
-    
+        
     }
     
     func initiateSave() {
@@ -356,6 +388,10 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
         } else {
             return nil
         }
+    }
+    
+    func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
+        jumpToSelectedObjective()
     }
 }
 

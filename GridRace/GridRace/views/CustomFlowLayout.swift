@@ -8,7 +8,7 @@
 
 import UIKit
 
-class customFlowLayout: UICollectionViewFlowLayout {
+class CustomFlowLayout: UICollectionViewFlowLayout {
 
     init(collectionViewWidth: CGFloat, collectionViewHeigth: CGFloat) {
         super.init()
