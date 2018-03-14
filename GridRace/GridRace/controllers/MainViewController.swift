@@ -62,7 +62,6 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
         locationManager.startUpdatingLocation()
         locationManager.delegate = self
         mapView.userTrackingMode = .none
-        mapView.showsUserLocation = true
         mapView.delegate = self
         
         //add items to view
@@ -90,23 +89,23 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
             collectionView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
             collectionView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
             collectionView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor),
-            collectionView.heightAnchor.constraint(equalToConstant: 300)
+            collectionView.heightAnchor.constraint(equalToConstant: 250)
             ])
         
         
         updateSelectedObjectiveType()
-        
-        //give the map time to load
-        DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(5)) {
-            self.addMapCircles()
-        }
-        
     }
     
     override func viewDidLayoutSubviews() {
         collectionView.collectionViewLayout = customFlowLayout(collectionViewWidth: collectionView.frame.width, collectionViewHeigth: collectionView.frame.height)
         collectionView.layoutIfNeeded()
         mapView.layoutMargins = UIEdgeInsets(top: 16, left: 16, bottom: collectionView.frame.height, right: 16)
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        self.addMapCircles()
+        self.mapView.showsUserLocation = true
     }
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
@@ -350,7 +349,7 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
     func mapView(_ mapView: MKMapView!, rendererFor overlay: MKOverlay!) -> MKOverlayRenderer! {
         if overlay is MKCircle {
             let circle = MKCircleRenderer(overlay: overlay)
-            circle.strokeColor = AppColors.cellColor
+            circle.strokeColor = AppColors.orangeHighlightColor
             circle.fillColor = AppColors.orangeHighlightColor.withAlphaComponent(0.7)
             circle.lineWidth = 1
             return circle
