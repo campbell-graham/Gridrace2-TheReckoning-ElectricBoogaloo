@@ -24,6 +24,7 @@ class DetailViewController: UIViewController {
     private let hintImageView = UIImageView()
     private let hintPointDeductionValue = 2
     private var passwordViewController: PasswordViewController?
+    private var keyboardHeight: CGFloat = 0.0
     
     var delegate: ObjectiveTableViewControllerDelegate?
     
@@ -37,7 +38,8 @@ class DetailViewController: UIViewController {
         case .photo: // imageview
             answerView = ImageResponseView()
         case .text: // textField
-            answerView = TextResponseView()
+            self.answerView = TextResponseView()
+
         case .password: // pin view
 
             passwordViewController = PasswordViewController()
@@ -52,6 +54,13 @@ class DetailViewController: UIViewController {
                 passwordViewController!.didMove(toParentViewController: self)
                 passwordViewController?.buttonCompletion = self.updateLabel
             }
+        }
+    }
+
+    deinit {
+        if answerView is TextResponseView {
+            NotificationCenter.default.removeObserver(self)
+            NotificationCenter.default.removeObserver(self)
         }
     }
 
@@ -117,17 +126,22 @@ class DetailViewController: UIViewController {
 
         responseTextLabel.font = UIFont.boldSystemFont(ofSize: 20)
 
-        let interactGestureRecogniser: UITapGestureRecognizer
         switch answerView {
         case is ImageResponseView :
-            interactGestureRecogniser = UITapGestureRecognizer(target: self, action: #selector(selectPhoto))
+            let interactGestureRecogniser = UITapGestureRecognizer(target: self, action: #selector(selectPhoto))
+            answerView.addGestureRecognizer(interactGestureRecogniser)
         case is TextResponseView :
-            interactGestureRecogniser = UITapGestureRecognizer(target: self, action: #selector(enterAnswer))
+            let answerView = self.answerView as! TextResponseView
+            answerView.textView.delegate = self
+
+            NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow), name: NSNotification.Name.UIKeyboardWillShow, object: nil)
+
+            NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide), name: NSNotification.Name.UIKeyboardWillHide, object: nil)
         default:
-            interactGestureRecogniser = UITapGestureRecognizer(target: self, action: nil)
+            break
         }
 
-        answerView.addGestureRecognizer(interactGestureRecogniser)
+
         answerView.isUserInteractionEnabled = true
 
         let hintGestureRecogniser = UITapGestureRecognizer(target: self, action: #selector(clueButtonHandler))
@@ -148,6 +162,27 @@ class DetailViewController: UIViewController {
         pointLabel.text = (data.adjustedPoints != nil ? "\(data.adjustedPoints!)" : "\(objective.points)") + " Points"
 
         responseTextLabel.text = "Your Response"
+
+    }
+
+    @objc func keyboardWillShow(_ notification: Notification) {
+
+        if keyboardHeight == 0.0 {
+            if let keyboardFrame: NSValue = notification.userInfo?[UIKeyboardFrameEndUserInfoKey] as? NSValue {
+
+                 keyboardHeight = keyboardFrame.cgRectValue.height
+            }
+        }
+
+        // Assign new frame to your view
+        let oldFrame = view.frame
+        self.view.frame = CGRect(x: 0, y: oldFrame.minY-keyboardHeight, width: oldFrame.width, height: oldFrame.height)
+    }
+
+    @objc func keyboardWillHide(notification: NSNotification) {
+
+        let oldFrame = view.frame
+        self.view.frame = CGRect(x: 0, y: oldFrame.minY+keyboardHeight, width: oldFrame.width, height: oldFrame.height)
 
     }
 
@@ -174,7 +209,7 @@ class DetailViewController: UIViewController {
 
             hintImageView.leadingAnchor.constraint(equalTo: titleLabel.trailingAnchor, constant: 16),
             hintImageView.centerYAnchor.constraint(equalTo: titleLabel.centerYAnchor),
-            hintImageView.widthAnchor.constraint(equalToConstant: 32),
+            hintImageView.widthAnchor.constraint(equalToConstant: 24),
             hintImageView.heightAnchor.constraint(equalTo: hintImageView.widthAnchor),
 
             pointLabel.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 8),
@@ -251,24 +286,6 @@ class DetailViewController: UIViewController {
         clueViewController.modalTransitionStyle = .crossDissolve
         clueViewController.modalPresentationStyle = .overCurrentContext
         present(clueViewController, animated: true, completion: nil)
-    }
-
-    @objc func enterAnswer() {
-
-        let textFieldViewController = TextFieldViewController(closure: enterAnswerCompletion)
-        textFieldViewController.modalTransitionStyle = .crossDissolve
-        textFieldViewController.modalPresentationStyle = .overCurrentContext
-        present(textFieldViewController, animated: true, completion: nil)
-    }
-
-    func enterAnswerCompletion(answer: String) {
-
-        if let answerView = answerView as? TextResponseView {
-            answerView.textView.text = answer
-            playHudAnimation()
-            data.textResponse = answer
-            delegate?.initiateSave()
-        }
     }
 
     private func playHudAnimation() {
@@ -401,5 +418,17 @@ RSKImageCropViewControllerDelegate, RSKImageCropViewControllerDataSource {
 
     func imageCropViewControllerDidCancelCrop(_ controller: RSKImageCropViewController) {
         dismiss(animated: true, completion: nil)
+    }
+}
+
+extension DetailViewController: UITextViewDelegate {
+
+    func textViewDidEndEditing(_ textView: UITextView) {
+        if let answerView = answerView as? TextResponseView {
+
+            playHudAnimation()
+            data.textResponse = answerView.textView.text
+            delegate?.initiateSave()
+        }
     }
 }
