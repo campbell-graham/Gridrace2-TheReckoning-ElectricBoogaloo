@@ -86,7 +86,7 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
             mapView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
             mapView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor),
             
-            collectionView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            collectionView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
             collectionView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
             collectionView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor),
             collectionView.heightAnchor.constraint(equalToConstant: 250)
@@ -113,31 +113,23 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
         
         if let layout = collectionView.collectionViewLayout as? CustomFlowLayout {
             let pageWidth = layout.pageWidth()
+            //get index of the current cell using the page width (which is the difference the leading side of each cell)
             let index: Int = Int(round(collectionView.contentOffset.x / pageWidth))
             let indexForVisibleCell = IndexPath(item: index, section: 0)
-            let indexForPreviousCell = IndexPath(item: index - 1, section: 0)
-            let indexForNextCell = IndexPath(item: index + 1, section: 0)
-            
-            
-            if let cellToZoom = collectionView.cellForItem(at: indexForVisibleCell) as? ObjectiveInformationCollectionViewCell, let previousCell = collectionView.cellForItem(at: indexForPreviousCell) as? ObjectiveInformationCollectionViewCell, let nextCell = collectionView.cellForItem(at: indexForNextCell) as? ObjectiveInformationCollectionViewCell {
-                UIView.animate(withDuration: 0.2, animations: {
-                    cellToZoom.transform = CGAffineTransform(scaleX: 1.1, y: 1.1)
-                    previousCell.transform = CGAffineTransform(scaleX: 1, y: 1)
-                    nextCell.transform = CGAffineTransform(scaleX: 1, y: 1)
-                })
-            } else if let cellToZoom = collectionView.cellForItem(at: indexForVisibleCell) as? ObjectiveInformationCollectionViewCell, let previousCell = collectionView.cellForItem(at: indexForPreviousCell) as? ObjectiveInformationCollectionViewCell {
-                UIView.animate(withDuration: 0.2, animations: {
-                    cellToZoom.transform = CGAffineTransform(scaleX: 1.1, y: 1.1)
-                    previousCell.transform = CGAffineTransform(scaleX: 1, y: 1)
-                })
-            } else if let cellToZoom = collectionView.cellForItem(at: indexForVisibleCell) as? ObjectiveInformationCollectionViewCell, let nextCell = collectionView.cellForItem(at: indexForNextCell) as? ObjectiveInformationCollectionViewCell {
-                UIView.animate(withDuration: 0.2, animations: {
-                    cellToZoom.transform = CGAffineTransform(scaleX: 1.1, y: 1.1)
-                    nextCell.transform = CGAffineTransform(scaleX: 1, y: 1)
-                })
-            }
+            //save the middle cell
+            let cellToZoom = collectionView.cellForItem(at: indexForVisibleCell) as! ObjectiveInformationCollectionViewCell
+
+            //animate cells, making the middle one larger and all the other ones their original size in case they have changed
+            UIView.animate(withDuration: 0.1, animations: {
+                for (cell) in (self.collectionView.visibleCells as! [ObjectiveInformationCollectionViewCell]) {
+                    if cell == cellToZoom {
+                        cell.transform = CGAffineTransform(scaleX: 1.1, y: 1.1)
+                    } else {
+                        cell.transform = CGAffineTransform(scaleX: 1, y: 1)
+                    }
+                }
+            })
         }
-        
     }
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
@@ -389,8 +381,8 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
             return nil
         }
     }
-    
-    func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
+
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
         jumpToSelectedObjective()
     }
 }
