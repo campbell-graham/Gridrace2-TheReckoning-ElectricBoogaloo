@@ -179,7 +179,7 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         let objective = objectivesToDisplay[indexPath.row]
         let data = AppResources.ObjectiveData.sharedObjectives.data.first(where: {$0.objectiveID == objective.id})
-        present(MapViewController(objective: objective, data: data!), animated: true, completion: nil)
+        navigationController?.pushViewController(MapViewController(objective: objective, data: data!), animated: true)
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
@@ -354,7 +354,7 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
         //a download is always called at the end so that comparisons can be made, and local data overwritten if it is no longer valid. Wait until download is complete and then run comparisons with local data
         AppResources.returnDownloadedObjectives() {tempObjectives in
             if tempObjectives.isEmpty {
-                let alert = UIAlertController(title: "Failed to download!", message: "We were unable to download up to date data, so please note that the objectives in this app may not be accurate", preferredStyle: .alert)
+                let alert = UIAlertController(title: "Failed to download!", message: "We were unable to download the required data, consider restarting the app whilst making sure you have an internet connection.", preferredStyle: .alert)
                 alert.addAction(UIAlertAction(title: "Okay", style: .cancel, handler: nil))
                 self.present(alert, animated: true, completion: nil)
                 return
