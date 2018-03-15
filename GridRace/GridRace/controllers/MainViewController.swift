@@ -97,7 +97,7 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
     }
     
     override func viewDidLayoutSubviews() {
-        collectionView.collectionViewLayout = CustomFlowLayout(collectionViewWidth: collectionView.frame.width, collectionViewHeigth: collectionView.frame.height)
+        collectionView.collectionViewLayout = CustomFlowLayout(collectionViewWidth: collectionView.frame.width, collectionViewHeigth: collectionView.frame.height, itemSizePercent: 0.5)
         collectionView.layoutIfNeeded()
         mapView.layoutMargins = UIEdgeInsets(top: 16, left: 16, bottom: collectionView.frame.height, right: 16)
     }
@@ -105,11 +105,11 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         self.addMapCircles()
-        self.jumpToSelectedObjective()
+        self.animateCells()
         self.mapView.showsUserLocation = true
     }
     
-    func jumpToSelectedObjective() {
+    func animateCells() {
         
         if let layout = collectionView.collectionViewLayout as? CustomFlowLayout {
             let pageWidth = layout.pageWidth()
@@ -129,11 +129,44 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
                     }
                 }
             })
+            
+            
+            //zoom to location on map
+            if let coordinate = objectivesToDisplay[index].coordinate {
+                let latDelta: CLLocationDegrees = 0.05
+                let lonDelta: CLLocationDegrees = 0.05
+                let span:MKCoordinateSpan = MKCoordinateSpanMake(latDelta, lonDelta)
+                let region: MKCoordinateRegion = MKCoordinateRegionMake(coordinate, span)
+                mapView.setRegion(region, animated: true)
+            }
+        }
+    }
+    
+    func zoomToLocation() {
+        if let layout = collectionView.collectionViewLayout as? CustomFlowLayout {
+            let pageWidth = layout.pageWidth()
+            //get index of the current cell using the page width (which is the difference the leading side of each cell)
+            let index: Int = Int(round(collectionView.contentOffset.x / pageWidth))
+            
+            //zoom to location on map
+            if let coordinate = objectivesToDisplay[index].coordinate {
+                let latDelta: CLLocationDegrees = 0.005
+                let lonDelta: CLLocationDegrees = 0.005
+                let span:MKCoordinateSpan = MKCoordinateSpanMake(latDelta, lonDelta)
+                let region: MKCoordinateRegion = MKCoordinateRegionMake(coordinate, span)
+                mapView.setRegion(region, animated: true)
+            }
         }
     }
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return objectivesToDisplay.count
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        let objective = objectivesToDisplay[indexPath.row]
+        let data = AppResources.ObjectiveData.sharedObjectives.data.first(where: {$0.objectiveID == objective.id})
+        present(MapViewController(objective: objective, data: data!), animated: true, completion: nil)
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
@@ -382,8 +415,13 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
         }
     }
 
-    func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        jumpToSelectedObjective()
+    func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
+        animateCells()
+    }
+    
+    func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
+        animateCells()
+        zoomToLocation()
     }
 }
 
