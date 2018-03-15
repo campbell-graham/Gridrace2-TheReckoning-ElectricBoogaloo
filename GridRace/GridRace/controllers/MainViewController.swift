@@ -424,15 +424,6 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
 
     func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
         animateCells()
-    }
-    
-    func scrollViewDidEndScrollingAnimation(_ scrollView: UIScrollView) {
-        animateCells()
-        zoomToLocation()
-    }
-    
-    func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
-        animateCells()
         zoomToLocation()
     }
 }
