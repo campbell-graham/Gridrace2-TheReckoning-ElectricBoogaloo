@@ -339,8 +339,14 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
         if let objectivesDataToRead = try? Data(contentsOf: objectivesFilePath()), let userDataToRead = try? Data(contentsOf: userDataFilePath()) {
             let decoder = PropertyListDecoder()
             do {
-                AppResources.ObjectiveData.sharedObjectives.objectives = try decoder.decode([Objective].self, from: objectivesDataToRead)
-                AppResources.ObjectiveData.sharedObjectives.data = try decoder.decode([ObjectiveUserData].self, from: userDataToRead)
+                let objectives = try decoder.decode([Objective].self, from: objectivesDataToRead)
+                for (objective) in objectives {
+                    AppResources.ObjectiveData.sharedObjectives.objectives.append(objective)
+                }
+                let data = try decoder.decode([ObjectiveUserData].self, from: userDataToRead)
+                for (item) in data {
+                    AppResources.ObjectiveData.sharedObjectives.data.append(item)
+                }
             } catch {
                 print("Error decoding the local array, will re-download")
                 //delete local files if there are issues assiging to local variables
@@ -354,9 +360,10 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
         //a download is always called at the end so that comparisons can be made, and local data overwritten if it is no longer valid. Wait until download is complete and then run comparisons with local data
         AppResources.returnDownloadedObjectives() {tempObjectives in
             if tempObjectives.isEmpty {
-                let alert = UIAlertController(title: "Failed to download!", message: "We were unable to download the required data, consider restarting the app whilst making sure you have an internet connection.", preferredStyle: .alert)
+                let alert = UIAlertController(title: "Failed to download!", message: "Using locally saved data fow now, however we recommend restarting with app whilst having an internet connection", preferredStyle: .alert)
                 alert.addAction(UIAlertAction(title: "Okay", style: .cancel, handler: nil))
                 self.present(alert, animated: true, completion: nil)
+                self.updateSelectedObjectiveType()
                 return
             }
             
@@ -389,6 +396,7 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
                 alert.addAction(UIAlertAction(title: "Okay", style: UIAlertActionStyle.default, handler: nil))
                 self.present(alert, animated: true, completion: nil)
             }
+            self.saveLocalData()
             self.updateSelectedObjectiveType()
         }
     }
