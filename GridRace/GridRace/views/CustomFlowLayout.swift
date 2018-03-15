@@ -10,8 +10,9 @@ import UIKit
 
 class CustomFlowLayout: UICollectionViewFlowLayout {
 
-    init(collectionViewWidth: CGFloat, collectionViewHeigth: CGFloat, itemSizePercent: CGFloat) {
+    init(collectionViewWidth: CGFloat, collectionViewHeigth: CGFloat, itemSizePoints: CGFloat) {
         super.init()
+        let itemSizePercent = itemSizePoints / collectionViewWidth
         let cellSpacing = (collectionViewWidth * (1 - itemSizePercent)) / 4
         sectionInset = UIEdgeInsets(top: 10, left: (cellSpacing * 2), bottom: 10, right: (cellSpacing  * 2))
         scrollDirection = .horizontal
