@@ -155,6 +155,8 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
                 let span:MKCoordinateSpan = MKCoordinateSpanMake(latDelta, lonDelta)
                 let region: MKCoordinateRegion = MKCoordinateRegionMake(coordinate, span)
                 mapView.setRegion(region, animated: true)
+            } else {
+                mapView.setRegion(region(for: currentAnnotations), animated: true)
             }
         }
     }
