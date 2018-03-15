@@ -104,9 +104,10 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        self.addMapCircles()
-        self.animateCells()
-        self.mapView.showsUserLocation = true
+        addMapCircles()
+        animateCells()
+        zoomToLocation()
+        mapView.showsUserLocation = true
     }
     
     func animateCells() {
@@ -419,6 +420,11 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
 
     func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
         animateCells()
+    }
+    
+    func scrollViewDidEndScrollingAnimation(_ scrollView: UIScrollView) {
+        animateCells()
+        zoomToLocation()
     }
     
     func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
