@@ -142,7 +142,7 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
             //get index of the current cell using the page width (which is the difference the leading side of each cell)
             let index: Int = Int(round(collectionView.contentOffset.x / pageWidth))
             
-            if index < 0 || index > objectivesToDisplay.count {
+            if index < 0 || index > objectivesToDisplay.count - 1 {
                 return
             }
             
@@ -423,6 +423,16 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
     }
 
     func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
+        animateCells()
+        zoomToLocation()
+    }
+    
+    func scrollViewDidEndScrollingAnimation(_ scrollView: UIScrollView) {
+        animateCells()
+        zoomToLocation()
+    }
+    
+    func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
         animateCells()
         zoomToLocation()
     }
