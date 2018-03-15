@@ -91,9 +91,6 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
             collectionView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor),
             collectionView.heightAnchor.constraint(equalToConstant: 250)
             ])
-        
-        
-        updateSelectedObjectiveType()
     }
     
     override func viewDidLayoutSubviews() {
@@ -104,18 +101,24 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        addMapCircles()
-        animateCells()
-        zoomToLocation()
         mapView.showsUserLocation = true
     }
     
     func animateCells() {
         
+        guard collectionView.numberOfItems(inSection: 0) > 0 else {
+            return
+        }
+        
         if let layout = collectionView.collectionViewLayout as? CustomFlowLayout {
             let pageWidth = layout.pageWidth()
             //get index of the current cell using the page width (which is the difference the leading side of each cell)
             let index: Int = Int(round(collectionView.contentOffset.x / pageWidth))
+            
+            if index < 0 || index > objectivesToDisplay.count - 1 {
+                return
+            }
+            
             let indexForVisibleCell = IndexPath(item: index, section: 0)
             //save the middle cell
             let cellToZoom = collectionView.cellForItem(at: indexForVisibleCell) as! ObjectiveInformationCollectionViewCell
@@ -130,16 +133,6 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
                     }
                 }
             })
-            
-            
-            //zoom to location on map
-            if let coordinate = objectivesToDisplay[index].coordinate {
-                let latDelta: CLLocationDegrees = 0.05
-                let lonDelta: CLLocationDegrees = 0.05
-                let span:MKCoordinateSpan = MKCoordinateSpanMake(latDelta, lonDelta)
-                let region: MKCoordinateRegion = MKCoordinateRegionMake(coordinate, span)
-                mapView.setRegion(region, animated: true)
-            }
         }
     }
     
@@ -148,6 +141,11 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
             let pageWidth = layout.pageWidth()
             //get index of the current cell using the page width (which is the difference the leading side of each cell)
             let index: Int = Int(round(collectionView.contentOffset.x / pageWidth))
+            
+            if index < 0 || index > objectivesToDisplay.count {
+                return
+            }
+            
             
             //zoom to location on map
             if let coordinate = objectivesToDisplay[index].coordinate {
@@ -186,6 +184,11 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
         let objectiveTypeToFilter = ObjectiveType(rawValue: selectedObjectiveTypeAsString!)
         objectivesToDisplay = AppResources.ObjectiveData.sharedObjectives.objectives.filter({$0.objectiveType == objectiveTypeToFilter})
         collectionView.reloadData()
+        self.collectionView.performBatchUpdates({}, completion: { (finished) in
+            self.addMapCircles()
+            self.animateCells()
+            self.zoomToLocation()
+        })
         collectionView.setContentOffset(CGPoint(x:0,y:0), animated: true)
     }
     
@@ -374,6 +377,7 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
                 alert.addAction(UIAlertAction(title: "Okay", style: UIAlertActionStyle.default, handler: nil))
                 self.present(alert, animated: true, completion: nil)
             }
+            self.updateSelectedObjectiveType()
         }
     }
     
