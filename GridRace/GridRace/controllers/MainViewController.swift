@@ -101,6 +101,18 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
+        
+        //ask permission for user location  (also had to add "NSLocationWhenInUseUsageDescription" to Info.plist file)
+        let authStatus = CLLocationManager.authorizationStatus()
+        if authStatus == .notDetermined {
+            locationManager.requestWhenInUseAuthorization()
+        }
+        // if permission denied show popup alert
+        if authStatus == .denied || authStatus == .restricted {
+            showLocationServicesDeniedAlert()
+            return
+        }
+        
         mapView.showsUserLocation = true
     }
     
@@ -408,6 +420,16 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
         
         //save this information
         saveLocalData()
+    }
+    
+    func showLocationServicesDeniedAlert() {
+        let alert = UIAlertController(
+            title: "Location Services Disabled",
+            message: "Please enable location services for this app in Settings.",
+            preferredStyle: .alert)
+        let okAction = UIAlertAction(title: "OK", style: .default, handler: nil)
+        present(alert, animated: true, completion: nil)
+        alert.addAction(okAction)
     }
     
     func mapView(_ mapView: MKMapView!, rendererFor overlay: MKOverlay!) -> MKOverlayRenderer! {
