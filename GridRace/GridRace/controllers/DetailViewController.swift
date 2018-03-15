@@ -24,8 +24,7 @@ class DetailViewController: UIViewController {
     private let hintImageView = UIImageView()
     private let hintPointDeductionValue = 2
     private var passwordViewController: PasswordViewController?
-    private var keyboardHeight: CGFloat = 0.0
-    
+
     var delegate: ObjectiveTableViewControllerDelegate?
     
 
@@ -165,26 +164,31 @@ class DetailViewController: UIViewController {
 
     }
 
+    // MARK: - Keyboard
+
+    private var originalViewFrame: CGRect = .zero
+
     @objc func keyboardWillShow(_ notification: Notification) {
-
-        if keyboardHeight == 0.0 {
-            if let keyboardFrame: NSValue = notification.userInfo?[UIKeyboardFrameEndUserInfoKey] as? NSValue {
-
-                 keyboardHeight = keyboardFrame.cgRectValue.height
-            }
+        if originalViewFrame == .zero {
+            originalViewFrame = view.frame
         }
 
+        guard let keyboardFrame = notification.userInfo?[UIKeyboardFrameEndUserInfoKey] as? NSValue else { return }
+        let keyboardHeight = keyboardFrame.cgRectValue.height
+
+
         // Assign new frame to your view
-        let oldFrame = view.frame
-        self.view.frame = CGRect(x: 0, y: oldFrame.minY-keyboardHeight, width: oldFrame.width, height: oldFrame.height)
+        var newFrame = originalViewFrame
+        newFrame.origin.y = originalViewFrame.minY-keyboardHeight
+        self.view.frame = newFrame
     }
 
     @objc func keyboardWillHide(notification: NSNotification) {
-
-        let oldFrame = view.frame
-        self.view.frame = CGRect(x: 0, y: oldFrame.minY+keyboardHeight, width: oldFrame.width, height: oldFrame.height)
-
+        guard originalViewFrame != .zero else { return }
+        self.view.frame = originalViewFrame
     }
+
+    // MARK: -
 
     private func setUpLayout() {
 
