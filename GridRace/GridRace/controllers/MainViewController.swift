@@ -19,6 +19,7 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
     let locationManager = CLLocationManager()
     var objectivesToDisplay = [Objective]()
     var currentAnnotations = [String: MKAnnotation]()
+    var buttonsView = UIView()
     
     lazy var collectionView: UICollectionView = {
         
@@ -37,7 +38,6 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
         segmentedControl.tintColor = AppColors.orangeHighlightColor
         segmentedControl.setTitleTextAttributes([NSAttributedStringKey.font: UIFont.systemFont(ofSize: 15, weight: .medium)],
                                                 for: .normal)
-        
         
         
         super.init(nibName: nil, bundle: nil)
@@ -72,10 +72,15 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
         mapView.userTrackingMode = .none
         mapView.delegate = self
         
+        //buttons view set up
+        buttonsView.layer.cornerRadius = 16
+        buttonsView.backgroundColor = #colorLiteral(red: 1.0, green: 1.0, blue: 1.0, alpha: 1.0)
+        
         //add items to view
         self.navigationItem.titleView = segmentedControl
         view.addSubview(mapView)
         view.addSubview(collectionView)
+        view.addSubview(buttonsView)
         
         //collection view st up
         collectionView.delegate = self
@@ -86,6 +91,7 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
         //layout constraints
         mapView.translatesAutoresizingMaskIntoConstraints = false
         collectionView.translatesAutoresizingMaskIntoConstraints = false
+        buttonsView.translatesAutoresizingMaskIntoConstraints = false
         
         NSLayoutConstraint.activate([
             //map view
@@ -94,10 +100,17 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
             mapView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
             mapView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor),
             
+            //collection view
             collectionView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
             collectionView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
             collectionView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor),
-            collectionView.heightAnchor.constraint(equalToConstant: 250)
+            collectionView.heightAnchor.constraint(equalToConstant: 250),
+            
+            //buttons view
+            buttonsView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 16),
+            buttonsView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -16),
+            buttonsView.widthAnchor.constraint(equalToConstant: 50),
+            buttonsView.heightAnchor.constraint(equalToConstant: 100)
             ])
     }
     
