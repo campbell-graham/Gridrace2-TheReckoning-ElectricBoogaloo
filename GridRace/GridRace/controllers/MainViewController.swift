@@ -57,6 +57,14 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
         //styling
         view.backgroundColor = AppColors.backgroundColor
         
+        //add buttons to the navigation bar
+        let resetCameraBarButtonItem = UIBarButtonItem(title: "Reset Map", style: .plain, target: self, action: #selector(zoomToLocation))
+        resetCameraBarButtonItem.tintColor = AppColors.textSecondaryColor
+        navigationItem.leftBarButtonItem = resetCameraBarButtonItem
+        let showUserLocationBarButtonItem = UIBarButtonItem(title: "Show Self", style: .plain, target: self, action: #selector(showUserLocation))
+        showUserLocationBarButtonItem.tintColor = AppColors.textSecondaryColor
+        navigationItem.rightBarButtonItem = showUserLocationBarButtonItem
+        
         //map set up
         locationManager.requestAlwaysAuthorization()
         locationManager.startUpdatingLocation()
@@ -148,7 +156,7 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
         }
     }
     
-    func zoomToLocation() {
+    @objc func zoomToLocation() {
         if let layout = collectionView.collectionViewLayout as? CustomFlowLayout {
             let pageWidth = layout.pageWidth()
             //get index of the current cell using the page width (which is the difference the leading side of each cell)
@@ -184,6 +192,10 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
                 mapView.setRegion(region(for: Array(currentAnnotations.values)), animated: true)
             }
         }
+    }
+    
+    @objc func showUserLocation() {
+        mapView.setRegion(region(for: [MKAnnotation]()), animated: true)
     }
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
@@ -473,6 +485,9 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
     }
     
     func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
+        guard decelerate else {
+            return
+        }
         animateCells()
         zoomToLocation()
     }
