@@ -18,7 +18,7 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
     let mapView: MKMapView = MKMapView()
     let locationManager = CLLocationManager()
     var objectivesToDisplay = [Objective]()
-    var currentAnnotations = [MKAnnotation]()
+    var currentAnnotations = [String: MKAnnotation]()
     
     lazy var collectionView: UICollectionView = {
         
@@ -134,7 +134,7 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
             let indexForVisibleCell = IndexPath(item: index, section: 0)
             //save the middle cell
             let cellToZoom = collectionView.cellForItem(at: indexForVisibleCell) as! ObjectiveInformationCollectionViewCell
-
+            
             //animate cells, making the middle one larger and all the other ones their original size in case they have changed
             UIView.animate(withDuration: 0.1, animations: {
                 for (cell) in (self.collectionView.visibleCells as! [ObjectiveInformationCollectionViewCell]) {
@@ -158,16 +158,30 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
                 return
             }
             
-            
             //zoom to location on map
-            if let coordinate = objectivesToDisplay[index].coordinate {
+            if let coordinate = currentAnnotations[objectivesToDisplay[index].id]?.coordinate {
+                //make circle orange
+                let circle = currentAnnotations[objectivesToDisplay[index].id] as! MKCircle
+                for (overlay) in mapView.overlays as! [MKCircle] {
+                    let circleRenderer = (mapView.renderer(for: overlay) as! MKCircleRenderer)
+                    if overlay == circle {
+                        circleRenderer.fillColor = AppColors.orangeHighlightColor.withAlphaComponent(0.7)
+                    } else {
+                        circleRenderer.fillColor = AppColors.cellColor.withAlphaComponent(0.3)
+                    }
+                }
+                
                 let latDelta: CLLocationDegrees = 0.005
                 let lonDelta: CLLocationDegrees = 0.005
                 let span:MKCoordinateSpan = MKCoordinateSpanMake(latDelta, lonDelta)
                 let region: MKCoordinateRegion = MKCoordinateRegionMake(coordinate, span)
                 mapView.setRegion(region, animated: true)
             } else {
-                mapView.setRegion(region(for: currentAnnotations), animated: true)
+                for (overlay) in mapView.overlays as! [MKCircle] {
+                    let circleRenderer = (mapView.renderer(for: overlay) as! MKCircleRenderer)
+                    circleRenderer.fillColor = AppColors.cellColor.withAlphaComponent(0.7)
+                }
+                mapView.setRegion(region(for: Array(currentAnnotations.values)), animated: true)
             }
         }
     }
@@ -196,6 +210,7 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
         let objectiveTypeToFilter = ObjectiveType(rawValue: selectedObjectiveTypeAsString!)
         objectivesToDisplay = AppResources.ObjectiveData.sharedObjectives.objectives.filter({$0.objectiveType == objectiveTypeToFilter})
         collectionView.reloadData()
+        //executes when the reload data is complete
         self.collectionView.performBatchUpdates({}, completion: { (finished) in
             self.addMapCircles()
             self.animateCells()
@@ -209,27 +224,26 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
         
         //remove all old pins
         for (pin) in currentAnnotations {
-            mapView.remove(pin as! MKOverlay)
+            mapView.remove(pin.value as! MKCircle)
         }
         
         //empty current annotations
         currentAnnotations.removeAll()
         
         //zoom map to show new locations
-        for (objective) in objectivesToDisplay.filter({$0.latitude != nil && $0.longitude != nil}) {
+        for (objective) in objectivesToDisplay.filter({$0.coordinate != nil}) {
             let coordinate = CLLocationCoordinate2D(latitude: objective.latitude!, longitude: objective.longitude!)
             // generate a random offset in meters that is within the radius (so that the objective location will fall in new circle)
-            let randOffset = coordinate.latitude + (randBetween(lower: 20, upper: Int(radius - 10) ) as CLLocationDistance)
+            let randOffset = coordinate.latitude + (randBetween(lower: Int(round(-radius / 3)), upper: Int(round(radius / 3))) as CLLocationDistance)
             
             // use offset to create a new random center for the overlay circle
             let randCenter = locationWithBearing(bearing: randOffset, distanceMeters: randOffset, origin: coordinate)
             
             let circle = MKCircle(center: randCenter, radius: radius as CLLocationDistance)
-            self.mapView.add(circle)
             mapView.add(circle)
-            currentAnnotations.append(circle)
+            currentAnnotations[objective.id] = circle
         }
-        mapView.setRegion(region(for: currentAnnotations), animated: true)
+        mapView.setRegion(region(for: Array(currentAnnotations.values)), animated: true)
     }
     
     func randBetween(lower: Int, upper: Int) -> Double {
@@ -254,7 +268,6 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
     
     @objc func handleSegmentedChanged() {
         updateSelectedObjectiveType()
-        addMapCircles()
     }
     
     func region(for annotations: [MKAnnotation]) ->
@@ -444,23 +457,19 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
         if overlay is MKCircle {
             let circle = MKCircleRenderer(overlay: overlay)
             circle.strokeColor = AppColors.orangeHighlightColor
-            circle.fillColor = AppColors.orangeHighlightColor.withAlphaComponent(0.7)
+            circle.fillColor = AppColors.cellColor.withAlphaComponent(0.7)
             circle.lineWidth = 1
             return circle
         } else {
             return nil
         }
     }
-
+    
     func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
         animateCells()
         zoomToLocation()
     }
-    
-    func scrollViewDidEndScrollingAnimation(_ scrollView: UIScrollView) {
-        animateCells()
-        zoomToLocation()
-    }
+
     
     func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
         animateCells()
