@@ -20,6 +20,8 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
     var objectivesToDisplay = [Objective]()
     var currentAnnotations = [String: MKAnnotation]()
     var buttonsView = UIView()
+    var resetMapButton = UIButton(type: UIButtonType.system)
+    var showUserLocationButton = UIButton(type: UIButtonType.system)
     
     lazy var collectionView: UICollectionView = {
         
@@ -57,14 +59,6 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
         //styling
         view.backgroundColor = AppColors.backgroundColor
         
-        //add buttons to the navigation bar
-        let resetCameraBarButtonItem = UIBarButtonItem(title: "Reset Map", style: .plain, target: self, action: #selector(zoomToLocation))
-        resetCameraBarButtonItem.tintColor = AppColors.textSecondaryColor
-        navigationItem.leftBarButtonItem = resetCameraBarButtonItem
-        let showUserLocationBarButtonItem = UIBarButtonItem(title: "Show Self", style: .plain, target: self, action: #selector(showUserLocation))
-        showUserLocationBarButtonItem.tintColor = AppColors.textSecondaryColor
-        navigationItem.rightBarButtonItem = showUserLocationBarButtonItem
-        
         //map set up
         locationManager.requestAlwaysAuthorization()
         locationManager.startUpdatingLocation()
@@ -73,11 +67,26 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
         mapView.delegate = self
         
         //buttons view set up
+        showUserLocationButton.setImage(#imageLiteral(resourceName: "directional_arrow").withRenderingMode(.alwaysTemplate), for: .normal)
+        showUserLocationButton.imageView?.tintColor = UIColor.blue
+        showUserLocationButton.addTarget(self, action: #selector(showUserLocation), for: .touchUpInside)
+        resetMapButton.setImage(#imageLiteral(resourceName: "target").withRenderingMode(.alwaysTemplate), for: .normal)
+        resetMapButton.imageView?.tintColor = UIColor.blue
+        resetMapButton.addTarget(self, action: #selector(zoomToLocation), for: .touchUpInside)
         buttonsView.layer.cornerRadius = 16
-        buttonsView.backgroundColor = #colorLiteral(red: 1.0, green: 1.0, blue: 1.0, alpha: 1.0)
+        buttonsView.backgroundColor = #colorLiteral(red: 1.0, green: 1.0, blue: 1.0, alpha: 1.0)        
+
+        buttonsView.layer.shadowColor = UIColor.black.cgColor
+        buttonsView.layer.shadowOpacity = 1
+        buttonsView.layer.shadowOffset = CGSize.zero
+        buttonsView.layer.shadowRadius = 4
+        
+        //add buttons to buttons view
+        buttonsView.addSubview(showUserLocationButton)
+        buttonsView.addSubview(resetMapButton)
         
         //add items to view
-        self.navigationItem.titleView = segmentedControl
+        navigationItem.titleView = segmentedControl
         view.addSubview(mapView)
         view.addSubview(collectionView)
         view.addSubview(buttonsView)
@@ -92,6 +101,8 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
         mapView.translatesAutoresizingMaskIntoConstraints = false
         collectionView.translatesAutoresizingMaskIntoConstraints = false
         buttonsView.translatesAutoresizingMaskIntoConstraints = false
+        showUserLocationButton.translatesAutoresizingMaskIntoConstraints = false
+        resetMapButton.translatesAutoresizingMaskIntoConstraints = false
         
         NSLayoutConstraint.activate([
             //map view
@@ -107,10 +118,22 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
             collectionView.heightAnchor.constraint(equalToConstant: 250),
             
             //buttons view
-            buttonsView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 16),
-            buttonsView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -16),
+            buttonsView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 12),
+            buttonsView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -12),
             buttonsView.widthAnchor.constraint(equalToConstant: 50),
-            buttonsView.heightAnchor.constraint(equalToConstant: 100)
+            buttonsView.heightAnchor.constraint(equalToConstant: 100),
+            
+            //user location button
+            showUserLocationButton.topAnchor.constraint(equalTo: buttonsView.centerYAnchor),
+            showUserLocationButton.leadingAnchor.constraint(equalTo: buttonsView.leadingAnchor),
+            showUserLocationButton.trailingAnchor.constraint(equalTo: buttonsView.trailingAnchor),
+            showUserLocationButton.bottomAnchor.constraint(equalTo: buttonsView.bottomAnchor),
+            
+            //reset map button
+            resetMapButton.topAnchor.constraint(equalTo: buttonsView.topAnchor),
+            resetMapButton.leadingAnchor.constraint(equalTo: buttonsView.leadingAnchor),
+            resetMapButton.trailingAnchor.constraint(equalTo: buttonsView.trailingAnchor),
+            resetMapButton.bottomAnchor.constraint(equalTo: buttonsView.centerYAnchor)
             ])
     }
     
