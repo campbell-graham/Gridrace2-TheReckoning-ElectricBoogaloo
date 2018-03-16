@@ -188,7 +188,7 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
             let cellToZoom = collectionView.cellForItem(at: indexForVisibleCell) as! ObjectiveInformationCollectionViewCell
             
             //animate cells, making the middle one larger and all the other ones their original size in case they have changed
-            UIView.animate(withDuration: 0.1, animations: {
+            UIView.animate(withDuration: 0.05, animations: {
                 for (cell) in (self.collectionView.visibleCells as! [ObjectiveInformationCollectionViewCell]) {
                     if cell == cellToZoom {
                         cell.transform = CGAffineTransform(scaleX: 1.1, y: 1.1)
