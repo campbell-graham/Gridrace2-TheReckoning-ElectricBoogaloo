@@ -20,11 +20,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "GridRace/controllers/MainViewController.swift"
-            timestampString = "542869009.784807"
+            timestampString = "542870175.409377"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "491"
-            endingLineNumber = "491"
+            startingLineNumber = "499"
+            endingLineNumber = "499"
             landmarkName = "resetLocalData()"
             landmarkType = "7">
          </BreakpointContent>

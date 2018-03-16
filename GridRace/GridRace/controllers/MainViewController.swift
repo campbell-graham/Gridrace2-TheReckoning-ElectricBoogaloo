@@ -74,7 +74,7 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
         resetMapButton.imageView?.tintColor = UIColor.blue
         resetMapButton.addTarget(self, action: #selector(zoomToLocation), for: .touchUpInside)
         buttonsView.layer.cornerRadius = 16
-        buttonsView.backgroundColor = #colorLiteral(red: 1.0, green: 1.0, blue: 1.0, alpha: 1.0)        
+        //buttonsView.backgroundColor = #colorLiteral(red: 1.0, green: 1.0, blue: 1.0, alpha: 1.0)
 
         buttonsView.layer.shadowColor = UIColor.black.cgColor
         buttonsView.layer.shadowOpacity = 1
@@ -141,6 +141,14 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
         collectionView.collectionViewLayout = CustomFlowLayout(collectionViewWidth: collectionView.frame.width, collectionViewHeigth: collectionView.frame.height, itemSizePoints: 200)
         collectionView.layoutIfNeeded()
         mapView.layoutMargins = UIEdgeInsets(top: 16, left: 16, bottom: collectionView.frame.height, right: 16)
+        
+        let blurEffect = UIBlurEffect(style: UIBlurEffectStyle.light)
+        let blurEffectView = UIVisualEffectView(effect: blurEffect)
+        blurEffectView.frame = buttonsView.bounds
+        blurEffectView.layer.cornerRadius = buttonsView.layer.cornerRadius
+        blurEffectView.clipsToBounds = true
+        buttonsView.addSubview(blurEffectView)
+        buttonsView.sendSubview(toBack: blurEffectView)
     }
     
     override func viewDidAppear(_ animated: Bool) {
