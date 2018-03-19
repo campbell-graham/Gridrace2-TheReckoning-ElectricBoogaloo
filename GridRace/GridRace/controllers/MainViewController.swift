@@ -278,6 +278,7 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
             UIView.animate(withDuration: 0.3, animations: {
 
                 detailView.frame = fullFrame
+                detailView.layoutIfNeeded()
             })
         }
     }
@@ -305,20 +306,25 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
 
         if let detailView = detailViewController!.view {
             let currentCell = collectionView.cellForItem(at: IndexPath(indexes: [0,0]))
+
             let smallFrame = CGRect(x: ((view.frame.width / 2) - (currentCell!.frame.width / 2)), y: collectionView.frame.minY + currentCell!.frame.minY, width: currentCell!.frame.width, height: currentCell!.frame.height)
 
-            UIView.animate(withDuration: 0.3, animations: {
+            UIView.animate(withDuration: 0.3, animations:{
 
                 detailView.frame = smallFrame
-                self.changeNavBar()
-            })
+                detailView.layoutIfNeeded()
 
-            DispatchQueue.main.asyncAfter(deadline: DispatchTime.init(uptimeNanoseconds: 50000), execute: {
+            }, completion: { _ in 
+
 
                 self.detailViewController?.removeFromParentViewController()
                 self.detailViewController?.view.removeFromSuperview()
                 self.detailViewController = nil
+                self.changeNavBar()
             })
+
+
+
         }
 
         
