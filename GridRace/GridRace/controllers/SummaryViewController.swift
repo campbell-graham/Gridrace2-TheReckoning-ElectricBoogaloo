@@ -172,10 +172,10 @@ class SummaryViewController: UIViewController, UICollectionViewDelegate, UIColle
             
             mainTextLabel.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 20),
            
-            collectionView.topAnchor.constraint(equalTo: pointsTextLabel.bottomAnchor, constant: 4),
+            collectionView.topAnchor.constraint(equalTo: pointsTextLabel.bottomAnchor),
             collectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             collectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            collectionView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -8)
+            collectionView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor)
 
         ]
 
