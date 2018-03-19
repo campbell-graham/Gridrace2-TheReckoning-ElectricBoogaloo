@@ -21,7 +21,7 @@ class TimerView: UIView {
         
         //set up the timer view to refresh every second
        
-        _ = Timer.scheduledTimer(withTimeInterval: 1, repeats: true, block: {_ in
+        Timer.scheduledTimer(withTimeInterval: 1, repeats: true, block: {_ in
             let interval = Date().timeIntervalSince(AppResources.firstLaunchDate)
             
             let ti = NSInteger(interval)
