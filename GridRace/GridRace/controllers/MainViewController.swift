@@ -63,6 +63,7 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
         locationManager.requestAlwaysAuthorization()
         locationManager.startUpdatingLocation()
         locationManager.delegate = self
+        mapView.showsUserLocation = true
         mapView.userTrackingMode = .none
         mapView.delegate = self
         
@@ -164,8 +165,9 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
             showLocationServicesDeniedAlert()
             return
         }
+
         
-        mapView.showsUserLocation = true
+        updateSelectedObjectiveType()
     }
     
     func animateCells() {
@@ -258,6 +260,9 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
         cell.titleLabel.text = objective.name
         cell.pointsLabel.text = "\(objective.points) Points"
         cell.descriptionLabel.text = objective.desc
+        if (AppResources.ObjectiveData.sharedObjectives.data.first(where: {$0.objectiveID == objective.id})?.completed)! {
+            cell.tickImageView.tintColor = AppColors.orangeHighlightColor
+        }
         return cell
     }
     

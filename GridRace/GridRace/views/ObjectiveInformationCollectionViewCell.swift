@@ -12,6 +12,7 @@ class ObjectiveInformationCollectionViewCell: UICollectionViewCell {
     
     let titleLabel = UILabel()
     let pointsLabel = UILabel()
+    let tickImageView = UIImageView()
     let descriptionLabel = UILabel()
     
     
@@ -21,6 +22,10 @@ class ObjectiveInformationCollectionViewCell: UICollectionViewCell {
         layer.cornerRadius = 10
         
         backgroundColor = AppColors.backgroundColor
+        
+        //image view set up
+        tickImageView.image = #imageLiteral(resourceName: "tick").withRenderingMode(.alwaysTemplate)
+        tickImageView.tintColor = AppColors.textSecondaryColor
         
         //label set up
         titleLabel.font = UIFont.systemFont(ofSize: 16, weight: .medium)
@@ -48,17 +53,25 @@ class ObjectiveInformationCollectionViewCell: UICollectionViewCell {
         contentView.addSubview(titleLabel)
         contentView.addSubview(pointsLabel)
         contentView.addSubview(descriptionLabel)
+        contentView.addSubview(tickImageView)
         
         //layout constraints
         titleLabel.translatesAutoresizingMaskIntoConstraints = false
         pointsLabel.translatesAutoresizingMaskIntoConstraints = false
         descriptionLabel.translatesAutoresizingMaskIntoConstraints = false
+        tickImageView.translatesAutoresizingMaskIntoConstraints = false
         
         NSLayoutConstraint.activate([
             //title label
             titleLabel.topAnchor.constraint(equalTo: topAnchor, constant: 8),
             titleLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 8),
-            titleLabel.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -8),
+            
+            //tick image view
+            tickImageView.leadingAnchor.constraint(greaterThanOrEqualTo: titleLabel.trailingAnchor),
+            tickImageView.topAnchor.constraint(equalTo: topAnchor, constant: 8),
+            tickImageView.bottomAnchor.constraint(equalTo: titleLabel.bottomAnchor),
+            tickImageView.widthAnchor.constraint(equalTo: tickImageView.heightAnchor),
+            tickImageView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -8),
             
             //points label
             pointsLabel.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 8),
