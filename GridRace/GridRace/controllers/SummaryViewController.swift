@@ -18,7 +18,7 @@ class SummaryViewController: UIViewController, UICollectionViewDelegate, UIColle
     let timeValueLabel = UILabel()
     let pointsTextLabel = UILabel()
     let pointsValueLabel = UILabel()
-
+    let finishTime = AppResources.timeToDisplay
     let objectCount = 10
     var isCorrect = true
 
@@ -32,7 +32,7 @@ class SummaryViewController: UIViewController, UICollectionViewDelegate, UIColle
     }()
 
     // all places and bonus objectives minus 'last'/ 'password' objective
-    var allObjectives: [Objective] = AppResources.ObjectiveData.sharedObjectives.objectives
+    var allObjectives: [Objective] = Array(AppResources.ObjectiveData.sharedObjectives.objectives.dropLast())
     
     var allData = AppResources.ObjectiveData.sharedObjectives.data
     
@@ -133,7 +133,7 @@ class SummaryViewController: UIViewController, UICollectionViewDelegate, UIColle
         bonusTextLabel.text = "Bonus Objectives: "
         bonusValueLabel.text = "\(completedBonusObjectivesCount)/\(bonusObjectives.count)"
         timeTextLabel.text = "Time: "
-        timeValueLabel.text = "\(AppResources.timeToDisplay)"
+        timeValueLabel.text = "\(finishTime)"
         pointsTextLabel.text = "Points: "
         pointsValueLabel.text = "\(userPoints)/\(totalPoints)"
     }
@@ -169,8 +169,6 @@ class SummaryViewController: UIViewController, UICollectionViewDelegate, UIColle
 
 
         constraints += [
-            
-            mainTextLabel.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 20),
            
             collectionView.topAnchor.constraint(equalTo: pointsTextLabel.bottomAnchor),
             collectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
