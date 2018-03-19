@@ -18,6 +18,7 @@ struct AppColors {
     static var backgroundColor = #colorLiteral(red: 0.1647058824, green: 0.1960784314, blue: 0.2352941176, alpha: 1)
     static var greenHighlightColor = #colorLiteral(red: 0.07450980392, green: 0.8078431373, blue: 0.4, alpha: 1)
     static var starPointsColor = #colorLiteral(red: 0.9176470588, green: 1, blue: 0.3607843137, alpha: 1)
+    static var orangeHighlightColor = #colorLiteral(red: 0.968627451, green: 0.7411764706, blue: 0.1921568627, alpha: 1)
 }
 
 struct AppResources {
@@ -36,11 +37,28 @@ struct AppResources {
     static func returnDownloadedObjectives(completion: @escaping (([Objective]) -> ())) {
         //download if doesn't exist already
         
+        var hasConnection = false
+        
         var downloadedObjectives = [Objective]()
         
-        
+        let connectedRef = Database.database().reference(withPath: ".info/connected")
+        connectedRef.observe(.value, with: { snapshot in
+            if let connected = snapshot.value as? Bool, connected {
+                hasConnection = true
+            } else {
+                hasConnection = false
+            }
+        })
+    
+        //if no connection after 10 seconds, return blank objectives so the main controller knows it cannot connect
+        DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(10)) {
+            if !hasConnection {
+                completion([Objective]())
+            }
+        }
         
         let ref = Database.database().reference()
+        
         ref.observeSingleEvent(of: .value, with: { (snapshot) in
             do {
                 if let dict = snapshot.value as? [String: Any] {
