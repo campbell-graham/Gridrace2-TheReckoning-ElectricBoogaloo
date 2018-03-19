@@ -32,18 +32,14 @@ class SummaryViewController: UIViewController, UICollectionViewDelegate, UIColle
     }()
 
     // all places and bonus objectives minus 'last'/ 'password' objective
-    var allObjectives: [Objective] {
-        var objs = AppResources.ObjectiveData.sharedObjectives.objectives
-        return objs
-    }
+    var allObjectives: [Objective] = AppResources.ObjectiveData.sharedObjectives.objectives
+    
     var allData = AppResources.ObjectiveData.sharedObjectives.data
-    var placesObjectives: [Objective] {
-        return AppResources.ObjectiveData.sharedObjectives.objectives
-    }
+    
+    var mainObjectives: [Objective]
+    
 
-    var bonusObjectives: [Objective] {
-        return AppResources.ObjectiveData.sharedObjectives.objectives
-    }
+    var bonusObjectives: [Objective]
 
     var completedObjectives: Int {
 
@@ -56,22 +52,24 @@ class SummaryViewController: UIViewController, UICollectionViewDelegate, UIColle
         return result
     }
 
-    var completedPlacesObjectives: Int {
+    var completedPlacesObjectivesCount: Int {
 
         var result = 0
-        for data in AppResources.ObjectiveData.sharedObjectives.data {
-            if data.completed == true {
+        for objective in mainObjectives {
+            let data = allData.first(where: {$0.objectiveID == objective.id})
+            if data?.completed == true {
                 result += 1
             }
         }
         return result
     }
 
-    var completedBonusObjectives: Int {
+    var completedBonusObjectivesCount: Int {
 
         var result = 0
-        for data in AppResources.ObjectiveData.sharedObjectives.data {
-            if data.completed == true {
+        for objective in bonusObjectives {
+            let data = allData.first(where: {$0.objectiveID == objective.id})
+            if data?.completed == true {
                 result += 1
             }
         }
@@ -100,7 +98,17 @@ class SummaryViewController: UIViewController, UICollectionViewDelegate, UIColle
         }
         return result
     }
-
+    
+    init() {
+        mainObjectives = allObjectives.filter({$0.objectiveType == .main})
+        bonusObjectives = allObjectives.filter({$0.objectiveType == .bonus})
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -121,9 +129,9 @@ class SummaryViewController: UIViewController, UICollectionViewDelegate, UIColle
     func updateLabels() {
 
         mainTextLabel.text = "Main Objectives: "
-        mainValueLabel.text = "\(completedPlacesObjectives)/\(placesObjectives .count)"
+        mainValueLabel.text = "\(completedPlacesObjectivesCount)/\(mainObjectives.count)"
         bonusTextLabel.text = "Bonus Objectives: "
-        bonusValueLabel.text = "\(completedBonusObjectives)/\(bonusObjectives.count)"
+        bonusValueLabel.text = "\(completedBonusObjectivesCount)/\(bonusObjectives.count)"
         timeTextLabel.text = "Time: "
         timeValueLabel.text = "\(AppResources.timeToDisplay)"
         pointsTextLabel.text = "Points: "
@@ -174,22 +182,18 @@ class SummaryViewController: UIViewController, UICollectionViewDelegate, UIColle
         NSLayoutConstraint.activate(constraints)
     }
     
-    override func viewDidLayoutSubviews() {
-        collectionView.collectionViewLayout = CustomFlowLayout(collectionViewWidth: collectionView.frame.width, collectionViewHeigth: collectionView.frame.height, itemSizePoints: 250)
-    }
     
-    override func viewDidAppear(_ animated: Bool) {
-        var _ = Timer.scheduledTimer(withTimeInterval: 3, repeats: false, block: {_ in
-            self.collectionView.flashScrollIndicators()
-       })
+    
+    override func viewDidLayoutSubviews() {
+        if !(collectionView.collectionViewLayout is CustomFlowLayout) {
+            collectionView.collectionViewLayout = CustomFlowLayout(collectionViewWidth: collectionView.frame.width, collectionViewHeigth: collectionView.frame.height, itemSizePoints: 250)
+        }
     }
 
     //MARK:- collectionView delegate methods
 
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-
-        let totalCount = allObjectives.count
-        return totalCount
+        return allObjectives.count
     }
 
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
@@ -198,8 +202,8 @@ class SummaryViewController: UIViewController, UICollectionViewDelegate, UIColle
         data!.correct = !(data!.correct)
 
         updateLabels()
+        
         collectionView.reloadData()
-
     }
 
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
@@ -226,9 +230,7 @@ class SummaryViewController: UIViewController, UICollectionViewDelegate, UIColle
                 cell.responseImageView.tintColor = AppColors.cellColor
             }
             cell.responseImageView.contentMode = .scaleAspectFit
-        }
-
-        if objective.answerType == .text {
+        } else if objective.answerType == .text {
 
             cell.responseTextView.isHidden = false
             cell.responseImageView.isHidden = true
@@ -240,7 +242,7 @@ class SummaryViewController: UIViewController, UICollectionViewDelegate, UIColle
 
             cell.crossImageView.tintColor = #colorLiteral(red: 0, green: 0, blue: 0, alpha: 1)
             cell.checkMarkImageView.tintColor = #colorLiteral(red: 0.2745098174, green: 0.4862745106, blue: 0.1411764771, alpha: 1)
-        } else{
+        } else {
 
             cell.crossImageView.tintColor = #colorLiteral(red: 1, green: 0.1491314173, blue: 0, alpha: 1)
             cell.checkMarkImageView.tintColor = #colorLiteral(red: 0, green: 0, blue: 0, alpha: 1)

@@ -267,6 +267,8 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
         cell.descriptionLabel.text = objective.desc
         if (AppResources.ObjectiveData.sharedObjectives.data.first(where: {$0.objectiveID == objective.id})?.completed)! {
             cell.tickImageView.tintColor = AppColors.greenHighlightColor
+        } else {
+            cell.tickImageView.tintColor = AppColors.textSecondaryColor
         }
         return cell
     }
