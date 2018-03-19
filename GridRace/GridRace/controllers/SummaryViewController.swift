@@ -115,7 +115,7 @@ class SummaryViewController: UIViewController, UICollectionViewDelegate, UIColle
         collectionView.delegate = self
         collectionView.dataSource = self
         collectionView.backgroundColor = AppColors.backgroundColor
-        collectionView.register(ObjectiveCollectionViewCell.self, forCellWithReuseIdentifier: "objectiveCell")
+        collectionView.register(ObjectiveSummaryCollectionViewCell.self, forCellWithReuseIdentifier: "objectiveCell")
     }
 
     func updateLabels() {
@@ -175,7 +175,7 @@ class SummaryViewController: UIViewController, UICollectionViewDelegate, UIColle
     }
     
     override func viewDidLayoutSubviews() {
-        collectionView.collectionViewLayout = customFlowLayout(collectionViewWidth: collectionView.frame.width, collectionViewHeigth: collectionView.frame.height)
+        collectionView.collectionViewLayout = CustomFlowLayout(collectionViewWidth: collectionView.frame.width, collectionViewHeigth: collectionView.frame.height, itemSizePoints: 150)
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -204,7 +204,7 @@ class SummaryViewController: UIViewController, UICollectionViewDelegate, UIColle
 
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
 
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "objectiveCell", for: indexPath) as! ObjectiveCollectionViewCell
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "objectiveCell", for: indexPath) as! ObjectiveSummaryCollectionViewCell
 
         let objective = allObjectives[indexPath.row]
         let userData = allData.first(where: {$0.objectiveID == objective.id})

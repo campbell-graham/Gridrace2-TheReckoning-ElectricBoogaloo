@@ -72,7 +72,7 @@ class StartScreenViewController: UIViewController {
         //add date object to user defaults
         UserDefaults.standard.set(Date(), forKey: "FirstLaunchDate")
         
-        present(UINavigationController(rootViewController: ObjectiveTableViewController()), animated: true, completion: nil)
+        present(UINavigationController(rootViewController: MainViewController()), animated: true, completion: nil)
     }
     
     func addTimerToTabBar(tabBar: UITabBar) {

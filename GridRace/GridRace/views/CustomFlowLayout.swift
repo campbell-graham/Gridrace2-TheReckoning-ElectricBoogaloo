@@ -8,16 +8,17 @@
 
 import UIKit
 
-class customFlowLayout: UICollectionViewFlowLayout {
+class CustomFlowLayout: UICollectionViewFlowLayout {
 
-    init(collectionViewWidth: CGFloat, collectionViewHeigth: CGFloat) {
+    init(collectionViewWidth: CGFloat, collectionViewHeigth: CGFloat, itemSizePoints: CGFloat) {
         super.init()
-        let cellSpacing = collectionViewWidth * 0.1
-        sectionInset = UIEdgeInsets(top: 10, left: (cellSpacing * 2), bottom: 10, right: (cellSpacing * 2))
+        let itemSizePercent = itemSizePoints / collectionViewWidth
+        let cellSpacing = (collectionViewWidth * (1 - itemSizePercent)) / 4
+        sectionInset = UIEdgeInsets(top: 10, left: (cellSpacing * 2), bottom: 10, right: (cellSpacing  * 2))
         scrollDirection = .horizontal
-        minimumInteritemSpacing = cellSpacing;
+        minimumInteritemSpacing = cellSpacing
         minimumLineSpacing = cellSpacing
-        itemSize = CGSize(width: collectionViewWidth * 0.6, height: collectionViewHeigth * 0.8)
+        itemSize = CGSize(width: collectionViewWidth * itemSizePercent, height: collectionViewHeigth * 0.8)
     }
 
     required init?(coder aDecoder: NSCoder) {
