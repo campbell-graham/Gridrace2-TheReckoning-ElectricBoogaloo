@@ -170,8 +170,7 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
             return
         }
 
-        
-        updateSelectedObjectiveType()
+        collectionView.reloadData()
     }
     
     func animateCells() {
@@ -255,7 +254,9 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         let objective = objectivesToDisplay[indexPath.row]
         let data = AppResources.ObjectiveData.sharedObjectives.data.first(where: {$0.objectiveID == objective.id})
-        navigationController?.pushViewController(MapViewController(objective: objective, data: data!), animated: true)
+        let destination = MapViewController(objective: objective, data: data!)
+        destination.delegate = self
+        navigationController?.pushViewController(destination, animated: true)
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
@@ -265,7 +266,7 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
         cell.pointsLabel.text = "\(objective.points) Points"
         cell.descriptionLabel.text = objective.desc
         if (AppResources.ObjectiveData.sharedObjectives.data.first(where: {$0.objectiveID == objective.id})?.completed)! {
-            cell.tickImageView.tintColor = AppColors.orangeHighlightColor
+            cell.tickImageView.tintColor = AppColors.greenHighlightColor
         }
         return cell
     }
