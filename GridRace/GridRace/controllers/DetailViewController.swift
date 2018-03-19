@@ -17,16 +17,18 @@ class DetailViewController: UIViewController {
     let panView = PanView()
 
     private let titleLabel = UILabel()
-    private let descTextView = UITextView()
+    private let hintImageView = UIImageView()
     private let pointLabel = UILabel()
+    private let descTextView = UITextView()
     private let responseTextLabel = UILabel()
     private let answerView: UIView
-    private let hintImageView = UIImageView()
+
+    //Delete: rethink storing this value here, can we put it in firebase?
     private let hintPointDeductionValue = 2
+
     private var passwordViewController: PasswordViewController?
 
     var delegate: ObjectiveTableViewControllerDelegate?
-    
 
     init(objective: Objective, data: ObjectiveUserData) {
 
@@ -38,7 +40,6 @@ class DetailViewController: UIViewController {
             answerView = ImageResponseView()
         case .text: // textField
             self.answerView = TextResponseView()
-
         case .password: // pin view
 
             passwordViewController = PasswordViewController()
@@ -56,7 +57,14 @@ class DetailViewController: UIViewController {
         }
     }
 
+    //Delete: rethink password implimentstion
+    func updateLabel(attempt: String) {
+        self.descTextView.text = "\(objective.desc) \n attempt: \(attempt) "
+    }
+
     deinit {
+
+        // remove keyboard will show & will hide observers
         if answerView is TextResponseView {
             NotificationCenter.default.removeObserver(self)
             NotificationCenter.default.removeObserver(self)
@@ -67,38 +75,33 @@ class DetailViewController: UIViewController {
         fatalError("init(coder:) has not been implemented")
     }
 
-    func updateLabel(attempt: String) {
-        self.descTextView.text = "\(objective.desc) \n attempt: \(attempt) "
-    }
-
-
     override func viewDidLoad() {
 
         super.viewDidLoad()
 
+        //Delete: wont be in nav bar
         navigationController?.navigationBar.prefersLargeTitles = false
         title = objective.name
 
         setUpLayout()
         initialiseViews()
-    
+
         //present old data if it exists
         if data.completed {
-            switch objective.answerType {
-            case .text:
-                if (data.textResponse != nil) {
-                    (answerView as! TextResponseView).textView.text = data.textResponse
-                }
-            case .photo:
-                if let answerView = answerView as? ImageResponseView, let imageURL = data.imageResponseURL {
+            loadData()
+        }
+    }
 
-                    if let image = UIImage(contentsOfFile: imageURL.path) {
-                        answerView.setImage(image: image)
-                    }
-                }
-            default:
-                break
-            }
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+
+        //set textView to be scrolled to top
+        descTextView.setContentOffset(CGPoint.zero, animated: false)
+
+        //Delete: this seems dodgy (make password view controller seperate and only call at end? dont tie it to objectives?)
+        if let VC = childViewControllers.last as? PasswordViewController {
+
+            VC.activateButtonConstraints()
         }
     }
 
@@ -113,44 +116,19 @@ class DetailViewController: UIViewController {
         descTextView.backgroundColor = AppColors.backgroundColor
         responseTextLabel.textColor = AppColors.textPrimaryColor
 
-        updateViewsData()
-
-        // misc stuff
+        //fonts
         titleLabel.font = UIFont.boldSystemFont(ofSize: 20)
-
         pointLabel.font = UIFont.boldSystemFont(ofSize: 16)
-
         descTextView.font = UIFont.systemFont(ofSize: 14)
-        descTextView.isEditable = false
-
         responseTextLabel.font = UIFont.boldSystemFont(ofSize: 20)
 
-        switch answerView {
-        case is ImageResponseView :
-            let interactGestureRecogniser = UITapGestureRecognizer(target: self, action: #selector(selectPhoto))
-            answerView.addGestureRecognizer(interactGestureRecogniser)
-        case is TextResponseView :
-            let answerView = self.answerView as! TextResponseView
-            answerView.textView.delegate = self
-
-            NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow), name: NSNotification.Name.UIKeyboardWillShow, object: nil)
-
-            NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide), name: NSNotification.Name.UIKeyboardWillHide, object: nil)
-        default:
-            break
-        }
-
-
+        // misc stuff
+        descTextView.isEditable = false
+        hintImageView.contentMode = .scaleAspectFit
         answerView.isUserInteractionEnabled = true
 
-        let hintGestureRecogniser = UITapGestureRecognizer(target: self, action: #selector(clueButtonHandler))
-        hintImageView.addGestureRecognizer(hintGestureRecogniser)
-        hintImageView.isUserInteractionEnabled = true
-        hintImageView.contentMode = .scaleAspectFit
-    }
 
-    private func updateViewsData() {
-
+        // set view data
         titleLabel.text = "Overview"
         hintImageView.image = #imageLiteral(resourceName: "hint")
         if objective.answerType == .password {
@@ -162,33 +140,32 @@ class DetailViewController: UIViewController {
 
         responseTextLabel.text = "Your Response"
 
-    }
+        //gesture recognisers
+        hintImageView.isUserInteractionEnabled = true
+        let hintGestureRecogniser = UITapGestureRecognizer(target: self, action: #selector(clueButtonHandler))
+        hintImageView.addGestureRecognizer(hintGestureRecogniser)
 
-    // MARK: - Keyboard
 
-    private var originalViewFrame: CGRect = .zero
 
-    @objc func keyboardWillShow(_ notification: Notification) {
-        if originalViewFrame == .zero {
-            originalViewFrame = view.frame
+        switch answerView {
+        case is ImageResponseView :
+
+            let interactGestureRecogniser = UITapGestureRecognizer(target: self, action: #selector(selectPhoto))
+            answerView.addGestureRecognizer(interactGestureRecogniser)
+        case is TextResponseView :
+
+            //assign TextViewDelegate
+            let answerView = self.answerView as! TextResponseView
+            answerView.textView.delegate = self
+
+            // create keyboard state observers/ listeners (to reposition view when keyboard apperas/ disappears)
+            NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow), name: NSNotification.Name.UIKeyboardWillShow, object: nil)
+
+            NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide), name: NSNotification.Name.UIKeyboardWillHide, object: nil)
+        default:
+            break
         }
-
-        guard let keyboardFrame = notification.userInfo?[UIKeyboardFrameEndUserInfoKey] as? NSValue else { return }
-        let keyboardHeight = keyboardFrame.cgRectValue.height
-
-
-        // Assign new frame to your view
-        var newFrame = originalViewFrame
-        newFrame.origin.y = originalViewFrame.minY-keyboardHeight
-        self.view.frame = newFrame
     }
-
-    @objc func keyboardWillHide(notification: NSNotification) {
-        guard originalViewFrame != .zero else { return }
-        self.view.frame = originalViewFrame
-    }
-
-    // MARK: -
 
     private func setUpLayout() {
 
@@ -230,7 +207,7 @@ class DetailViewController: UIViewController {
             responseTextLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
             responseTextLabel.trailingAnchor.constraint(lessThanOrEqualTo: view.trailingAnchor, constant: -16),
             responseTextLabel.heightAnchor.constraint(equalToConstant: 20),
-        ])
+            ])
 
         switch answerView {
         case is ImageResponseView:
@@ -258,13 +235,40 @@ class DetailViewController: UIViewController {
 
     }
 
-    @objc private func clueButtonHandler() {
-        
-        guard let points = data.adjustedPoints else {
-            presentPointLossAlert()
-            return
+    // MARK: - KeyboardFunctions
+
+    private var originalViewFrame: CGRect = .zero
+
+    @objc func keyboardWillShow(_ notification: Notification) {
+        if originalViewFrame == .zero {
+            originalViewFrame = view.frame
         }
+
+        guard let keyboardFrame = notification.userInfo?[UIKeyboardFrameEndUserInfoKey] as? NSValue else { return }
+        let keyboardHeight = keyboardFrame.cgRectValue.height
+
+
+        // Assign new frame to your view
+        var newFrame = originalViewFrame
+        newFrame.origin.y = originalViewFrame.minY-keyboardHeight
+        self.view.frame = newFrame
+    }
+
+    @objc func keyboardWillHide(notification: NSNotification) {
+        guard originalViewFrame != .zero else { return }
+        self.view.frame = originalViewFrame
+    }
+
+
+    // MARK: - Private Functions
+
+    @objc private func clueButtonHandler() {
+
+        if data.adjustedPoints == nil {
+            presentPointLossAlert()
+        } else {
             presentClueViewController()
+        }
     }
 
     @objc private func presentPointLossAlert() {
@@ -273,12 +277,14 @@ class DetailViewController: UIViewController {
 
         let cancelAction = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
         alert.addAction(cancelAction)
+
         let continueAction = UIAlertAction(title: "Continue", style: .default, handler: { _ in
+
             self.data.adjustedPoints = self.objective.points - self.hintPointDeductionValue
-            //self.objective.hintTaken = true
-            self.updateViewsData()
-            self.presentClueViewController()
+            self.pointLabel.text = "\(self.data.adjustedPoints!) Points"
             self.delegate?.initiateSave()
+
+            self.presentClueViewController()
         })
         alert.addAction(continueAction)
 
@@ -298,24 +304,29 @@ class DetailViewController: UIViewController {
         hudView.text = "Complete!"
 
         DispatchQueue.main.asyncAfter(deadline: .now() + 2.0,
-          execute: {
-            hudView.hide()
-            //self.navigationController?.popViewController(animated: true)
+                                      execute: {
+                                        hudView.hide()
         })
     }
 
-    //set textView to be scrolled to top
-    override func viewDidLayoutSubviews() {
-        super.viewDidLayoutSubviews()
-        descTextView.setContentOffset(CGPoint.zero, animated: false)
+    private func loadData() {
+        switch objective.answerType {
+        case .text:
+            if (data.textResponse != nil) {
+                (answerView as! TextResponseView).textView.text = data.textResponse
+            }
+        case .photo:
+            if let answerView = answerView as? ImageResponseView, let imageURL = data.imageResponseURL {
 
-        if let VC = childViewControllers.last as? PasswordViewController {
-
-            VC.activateButtonConstraints()
+                if let image = UIImage(contentsOfFile: imageURL.path) {
+                    answerView.setImage(image: image)
+                }
+            }
+        default:
+            break
         }
-
     }
-    
+
 }
 
 extension DetailViewController:
@@ -323,37 +334,18 @@ UIImagePickerControllerDelegate, UINavigationControllerDelegate {
 
     @objc private func selectPhoto() {
 
-        if UIImagePickerController.isSourceTypeAvailable(.camera) {
-            takePhotoWithCamera()
-        } else {
-            choosePhotoFromLibrary()
-        }
-    }
-
-    private func takePhotoWithCamera() {
-
         let imagePicker = UIImagePickerController()
-        imagePicker.sourceType = .camera
+        imagePicker.sourceType = UIImagePickerController.isSourceTypeAvailable(.camera) ? .camera : .photoLibrary
         imagePicker.delegate = self
         present(imagePicker, animated: true, completion: nil)
     }
-
-    private func choosePhotoFromLibrary() {
-
-        let imagePicker = UIImagePickerController()
-        imagePicker.sourceType = .photoLibrary
-        imagePicker.delegate = self
-        present(imagePicker, animated: true, completion: nil)
-    }
-
-
 
     // MARK:- Image Picker Delegates
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : Any]) {
 
         if let image = info[UIImagePickerControllerOriginalImage] as? UIImage {
 
-        let imageCropperViewController = RSKImageCropViewController(image: image)
+            let imageCropperViewController = RSKImageCropViewController(image: image)
 
             imageCropperViewController.cropMode = RSKImageCropMode.custom
             imageCropperViewController.delegate = self
@@ -368,24 +360,15 @@ UIImagePickerControllerDelegate, UINavigationControllerDelegate {
 
         dismiss(animated: true, completion: nil)
     }
-    
+
 }
 
 extension DetailViewController:
 RSKImageCropViewControllerDelegate, RSKImageCropViewControllerDataSource {
 
-    func imageCropViewController(_ controller: RSKImageCropViewController, didCropImage croppedImage: UIImage, usingCropRect cropRect: CGRect, rotationAngle: CGFloat) {
-        // crop and resize chosen image (for optimial space, as we are storing image data in core data)
+    func saveImage(image: UIImage) {
 
-        let resizedImage = croppedImage.resized(withBounds:  CGSize(width: answerView.frame.width, height: answerView.frame.height))
-        if let answerView = answerView as? ImageResponseView {
-
-            answerView.setImage(image: resizedImage)
-        }
-        dismiss(animated: true, completion: nil)
-
-        //save image
-        let imageData = UIImageJPEGRepresentation(resizedImage, 1)
+        let imageData = UIImageJPEGRepresentation(image, 1)
         let imageFilePath = AppResources.documentsDirectory().appendingPathComponent("Photo_\(objective.id).jpeg")
         do {
             try imageData?.write(to: imageFilePath)
@@ -393,6 +376,20 @@ RSKImageCropViewControllerDelegate, RSKImageCropViewControllerDataSource {
         } catch {
             print("Failed to save image")
         }
+    }
+
+    // MARK:- Image Croper Delegates
+
+    func imageCropViewController(_ controller: RSKImageCropViewController, didCropImage croppedImage: UIImage, usingCropRect cropRect: CGRect, rotationAngle: CGFloat) {
+
+        // crop and resize chosen image to size of UIImageView controller
+        let resizedImage = croppedImage.resized(withBounds:  CGSize(width: answerView.frame.width, height: answerView.frame.height))
+        if let answerView = answerView as? ImageResponseView {
+            answerView.setImage(image: resizedImage)
+        }
+        dismiss(animated: true, completion: nil)
+
+        saveImage(image: resizedImage)
 
         playHudAnimation()
         delegate?.initiateSave()
