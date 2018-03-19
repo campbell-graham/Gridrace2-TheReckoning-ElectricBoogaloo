@@ -108,8 +108,8 @@ class DetailViewController: UIViewController {
         //Colors
         view.backgroundColor = AppColors.backgroundColor
         titleLabel.textColor = AppColors.textPrimaryColor
-        hintImageView.tintColor = AppColors.greenHighlightColor
-        pointLabel.textColor = AppColors.greenHighlightColor
+        hintImageView.tintColor = AppColors.orangeHighlightColor
+        pointLabel.textColor = AppColors.orangeHighlightColor
         descTextView.textColor = AppColors.textPrimaryColor
         descTextView.backgroundColor = AppColors.backgroundColor
         responseTextLabel.textColor = AppColors.textPrimaryColor

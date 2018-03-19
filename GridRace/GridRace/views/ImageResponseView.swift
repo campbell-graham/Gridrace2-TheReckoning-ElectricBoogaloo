@@ -26,7 +26,7 @@ class ImageResponseView: UIView {
         responseImageView.isHidden = true
 
         cameraLabel.text = "Add Photo"
-        cameraLabel.textColor = AppColors.greenHighlightColor
+        cameraLabel.textColor = AppColors.orangeHighlightColor
         cameraLabel.textAlignment = .center
         cameraLabel.font = UIFont.boldSystemFont(ofSize: 16)
 
