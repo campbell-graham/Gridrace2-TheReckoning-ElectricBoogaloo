@@ -42,7 +42,6 @@ class SummaryViewController: UIViewController, UICollectionViewDelegate, UIColle
     var bonusObjectives: [Objective]
 
     var completedObjectives: Int {
-
         var result = 0
         for data in allData {
             if data.completed == true {
@@ -53,7 +52,6 @@ class SummaryViewController: UIViewController, UICollectionViewDelegate, UIColle
     }
 
     var completedPlacesObjectivesCount: Int {
-
         var result = 0
         for objective in mainObjectives {
             let data = allData.first(where: {$0.objectiveID == objective.id})
@@ -65,7 +63,6 @@ class SummaryViewController: UIViewController, UICollectionViewDelegate, UIColle
     }
 
     var completedBonusObjectivesCount: Int {
-
         var result = 0
         for objective in bonusObjectives {
             let data = allData.first(where: {$0.objectiveID == objective.id})
@@ -77,7 +74,6 @@ class SummaryViewController: UIViewController, UICollectionViewDelegate, UIColle
     }
 
     var userPoints: Int {
-
         var result = 0
         for objective in allObjectives {
             let dataForObject = allData.first(where: {$0.objectiveID == objective.id})
@@ -85,15 +81,12 @@ class SummaryViewController: UIViewController, UICollectionViewDelegate, UIColle
                 result += dataForObject?.adjustedPoints != nil ? (dataForObject?.adjustedPoints)! : objective.points
             }
         }
-
         return result
     }
 
     var totalPoints: Int {
-
         var result = 0
-        for obj in allObjectives{
-
+        for obj in allObjectives {
             result += obj.points
         }
         return result
@@ -127,7 +120,6 @@ class SummaryViewController: UIViewController, UICollectionViewDelegate, UIColle
     }
 
     func updateLabels() {
-
         mainTextLabel.text = "Main Objectives: "
         mainValueLabel.text = "\(completedPlacesObjectivesCount)/\(mainObjectives.count)"
         bonusTextLabel.text = "Bonus Objectives: "
@@ -139,7 +131,6 @@ class SummaryViewController: UIViewController, UICollectionViewDelegate, UIColle
     }
 
     func setUpLayout() {
-
         for view in [mainTextLabel, mainValueLabel, bonusTextLabel, bonusValueLabel, timeTextLabel,
                      timeValueLabel, pointsTextLabel, pointsValueLabel] {
 
@@ -162,25 +153,19 @@ class SummaryViewController: UIViewController, UICollectionViewDelegate, UIColle
             "pointsValueLabel" : pointsValueLabel
         ]
 
-        
         var constraints = NSLayoutConstraint.constraints(withVisualFormat: "V:|-32-[mainTextLabel]-[bonusTextLabel]-[timeTextLabel]-[pointsTextLabel]", options: [.alignAllLeading], metrics: nil, views: views)
         constraints += NSLayoutConstraint.constraints(withVisualFormat: "V:[mainValueLabel]-[bonusValueLabel]-[timeValueLabel]-[pointsValueLabel]", options: [.alignAllLeading], metrics: nil, views: views)
         constraints += NSLayoutConstraint.constraints(withVisualFormat: "H:|-50-[mainTextLabel]-32-[mainValueLabel]", options: [.alignAllTop, .alignAllBottom], metrics: nil, views: views)
 
-
         constraints += [
-           
             collectionView.topAnchor.constraint(equalTo: pointsTextLabel.bottomAnchor),
             collectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             collectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             collectionView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor)
-
         ]
-
+        
         NSLayoutConstraint.activate(constraints)
     }
-    
-    
     
     override func viewDidLayoutSubviews() {
         if !(collectionView.collectionViewLayout is CustomFlowLayout) {
@@ -195,7 +180,6 @@ class SummaryViewController: UIViewController, UICollectionViewDelegate, UIColle
     }
 
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-
         let data = allData.first(where: {$0.objectiveID == allObjectives[indexPath.row].id})
         data!.correct = !(data!.correct)
 
@@ -205,7 +189,6 @@ class SummaryViewController: UIViewController, UICollectionViewDelegate, UIColle
     }
 
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "objectiveCell", for: indexPath) as! ObjectiveSummaryCollectionViewCell
 
         let objective = allObjectives[indexPath.row]
