@@ -25,7 +25,6 @@
 		AA1CD2C4204519E10007A0C1 /* HudView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA1CD2C3204519E10007A0C1 /* HudView.swift */; };
 		AA23AB21204E0A8300F6CCEF /* walking.gpx in Resources */ = {isa = PBXBuildFile; fileRef = AA23AB20204E0A8300F6CCEF /* walking.gpx */; };
 		AA23AB23204E11FE00F6CCEF /* PasswordViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA23AB22204E11FE00F6CCEF /* PasswordViewController.swift */; };
-		AA23CECC2048E6450003E1D2 /* MapViewController copy.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA23CECB2048E6450003E1D2 /* MapViewController copy.swift */; };
 		AA23CECE2048F5FD0003E1D2 /* PanView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA23CECD2048F5FD0003E1D2 /* PanView.swift */; };
 		AA25AD7020521DB200A983BD /* CustomFlowLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA25AD6F20521DB200A983BD /* CustomFlowLayout.swift */; };
 		AA29A12420438BC500DF3A1C /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA29A12320438BC500DF3A1C /* AppDelegate.swift */; };
@@ -60,7 +59,6 @@
 		AA1CD2C3204519E10007A0C1 /* HudView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HudView.swift; sourceTree = "<group>"; };
 		AA23AB20204E0A8300F6CCEF /* walking.gpx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = walking.gpx; sourceTree = "<group>"; };
 		AA23AB22204E11FE00F6CCEF /* PasswordViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PasswordViewController.swift; sourceTree = "<group>"; };
-		AA23CECB2048E6450003E1D2 /* MapViewController copy.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "MapViewController copy.swift"; sourceTree = "<group>"; };
 		AA23CECD2048F5FD0003E1D2 /* PanView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PanView.swift; sourceTree = "<group>"; };
 		AA25AD6F20521DB200A983BD /* CustomFlowLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomFlowLayout.swift; sourceTree = "<group>"; };
 		AA29A12020438BC500DF3A1C /* GridRace.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = GridRace.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -145,7 +143,6 @@
 		AA29C93E2047B0EB00BE0BAE /* controllers */ = {
 			isa = PBXGroup;
 			children = (
-				AA23CECB2048E6450003E1D2 /* MapViewController copy.swift */,
 				AA29A1372043D0CF00DF3A1C /* DetailViewController.swift */,
 				AA1CD2BD2044C6DA0007A0C1 /* ClueViewController.swift */,
 				3712BDE82044D9A300B4C9B3 /* MainViewController.swift */,
@@ -338,7 +335,6 @@
 				AA1CD2C02044D29B0007A0C1 /* GradientView.swift in Sources */,
 				AAD4B5DA204FB5DA005FBB24 /* SummaryViewController.swift in Sources */,
 				AA29A12420438BC500DF3A1C /* AppDelegate.swift in Sources */,
-				AA23CECC2048E6450003E1D2 /* MapViewController copy.swift in Sources */,
 				AA29C93B204763FE00BE0BAE /* TextFieldViewController.swift in Sources */,
 				376A5F852043A08D00D69090 /* (null) in Sources */,
 				AA1CD2C2204513820007A0C1 /* UIImageExtension.swift in Sources */,

@@ -22,6 +22,9 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
     var buttonsView = UIView()
     var resetMapButton = UIButton(type: UIButtonType.system)
     var showUserLocationButton = UIButton(type: UIButtonType.system)
+
+    var timerView = TimerView(frame: CGRect(x: 0, y: 0, width: 100, height: 44))
+    var detailViewController: DetailViewController?
     
     lazy var collectionView: UICollectionView = {
         
@@ -55,9 +58,7 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        
-        let timerView = TimerView(frame: CGRect(x: 0, y: 0, width: 100, height: 44))
+
         navigationItem.leftBarButtonItem = UIBarButtonItem(customView: timerView)
         
         //styling
@@ -143,17 +144,20 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
     }
     
     override func viewDidLayoutSubviews() {
-        collectionView.collectionViewLayout = CustomFlowLayout(collectionViewWidth: collectionView.frame.width, collectionViewHeigth: collectionView.frame.height, itemSizePoints: 200)
-        collectionView.layoutIfNeeded()
-        mapView.layoutMargins = UIEdgeInsets(top: 16, left: 16, bottom: collectionView.frame.height, right: 16)
-        
-        let blurEffect = UIBlurEffect(style: UIBlurEffectStyle.light)
-        let blurEffectView = UIVisualEffectView(effect: blurEffect)
-        blurEffectView.frame = buttonsView.bounds
-        blurEffectView.layer.cornerRadius = buttonsView.layer.cornerRadius
-        blurEffectView.clipsToBounds = true
-        buttonsView.addSubview(blurEffectView)
-        buttonsView.sendSubview(toBack: blurEffectView)
+
+        if !(collectionView.collectionViewLayout is CustomFlowLayout) {
+            collectionView.collectionViewLayout = CustomFlowLayout(collectionViewWidth: collectionView.frame.width, collectionViewHeigth: collectionView.frame.height, itemSizePoints: 200)
+            collectionView.layoutIfNeeded()
+            mapView.layoutMargins = UIEdgeInsets(top: 16, left: 16, bottom: collectionView.frame.height, right: 16)
+            
+            let blurEffect = UIBlurEffect(style: UIBlurEffectStyle.light)
+            let blurEffectView = UIVisualEffectView(effect: blurEffect)
+            blurEffectView.frame = buttonsView.bounds
+            blurEffectView.layer.cornerRadius = buttonsView.layer.cornerRadius
+            blurEffectView.clipsToBounds = true
+            buttonsView.addSubview(blurEffectView)
+            buttonsView.sendSubview(toBack: blurEffectView)
+        }
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -255,7 +259,76 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         let objective = objectivesToDisplay[indexPath.row]
         let data = AppResources.ObjectiveData.sharedObjectives.data.first(where: {$0.objectiveID == objective.id})
-        navigationController?.pushViewController(MapViewController(objective: objective, data: data!), animated: true)
+
+        detailViewController = DetailViewController(objective: objective, data: data!)
+        detailViewController?.delegate = self
+        addChildViewController(detailViewController!)
+        detailViewController!.didMove(toParentViewController: self)
+
+        if let detailView = detailViewController!.view {
+
+            changeNavBar()
+
+            let currentCell = collectionView.cellForItem(at: indexPath)
+            let smallFrame = CGRect(x: ((view.frame.width / 2) - (currentCell!.frame.width / 2)), y: collectionView.frame.minY + currentCell!.frame.minY, width: currentCell!.frame.width, height: currentCell!.frame.height)
+            detailView.frame = smallFrame
+            view.addSubview(detailView)
+
+            let fullFrame = CGRect(x: 0, y: view.frame.height * 0.4, width: view.frame.width, height: view.frame.height * 0.6)
+            UIView.animate(withDuration: 0.3, animations: {
+
+                detailView.frame = fullFrame
+            })
+        }
+    }
+
+    func changeNavBar() {
+
+        if detailViewController != nil {
+
+            navigationItem.titleView = nil
+            navigationItem.title = detailViewController?.objective.name
+            navigationItem.leftBarButtonItem = UIBarButtonItem(title: "Cancel", style: .plain, target: self, action: #selector(dismissDetailView))
+            navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Submit", style: .done, target: self, action: #selector(completeObjective))
+
+        } else {
+
+            navigationItem.titleView = segmentedControl
+            navigationItem.leftBarButtonItem = UIBarButtonItem(customView: timerView)
+            navigationItem.rightBarButtonItem = UIBarButtonItem(title: "", style: .done, target: self, action: nil)
+        }
+    }
+
+    @objc func dismissDetailView() {
+
+
+
+        if let detailView = detailViewController!.view {
+            let currentCell = collectionView.cellForItem(at: IndexPath(indexes: [0,0]))
+            let smallFrame = CGRect(x: ((view.frame.width / 2) - (currentCell!.frame.width / 2)), y: collectionView.frame.minY + currentCell!.frame.minY, width: currentCell!.frame.width, height: currentCell!.frame.height)
+
+            UIView.animate(withDuration: 0.3, animations: {
+
+                detailView.frame = smallFrame
+                self.changeNavBar()
+            })
+
+            DispatchQueue.main.asyncAfter(deadline: DispatchTime.init(uptimeNanoseconds: 50000), execute: {
+
+                self.detailViewController?.removeFromParentViewController()
+                self.detailViewController?.view.removeFromSuperview()
+                self.detailViewController = nil
+            })
+        }
+
+        
+    }
+
+    @objc func completeObjective() {
+
+        detailViewController!.saveData()
+        dismissDetailView()
+        collectionView.reloadData()
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {

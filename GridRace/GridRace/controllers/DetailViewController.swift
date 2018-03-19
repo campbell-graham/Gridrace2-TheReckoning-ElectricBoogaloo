@@ -14,12 +14,10 @@ class DetailViewController: UIViewController {
     var objective: Objective
     var data: ObjectiveUserData
 
-    let panView = PanView()
-
     private let titleLabel = UILabel()
     private let hintImageView = UIImageView()
     private let pointLabel = UILabel()
-    private let descTextView = UITextView()
+    let descTextView = UITextView()
     private let responseTextLabel = UILabel()
     private let answerView: UIView
 
@@ -30,7 +28,7 @@ class DetailViewController: UIViewController {
 
     var delegate: ObjectiveTableViewControllerDelegate?
 
-    init(objective: Objective, data: ObjectiveUserData) {
+    init( objective: Objective, data: ObjectiveUserData) {
 
         self.objective = objective
         self.data = data
@@ -156,7 +154,6 @@ class DetailViewController: UIViewController {
 
             //assign TextViewDelegate
             let answerView = self.answerView as! TextResponseView
-            answerView.textView.delegate = self
 
             // create keyboard state observers/ listeners (to reposition view when keyboard apperas/ disappears)
             NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow), name: NSNotification.Name.UIKeyboardWillShow, object: nil)
@@ -169,7 +166,7 @@ class DetailViewController: UIViewController {
 
     private func setUpLayout() {
 
-        for view in [panView, titleLabel, hintImageView, pointLabel, descTextView, responseTextLabel, answerView] {
+        for view in [ titleLabel, hintImageView, pointLabel, descTextView, responseTextLabel, answerView] {
             view.translatesAutoresizingMaskIntoConstraints = false
             self.view.addSubview(view)
         }
@@ -178,12 +175,7 @@ class DetailViewController: UIViewController {
 
         var constraints = ([
 
-            panView.topAnchor.constraint(equalTo: view.topAnchor),
-            panView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            panView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            panView.heightAnchor.constraint(equalToConstant: 30),
-
-            titleLabel.topAnchor.constraint(equalTo: panView.bottomAnchor, constant: 16),
+            titleLabel.topAnchor.constraint(equalTo: view.topAnchor, constant: 16),
             titleLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
             titleLabel.trailingAnchor.constraint(lessThanOrEqualTo: view.trailingAnchor, constant: -16),
             titleLabel.heightAnchor.constraint(equalToConstant: 20),
@@ -300,7 +292,7 @@ class DetailViewController: UIViewController {
 
     private func playHudAnimation() {
 
-        let hudView = HudView.hud(inView: navigationController!.view, animated: true)
+        let hudView = HudView.hud(inView: view, animated: true)
         hudView.text = "Complete!"
 
         DispatchQueue.main.asyncAfter(deadline: .now() + 2.0,
@@ -325,6 +317,27 @@ class DetailViewController: UIViewController {
         default:
             break
         }
+    }
+
+    func saveData() {
+
+        if let answerView = answerView as? ImageResponseView {
+
+            let imageData = UIImageJPEGRepresentation(answerView.responseImageView.image! , 1)
+            let imageFilePath = AppResources.documentsDirectory().appendingPathComponent("Photo_\(objective.id).jpeg")
+            do {
+                try imageData?.write(to: imageFilePath)
+                data.imageResponseURL = imageFilePath
+            } catch {
+                print("Failed to save image")
+            }
+
+        } else if let answerView = answerView as? TextResponseView {
+
+            data.textResponse = answerView.textView.text
+        }
+
+        delegate?.initiateSave()
     }
 
 }
@@ -366,18 +379,6 @@ UIImagePickerControllerDelegate, UINavigationControllerDelegate {
 extension DetailViewController:
 RSKImageCropViewControllerDelegate, RSKImageCropViewControllerDataSource {
 
-    func saveImage(image: UIImage) {
-
-        let imageData = UIImageJPEGRepresentation(image, 1)
-        let imageFilePath = AppResources.documentsDirectory().appendingPathComponent("Photo_\(objective.id).jpeg")
-        do {
-            try imageData?.write(to: imageFilePath)
-            data.imageResponseURL = imageFilePath
-        } catch {
-            print("Failed to save image")
-        }
-    }
-
     // MARK:- Image Croper Delegates
 
     func imageCropViewController(_ controller: RSKImageCropViewController, didCropImage croppedImage: UIImage, usingCropRect cropRect: CGRect, rotationAngle: CGFloat) {
@@ -389,10 +390,7 @@ RSKImageCropViewControllerDelegate, RSKImageCropViewControllerDataSource {
         }
         dismiss(animated: true, completion: nil)
 
-        saveImage(image: resizedImage)
-
         playHudAnimation()
-        delegate?.initiateSave()
     }
 
     func imageCropViewControllerCustomMovementRect(_ controller: RSKImageCropViewController) -> CGRect {
@@ -422,14 +420,3 @@ RSKImageCropViewControllerDelegate, RSKImageCropViewControllerDataSource {
     }
 }
 
-extension DetailViewController: UITextViewDelegate {
-
-    func textViewDidEndEditing(_ textView: UITextView) {
-        if let answerView = answerView as? TextResponseView {
-
-            playHudAnimation()
-            data.textResponse = answerView.textView.text
-            delegate?.initiateSave()
-        }
-    }
-}
