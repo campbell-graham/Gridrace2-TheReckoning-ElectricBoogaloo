@@ -7,23 +7,28 @@
 //
 
 import UIKit
+import RSKImageCropper
 
 class DetailViewController: UIViewController {
 
     var objective: Objective
     var data: ObjectiveUserData
+
     let panView = PanView()
-    private let descLabel = UITextView()
-    let pointBorderImageView = UIImageView()
-    private let pointLabel = UILabel()
-    private let answerView: UIView
-    private let interactImageView = UIImageView()
+
+    private let titleLabel = UILabel()
     private let hintImageView = UIImageView()
+    private let pointLabel = UILabel()
+    private let descTextView = UITextView()
+    private let responseTextLabel = UILabel()
+    private let answerView: UIView
+
+    //Delete: rethink storing this value here, can we put it in firebase?
     private let hintPointDeductionValue = 2
+
     private var passwordViewController: PasswordViewController?
-    
+
     var delegate: ObjectiveTableViewControllerDelegate?
-    
 
     init(objective: Objective, data: ObjectiveUserData) {
 
@@ -32,9 +37,9 @@ class DetailViewController: UIViewController {
 
         switch  objective.answerType {
         case .photo: // imageview
-            answerView = UIImageView()
+            answerView = ImageResponseView()
         case .text: // textField
-            answerView = TextResponseView()
+            self.answerView = TextResponseView()
         case .password: // pin view
 
             passwordViewController = PasswordViewController()
@@ -52,40 +57,51 @@ class DetailViewController: UIViewController {
         }
     }
 
+    //Delete: rethink password implimentstion
+    func updateLabel(attempt: String) {
+        self.descTextView.text = "\(objective.desc) \n attempt: \(attempt) "
+    }
+
+    deinit {
+
+        // remove keyboard will show & will hide observers
+        if answerView is TextResponseView {
+            NotificationCenter.default.removeObserver(self)
+            NotificationCenter.default.removeObserver(self)
+        }
+    }
+
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-
-    func updateLabel(attempt: String) {
-        self.descLabel.text = "\(objective.desc) \n attempt: \(attempt) "
-    }
-
 
     override func viewDidLoad() {
 
         super.viewDidLoad()
 
+        //Delete: wont be in nav bar
         navigationController?.navigationBar.prefersLargeTitles = false
         title = objective.name
 
-        initialiseViews()
         setUpLayout()
-    
+        initialiseViews()
+
         //present old data if it exists
         if data.completed {
-            switch objective.answerType {
-            case .text:
-                if (data.textResponse != nil) {
-                    (answerView as! TextResponseView).textLabel.text = data.textResponse
-                }
-            case .password:
-                print("Not implemented yet")
-            case .photo:
-                if let answerView = answerView as? UIImageView, let imageURL = data.imageResponseURL {
-                    answerView.contentMode = .scaleAspectFit
-                    answerView.image = UIImage(contentsOfFile: imageURL.path)?.resized(withBounds:  CGSize(width: 200, height: 200))
-                }
-            }
+            loadData()
+        }
+    }
+
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+
+        //set textView to be scrolled to top
+        descTextView.setContentOffset(CGPoint.zero, animated: false)
+
+        //Delete: this seems dodgy (make password view controller seperate and only call at end? dont tie it to objectives?)
+        if let VC = childViewControllers.last as? PasswordViewController {
+
+            VC.activateButtonConstraints()
         }
     }
 
@@ -93,75 +109,72 @@ class DetailViewController: UIViewController {
 
         //Colors
         view.backgroundColor = AppColors.backgroundColor
-        descLabel.textColor = AppColors.textPrimaryColor
-        pointLabel.textColor = AppColors.greenHighlightColor
-        pointBorderImageView.tintColor = AppColors.greenHighlightColor
-        interactImageView.tintColor = AppColors.greenHighlightColor
+        titleLabel.textColor = AppColors.textPrimaryColor
         hintImageView.tintColor = AppColors.greenHighlightColor
+        pointLabel.textColor = AppColors.greenHighlightColor
+        descTextView.textColor = AppColors.textPrimaryColor
+        descTextView.backgroundColor = AppColors.backgroundColor
+        responseTextLabel.textColor = AppColors.textPrimaryColor
 
-        updateViewsData()
+        //fonts
+        titleLabel.font = UIFont.boldSystemFont(ofSize: 20)
+        pointLabel.font = UIFont.boldSystemFont(ofSize: 16)
+        descTextView.font = UIFont.systemFont(ofSize: 14)
+        responseTextLabel.font = UIFont.boldSystemFont(ofSize: 20)
 
         // misc stuff
-        descLabel.backgroundColor = AppColors.backgroundColor
-        descLabel.font = UIFont.systemFont(ofSize: 16)
-        descLabel.isEditable = false
+        descTextView.isEditable = false
+        hintImageView.contentMode = .scaleAspectFit
+        answerView.isUserInteractionEnabled = true
 
-        pointBorderImageView.isUserInteractionEnabled = true
-        pointBorderImageView.contentMode = .scaleAspectFit
 
-        pointLabel.font = UIFont.boldSystemFont(ofSize: 16)
-
-        let interactGestureRecogniser: UITapGestureRecognizer
-
-        switch answerView {
-        case is UIImageView :
-            interactGestureRecogniser = UITapGestureRecognizer(target: self, action: #selector(selectPhoto))
-        case is TextResponseView :
-            interactGestureRecogniser = UITapGestureRecognizer(target: self, action: #selector(enterAnswer))
-        default:
-            interactGestureRecogniser = UITapGestureRecognizer(target: self, action: nil)
+        // set view data
+        titleLabel.text = "Overview"
+        hintImageView.image = #imageLiteral(resourceName: "hint")
+        if objective.answerType == .password {
+            descTextView.text = "\(objective.desc) \n attempt: "
+        } else {
+            descTextView.text = objective.desc
         }
+        pointLabel.text = (data.adjustedPoints != nil ? "\(data.adjustedPoints!)" : "\(objective.points)") + " Points"
 
-        interactImageView.addGestureRecognizer(interactGestureRecogniser)
-        interactImageView.isUserInteractionEnabled = true
-        interactImageView.contentMode = .scaleAspectFit
+        responseTextLabel.text = "Your Response"
 
+        //gesture recognisers
+        hintImageView.isUserInteractionEnabled = true
         let hintGestureRecogniser = UITapGestureRecognizer(target: self, action: #selector(clueButtonHandler))
         hintImageView.addGestureRecognizer(hintGestureRecogniser)
-        hintImageView.isUserInteractionEnabled = true
-        hintImageView.contentMode = .scaleAspectFit
-    }
 
-    private func updateViewsData() {
 
-        if objective.answerType == .password {
-            descLabel.text = "\(objective.desc) \n attempt: "
-        } else {
-            descLabel.text = objective.desc
-        }
-        pointBorderImageView.image = #imageLiteral(resourceName: "circle")
-        pointLabel.text = data.adjustedPoints != nil ? "\(data.adjustedPoints!)" : "\(objective.points)"
-        hintImageView.image = #imageLiteral(resourceName: "hint")
 
-        switch  answerView {
-        case is UIImageView:
-            interactImageView.image = #imageLiteral(resourceName: "camera")
-        case is TextResponseView:
-            interactImageView.image = #imageLiteral(resourceName: "textCursor")
+        switch answerView {
+        case is ImageResponseView :
+
+            let interactGestureRecogniser = UITapGestureRecognizer(target: self, action: #selector(selectPhoto))
+            answerView.addGestureRecognizer(interactGestureRecogniser)
+        case is TextResponseView :
+
+            //assign TextViewDelegate
+            let answerView = self.answerView as! TextResponseView
+            answerView.textView.delegate = self
+
+            // create keyboard state observers/ listeners (to reposition view when keyboard apperas/ disappears)
+            NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow), name: NSNotification.Name.UIKeyboardWillShow, object: nil)
+
+            NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide), name: NSNotification.Name.UIKeyboardWillHide, object: nil)
         default:
-            interactImageView.image = #imageLiteral(resourceName: "flag")
+            break
         }
     }
 
     private func setUpLayout() {
 
-        for view in [panView, descLabel, pointBorderImageView, answerView, interactImageView, hintImageView] {
+        for view in [panView, titleLabel, hintImageView, pointLabel, descTextView, responseTextLabel, answerView] {
             view.translatesAutoresizingMaskIntoConstraints = false
             self.view.addSubview(view)
         }
-
-        pointLabel.translatesAutoresizingMaskIntoConstraints = false
-        pointBorderImageView.addSubview(pointLabel)
+        titleLabel.setContentCompressionResistancePriority(.required, for: .horizontal)
+        titleLabel.setContentCompressionResistancePriority(.required, for: .vertical)
 
         var constraints = ([
 
@@ -170,75 +183,92 @@ class DetailViewController: UIViewController {
             panView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             panView.heightAnchor.constraint(equalToConstant: 30),
 
-            descLabel.topAnchor.constraint(equalTo: panView.bottomAnchor, constant: 16),
-            descLabel.leadingAnchor.constraint(equalTo: pointBorderImageView.trailingAnchor, constant: 16),
-            descLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
-            descLabel.heightAnchor.constraint(equalTo: view.heightAnchor, multiplier: 0.2),
+            titleLabel.topAnchor.constraint(equalTo: panView.bottomAnchor, constant: 16),
+            titleLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
+            titleLabel.trailingAnchor.constraint(lessThanOrEqualTo: view.trailingAnchor, constant: -16),
+            titleLabel.heightAnchor.constraint(equalToConstant: 20),
 
-            pointBorderImageView.topAnchor.constraint(equalTo: descLabel.topAnchor),
-            pointBorderImageView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
-            pointBorderImageView.heightAnchor.constraint(equalToConstant: 64),
-            pointBorderImageView.widthAnchor.constraint(equalToConstant: 64),
+            hintImageView.leadingAnchor.constraint(equalTo: titleLabel.trailingAnchor, constant: 16),
+            hintImageView.centerYAnchor.constraint(equalTo: titleLabel.centerYAnchor),
+            hintImageView.widthAnchor.constraint(equalToConstant: 24),
+            hintImageView.heightAnchor.constraint(equalTo: hintImageView.widthAnchor),
 
-            pointLabel.centerXAnchor.constraint(equalTo: pointBorderImageView.centerXAnchor),
-            pointLabel.centerYAnchor.constraint(equalTo: pointBorderImageView.centerYAnchor),
-        ])
+            pointLabel.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 8),
+            pointLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
+            pointLabel.trailingAnchor.constraint(lessThanOrEqualTo: view.trailingAnchor, constant: -16),
+            pointLabel.heightAnchor.constraint(equalToConstant: 20),
+
+            descTextView.topAnchor.constraint(equalTo: pointLabel.bottomAnchor, constant: 8),
+            descTextView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
+            descTextView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
+            descTextView.heightAnchor.constraint(equalTo: view.heightAnchor, multiplier: 0.2),
+
+            responseTextLabel.topAnchor.constraint(equalTo: descTextView.bottomAnchor, constant: 8),
+            responseTextLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
+            responseTextLabel.trailingAnchor.constraint(lessThanOrEqualTo: view.trailingAnchor, constant: -16),
+            responseTextLabel.heightAnchor.constraint(equalToConstant: 20),
+            ])
 
         switch answerView {
-        case is UIImageView:
+        case is ImageResponseView:
             constraints += [
-                answerView.topAnchor.constraint(greaterThanOrEqualTo: descLabel.bottomAnchor, constant: 16),
-                answerView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-                answerView.bottomAnchor.constraint(lessThanOrEqualTo: interactImageView.topAnchor, constant: -16),
-                answerView.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: 0.4),
-                answerView.heightAnchor.constraint(equalTo: answerView.widthAnchor),
-
-                interactImageView.topAnchor.constraint(greaterThanOrEqualTo: answerView.bottomAnchor, constant: 16),]
+                answerView.topAnchor.constraint(equalTo: responseTextLabel.bottomAnchor, constant: 16),
+                answerView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
+                answerView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
+                answerView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -16)]
         case is TextResponseView:
             constraints += [
-                answerView.topAnchor.constraint(equalTo: descLabel.bottomAnchor),
+                answerView.topAnchor.constraint(equalTo: responseTextLabel.bottomAnchor),
                 answerView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
                 answerView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-                answerView.bottomAnchor.constraint(equalTo: interactImageView.topAnchor)]
+                answerView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
+            ]
         default:
             constraints += [
-                answerView.topAnchor.constraint(equalTo: descLabel.bottomAnchor),
+                answerView.topAnchor.constraint(equalTo: responseTextLabel.bottomAnchor),
                 answerView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
                 answerView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-                answerView.bottomAnchor.constraint(equalTo: view.bottomAnchor)]
-        }
-
-        if objective.answerType != .password {
-            constraints += [
-
-                interactImageView.centerXAnchor.constraint(equalTo: view.centerXAnchor, constant: -(view.center.x / 2) ),
-                interactImageView.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -16),
-                interactImageView.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: 0.2),
-                interactImageView.heightAnchor.constraint(equalTo: interactImageView.widthAnchor),
-
-                hintImageView.topAnchor.constraint(equalTo: interactImageView.topAnchor),
-                hintImageView.centerXAnchor.constraint(equalTo: view.centerXAnchor, constant: (view.center.x / 2) ),
-                hintImageView.bottomAnchor.constraint(equalTo: interactImageView.bottomAnchor),
-                hintImageView.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: 0.2),
-                hintImageView.heightAnchor.constraint(equalTo: hintImageView.widthAnchor)
-            ]
-        } else {
-
-            interactImageView.isHidden = true
-            hintImageView.isHidden = true
+                answerView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor)]
         }
 
         NSLayoutConstraint.activate(constraints)
 
     }
 
-    @objc private func clueButtonHandler() {
-        
-        guard let points = data.adjustedPoints else {
-            presentPointLossAlert()
-            return
+    // MARK: - KeyboardFunctions
+
+    private var originalViewFrame: CGRect = .zero
+
+    @objc func keyboardWillShow(_ notification: Notification) {
+        if originalViewFrame == .zero {
+            originalViewFrame = view.frame
         }
+
+        guard let keyboardFrame = notification.userInfo?[UIKeyboardFrameEndUserInfoKey] as? NSValue else { return }
+        let keyboardHeight = keyboardFrame.cgRectValue.height
+
+
+        // Assign new frame to your view
+        var newFrame = originalViewFrame
+        newFrame.origin.y = originalViewFrame.minY-keyboardHeight
+        self.view.frame = newFrame
+    }
+
+    @objc func keyboardWillHide(notification: NSNotification) {
+        guard originalViewFrame != .zero else { return }
+        self.view.frame = originalViewFrame
+    }
+
+
+    // MARK: - Private Functions
+
+    @objc private func clueButtonHandler() {
+
+        if data.adjustedPoints == nil {
+            presentPointLossAlert()
+        } else {
             presentClueViewController()
+        }
     }
 
     @objc private func presentPointLossAlert() {
@@ -247,12 +277,14 @@ class DetailViewController: UIViewController {
 
         let cancelAction = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
         alert.addAction(cancelAction)
+
         let continueAction = UIAlertAction(title: "Continue", style: .default, handler: { _ in
+
             self.data.adjustedPoints = self.objective.points - self.hintPointDeductionValue
-            //self.objective.hintTaken = true
-            self.updateViewsData()
-            self.presentClueViewController()
+            self.pointLabel.text = "\(self.data.adjustedPoints!) Points"
             self.delegate?.initiateSave()
+
+            self.presentClueViewController()
         })
         alert.addAction(continueAction)
 
@@ -266,48 +298,35 @@ class DetailViewController: UIViewController {
         present(clueViewController, animated: true, completion: nil)
     }
 
-    @objc func enterAnswer() {
-
-        let textFieldViewController = TextFieldViewController(closure: enterAnswerCompletion)
-        textFieldViewController.modalTransitionStyle = .crossDissolve
-        textFieldViewController.modalPresentationStyle = .overCurrentContext
-        present(textFieldViewController, animated: true, completion: nil)
-    }
-
-    func enterAnswerCompletion(answer: String) {
-
-        if let answerView = answerView as? TextResponseView {
-            answerView.textLabel.text = answer
-            playHudAnimation()
-            data.textResponse = answer
-            delegate?.initiateSave()
-        }
-    }
-
     private func playHudAnimation() {
 
         let hudView = HudView.hud(inView: navigationController!.view, animated: true)
         hudView.text = "Complete!"
 
         DispatchQueue.main.asyncAfter(deadline: .now() + 2.0,
-          execute: {
-            hudView.hide()
-            //self.navigationController?.popViewController(animated: true)
+                                      execute: {
+                                        hudView.hide()
         })
     }
 
-    //set textView to be scrolled to top
-    override func viewDidLayoutSubviews() {
-        super.viewDidLayoutSubviews()
-        descLabel.setContentOffset(CGPoint.zero, animated: false)
+    private func loadData() {
+        switch objective.answerType {
+        case .text:
+            if (data.textResponse != nil) {
+                (answerView as! TextResponseView).textView.text = data.textResponse
+            }
+        case .photo:
+            if let answerView = answerView as? ImageResponseView, let imageURL = data.imageResponseURL {
 
-        if let VC = childViewControllers.last as? PasswordViewController {
-
-            VC.activateButtonConstraints()
+                if let image = UIImage(contentsOfFile: imageURL.path) {
+                    answerView.setImage(image: image)
+                }
+            }
+        default:
+            break
         }
-
     }
-    
+
 }
 
 extension DetailViewController:
@@ -315,45 +334,41 @@ UIImagePickerControllerDelegate, UINavigationControllerDelegate {
 
     @objc private func selectPhoto() {
 
-        if UIImagePickerController.isSourceTypeAvailable(.camera) {
-            takePhotoWithCamera()
-        } else {
-            choosePhotoFromLibrary()
-        }
-    }
-
-    private func takePhotoWithCamera() {
-
         let imagePicker = UIImagePickerController()
-        imagePicker.sourceType = .camera
+        imagePicker.sourceType = UIImagePickerController.isSourceTypeAvailable(.camera) ? .camera : .photoLibrary
         imagePicker.delegate = self
-        imagePicker.allowsEditing = true
         present(imagePicker, animated: true, completion: nil)
     }
-
-    private func choosePhotoFromLibrary() {
-
-        let imagePicker = UIImagePickerController()
-        imagePicker.sourceType = .photoLibrary
-        imagePicker.delegate = self
-        imagePicker.allowsEditing = true
-        present(imagePicker, animated: true, completion: nil)
-    }
-
-
 
     // MARK:- Image Picker Delegates
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : Any]) {
 
-        let retrivedImage = info[UIImagePickerControllerEditedImage] as? UIImage
-        if let answerView = answerView as? UIImageView {
-            answerView.contentMode = .scaleAspectFit
-            answerView.image = retrivedImage?.resized(withBounds:  CGSize(width: 200, height: 200))
+        if let image = info[UIImagePickerControllerOriginalImage] as? UIImage {
+
+            let imageCropperViewController = RSKImageCropViewController(image: image)
+
+            imageCropperViewController.cropMode = RSKImageCropMode.custom
+            imageCropperViewController.delegate = self
+            imageCropperViewController.dataSource = self
+            imageCropperViewController.alwaysBounceVertical = true
+            imageCropperViewController.avoidEmptySpaceAroundImage = true
+            picker.pushViewController(imageCropperViewController, animated: true)
         }
+    }
+
+    func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
+
         dismiss(animated: true, completion: nil)
-        
-        //save image
-        let imageData = UIImageJPEGRepresentation(retrivedImage!, 1)
+    }
+
+}
+
+extension DetailViewController:
+RSKImageCropViewControllerDelegate, RSKImageCropViewControllerDataSource {
+
+    func saveImage(image: UIImage) {
+
+        let imageData = UIImageJPEGRepresentation(image, 1)
         let imageFilePath = AppResources.documentsDirectory().appendingPathComponent("Photo_\(objective.id).jpeg")
         do {
             try imageData?.write(to: imageFilePath)
@@ -361,14 +376,60 @@ UIImagePickerControllerDelegate, UINavigationControllerDelegate {
         } catch {
             print("Failed to save image")
         }
+    }
+
+    // MARK:- Image Croper Delegates
+
+    func imageCropViewController(_ controller: RSKImageCropViewController, didCropImage croppedImage: UIImage, usingCropRect cropRect: CGRect, rotationAngle: CGFloat) {
+
+        // crop and resize chosen image to size of UIImageView controller
+        let resizedImage = croppedImage.resized(withBounds:  CGSize(width: answerView.frame.width, height: answerView.frame.height))
+        if let answerView = answerView as? ImageResponseView {
+            answerView.setImage(image: resizedImage)
+        }
+        dismiss(animated: true, completion: nil)
+
+        saveImage(image: resizedImage)
 
         playHudAnimation()
         delegate?.initiateSave()
     }
 
-    func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
+    func imageCropViewControllerCustomMovementRect(_ controller: RSKImageCropViewController) -> CGRect {
+        return maskRect(controller: controller)
+    }
 
+    func imageCropViewControllerCustomMaskRect(_ controller: RSKImageCropViewController) -> CGRect {
+        return maskRect(controller: controller)
+    }
+
+    func maskRect(controller: RSKImageCropViewController) -> CGRect {
+        let maskSize = CGSize(width: view.frame.width, height: answerView.bounds.height)
+        let viewHeight = controller.view.frame.height
+
+        // create and return shape for cropping image
+        return CGRect(x: 0, y: viewHeight * 0.5 - maskSize.height / 2.0, width: maskSize.width, height: maskSize.height)
+    }
+
+    func imageCropViewControllerCustomMaskPath(_ controller: RSKImageCropViewController) -> UIBezierPath {
+
+        // return path from mask shape
+        return UIBezierPath(rect: controller.maskRect);
+    }
+
+    func imageCropViewControllerDidCancelCrop(_ controller: RSKImageCropViewController) {
         dismiss(animated: true, completion: nil)
     }
-    
+}
+
+extension DetailViewController: UITextViewDelegate {
+
+    func textViewDidEndEditing(_ textView: UITextView) {
+        if let answerView = answerView as? TextResponseView {
+
+            playHudAnimation()
+            data.textResponse = answerView.textView.text
+            delegate?.initiateSave()
+        }
+    }
 }

@@ -27,10 +27,12 @@ PODS:
     - nanopb/encode (= 0.3.8)
   - nanopb/decode (0.3.8)
   - nanopb/encode (0.3.8)
+  - RSKImageCropper (2.0.0)
 
 DEPENDENCIES:
   - Firebase/Core
   - Firebase/Database
+  - RSKImageCropper
 
 SPEC CHECKSUMS:
   Firebase: 632216af3ed7f31e3be34776947fdc7546cfb572
@@ -41,7 +43,8 @@ SPEC CHECKSUMS:
   GoogleToolboxForMac: 2501e2ad72a52eb3dfe7bd9aee7dad11b858bd20
   leveldb-library: 08cba283675b7ed2d99629a4bc5fd052cd2bb6a5
   nanopb: 5601e6bca2dbf1ed831b519092ec110f66982ca3
+  RSKImageCropper: d9a1acbc0600bf8decc8f0d21895872c99a9e4cf
 
-PODFILE CHECKSUM: ec0273384dd3e76a2a6e3ed7d69815bcb7a23122
+PODFILE CHECKSUM: c363e2d27234cb52465b98c0103de228c32e645c
 
 COCOAPODS: 1.4.0

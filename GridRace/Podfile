@@ -8,4 +8,5 @@ target 'GridRace' do
   # Pods for GridRace
   pod 'Firebase/Core'
   pod 'Firebase/Database'
+  pod 'RSKImageCropper'
 end

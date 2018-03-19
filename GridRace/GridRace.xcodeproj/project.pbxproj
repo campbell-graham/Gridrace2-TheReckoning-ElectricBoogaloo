@@ -35,6 +35,7 @@
 		AA29A1382043D0CF00DF3A1C /* DetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA29A1372043D0CF00DF3A1C /* DetailViewController.swift */; };
 		AA29C93B204763FE00BE0BAE /* TextFieldViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA29C93A204763FE00BE0BAE /* TextFieldViewController.swift */; };
 		AA29C93D2047644300BE0BAE /* TextResponseView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA29C93C2047644300BE0BAE /* TextResponseView.swift */; };
+		AA3D6E792058DCF900D6632A /* ImageResponseView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA3D6E782058DCF900D6632A /* ImageResponseView.swift */; };
 		AAD4B5DA204FB5DA005FBB24 /* SummaryViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAD4B5D9204FB5DA005FBB24 /* SummaryViewController.swift */; };
 		D6F94F1D7B3362B4876B49D2 /* Pods_GridRace.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F14FC92863F3F26C6A68D7BE /* Pods_GridRace.framework */; };
 /* End PBXBuildFile section */
@@ -71,6 +72,7 @@
 		AA29A1372043D0CF00DF3A1C /* DetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailViewController.swift; sourceTree = "<group>"; };
 		AA29C93A204763FE00BE0BAE /* TextFieldViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TextFieldViewController.swift; sourceTree = "<group>"; };
 		AA29C93C2047644300BE0BAE /* TextResponseView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TextResponseView.swift; sourceTree = "<group>"; };
+		AA3D6E782058DCF900D6632A /* ImageResponseView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageResponseView.swift; sourceTree = "<group>"; };
 		AAD4B5D9204FB5DA005FBB24 /* SummaryViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SummaryViewController.swift; sourceTree = "<group>"; };
 		F14FC92863F3F26C6A68D7BE /* Pods_GridRace.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_GridRace.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -165,6 +167,7 @@
 				AA1CD2C3204519E10007A0C1 /* HudView.swift */,
 				AA23CECD2048F5FD0003E1D2 /* PanView.swift */,
 				370BBB01204E16D2005C4A56 /* TimerView.swift */,
+				AA3D6E782058DCF900D6632A /* ImageResponseView.swift */,
 				AA090A9C2050BFC60086C3CD /* ObjectiveSummaryCollectionViewCell.swift */,
 				AA25AD6F20521DB200A983BD /* CustomFlowLayout.swift */,
 				37A8B93A20588E65000BC310 /* ObjectiveInformationCollectionViewCell.swift */,
@@ -281,12 +284,14 @@
 			inputPaths = (
 				"${SRCROOT}/Pods/Target Support Files/Pods-GridRace/Pods-GridRace-frameworks.sh",
 				"${BUILT_PRODUCTS_DIR}/GoogleToolboxForMac/GoogleToolboxForMac.framework",
+				"${BUILT_PRODUCTS_DIR}/RSKImageCropper/RSKImageCropper.framework",
 				"${BUILT_PRODUCTS_DIR}/leveldb-library/leveldb.framework",
 				"${BUILT_PRODUCTS_DIR}/nanopb/nanopb.framework",
 			);
 			name = "[CP] Embed Pods Frameworks";
 			outputPaths = (
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/GoogleToolboxForMac.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/RSKImageCropper.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/leveldb.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/nanopb.framework",
 			);
@@ -325,6 +330,7 @@
 				AA23CECE2048F5FD0003E1D2 /* PanView.swift in Sources */,
 				3712BDEB2044E9EB00B4C9B3 /* CustomTableHeaderView.swift in Sources */,
 				3712BDE92044D9A300B4C9B3 /* MainViewController.swift in Sources */,
+				AA3D6E792058DCF900D6632A /* ImageResponseView.swift in Sources */,
 				37F2A7F22043DA7E00BA283B /* ObjectiveTableViewCell.swift in Sources */,
 				AA25AD7020521DB200A983BD /* CustomFlowLayout.swift in Sources */,
 				3712BDEF2045174100B4C9B3 /* Objective.swift in Sources */,
