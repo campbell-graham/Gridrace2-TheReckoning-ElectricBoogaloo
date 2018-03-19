@@ -56,6 +56,10 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        
+        let timerView = TimerView(frame: CGRect(x: 0, y: 0, width: 100, height: 44))
+        navigationItem.leftBarButtonItem = UIBarButtonItem(customView: timerView)
+        
         //styling
         view.backgroundColor = AppColors.backgroundColor
         
