@@ -36,8 +36,10 @@ class ObjectiveSummaryCollectionViewCell: UICollectionViewCell {
 
         responseTextView.layer.masksToBounds = true
         responseTextView.isEditable = false
-        responseTextView.isEditable = false
         responseTextView.layer.cornerRadius = contentView.layer.cornerRadius
+        responseTextView.backgroundColor = AppColors.cellColor
+        responseTextView.textContainerInset = UIEdgeInsets(top: 8, left: 8, bottom: 8, right: 8)
+        responseTextView.textColor = AppColors.textPrimaryColor
 
        
 
@@ -50,7 +52,7 @@ class ObjectiveSummaryCollectionViewCell: UICollectionViewCell {
         NSLayoutConstraint.activate([
 
             nameLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
-            nameLabel.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 16),
+            nameLabel.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 8),
             nameLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
             nameLabel.heightAnchor.constraint(equalToConstant: 44),
 
@@ -60,13 +62,13 @@ class ObjectiveSummaryCollectionViewCell: UICollectionViewCell {
             descLabel.heightAnchor.constraint(equalToConstant: 65),
 
             responseImageView.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
-            responseImageView.topAnchor.constraint(equalTo: descLabel.bottomAnchor, constant: 16),
-            responseImageView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -16),
+            responseImageView.topAnchor.constraint(equalTo: descLabel.bottomAnchor, constant: 8),
+            responseImageView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -8),
             responseImageView.widthAnchor.constraint(equalTo: responseImageView.heightAnchor),
 
             responseTextView.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
-            responseTextView.topAnchor.constraint(equalTo: descLabel.bottomAnchor, constant: 16),
-            responseTextView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -16),
+            responseTextView.topAnchor.constraint(equalTo: descLabel.bottomAnchor, constant: 8),
+            responseTextView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -8),
             responseTextView.widthAnchor.constraint(equalTo: responseTextView.heightAnchor)
 
         ])

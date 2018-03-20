@@ -117,16 +117,17 @@ class SummaryViewController: UIViewController, UICollectionViewDelegate, UIColle
         collectionView.dataSource = self
         collectionView.backgroundColor = AppColors.backgroundColor
         collectionView.register(ObjectiveSummaryCollectionViewCell.self, forCellWithReuseIdentifier: "objectiveCell")
+        
+        mainTextLabel.text = "Main Objectives: "
+        bonusTextLabel.text = "Bonus Objectives: "
+        timeTextLabel.text = "Time: "
+        pointsTextLabel.text = "Points: "
+        timeValueLabel.text = "\(finishTime)"
     }
 
     func updateLabels() {
-        mainTextLabel.text = "Main Objectives: "
         mainValueLabel.text = "\(completedPlacesObjectivesCount)/\(mainObjectives.count)"
-        bonusTextLabel.text = "Bonus Objectives: "
         bonusValueLabel.text = "\(completedBonusObjectivesCount)/\(bonusObjectives.count)"
-        timeTextLabel.text = "Time: "
-        timeValueLabel.text = "\(finishTime)"
-        pointsTextLabel.text = "Points: "
         pointsValueLabel.text = "\(userPoints)/\(totalPoints)"
     }
 
