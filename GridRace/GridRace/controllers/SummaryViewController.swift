@@ -8,8 +8,8 @@
 
 import UIKit
 
-class SummaryViewController: UIViewController, UICollectionViewDelegate, UICollectionViewDataSource {
-
+class SummaryViewController: UIViewController, UICollectionViewDelegate, UICollectionViewDataSource, UITableViewDelegate, UITableViewDataSource {
+    
     let mainTextLabel = UILabel()
     let mainValueLabel = UILabel()
     let bonusTextLabel = UILabel()
@@ -18,6 +18,7 @@ class SummaryViewController: UIViewController, UICollectionViewDelegate, UIColle
     let timeValueLabel = UILabel()
     let pointsTextLabel = UILabel()
     let pointsValueLabel = UILabel()
+    let summaryTableView = UITableView()
     let finishTime = AppResources.timeToDisplay
     let objectCount = 10
     var isCorrect = true
@@ -108,6 +109,12 @@ class SummaryViewController: UIViewController, UICollectionViewDelegate, UIColle
         title = "Summary"
         edgesForExtendedLayout = []
         view.backgroundColor = AppColors.backgroundColor
+        
+        //table view set up
+        summaryTableView.delegate = self
+        summaryTableView.dataSource = self
+        summaryTableView.register(UITableViewCell.self, forCellReuseIdentifier: "cell")
+        summaryTableView.tableFooterView = UIView()
 
         setUpLayout()
 
@@ -132,40 +139,47 @@ class SummaryViewController: UIViewController, UICollectionViewDelegate, UIColle
     }
 
     func setUpLayout() {
-        for view in [mainTextLabel, mainValueLabel, bonusTextLabel, bonusValueLabel, timeTextLabel,
-                     timeValueLabel, pointsTextLabel, pointsValueLabel] {
-
-            view.translatesAutoresizingMaskIntoConstraints = false
-            self.view.addSubview(view)
-            view.textColor = AppColors.textPrimaryColor
-        }
-
-        collectionView.translatesAutoresizingMaskIntoConstraints = false
+        
+        //add items to view
+        view.addSubview(summaryTableView)
         view.addSubview(collectionView)
+        
+        //layout constraints
+        
+        summaryTableView.translatesAutoresizingMaskIntoConstraints = false
+        collectionView.translatesAutoresizingMaskIntoConstraints = false
 
-        let views: [String: Any] = [
-            "mainTextLabel" : mainTextLabel,
-            "mainValueLabel" : mainValueLabel,
-            "bonusTextLabel" : bonusTextLabel,
-            "bonusValueLabel" : bonusValueLabel,
-            "timeTextLabel" : timeTextLabel,
-            "timeValueLabel" : timeValueLabel,
-            "pointsTextLabel" : pointsTextLabel,
-            "pointsValueLabel" : pointsValueLabel
-        ]
+//        let views: [String: Any] = [
+//            "mainTextLabel" : mainTextLabel,
+//            "mainValueLabel" : mainValueLabel,
+//            "bonusTextLabel" : bonusTextLabel,
+//            "bonusValueLabel" : bonusValueLabel,
+//            "timeTextLabel" : timeTextLabel,
+//            "timeValueLabel" : timeValueLabel,
+//            "pointsTextLabel" : pointsTextLabel,
+//            "pointsValueLabel" : pointsValueLabel
+//        ]
+//
+//        var constraints = NSLayoutConstraint.constraints(withVisualFormat: "V:|-32-[mainTextLabel]-[bonusTextLabel]-[timeTextLabel]-[pointsTextLabel]", options: [.alignAllLeading], metrics: nil, views: views)
+//        constraints += NSLayoutConstraint.constraints(withVisualFormat: "V:[mainValueLabel]-[bonusValueLabel]-[timeValueLabel]-[pointsValueLabel]", options: [.alignAllLeading], metrics: nil, views: views)
+//        constraints += NSLayoutConstraint.constraints(withVisualFormat: "H:|-50-[mainTextLabel]-32-[mainValueLabel]", options: [.alignAllTop, .alignAllBottom], metrics: nil, views: views)
 
-        var constraints = NSLayoutConstraint.constraints(withVisualFormat: "V:|-32-[mainTextLabel]-[bonusTextLabel]-[timeTextLabel]-[pointsTextLabel]", options: [.alignAllLeading], metrics: nil, views: views)
-        constraints += NSLayoutConstraint.constraints(withVisualFormat: "V:[mainValueLabel]-[bonusValueLabel]-[timeValueLabel]-[pointsValueLabel]", options: [.alignAllLeading], metrics: nil, views: views)
-        constraints += NSLayoutConstraint.constraints(withVisualFormat: "H:|-50-[mainTextLabel]-32-[mainValueLabel]", options: [.alignAllTop, .alignAllBottom], metrics: nil, views: views)
+        NSLayoutConstraint.activate([
+            //summary table view
+            summaryTableView.topAnchor.constraint(equalTo: view.topAnchor),
+            summaryTableView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            summaryTableView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            summaryTableView.bottomAnchor.constraint(equalTo: collectionView.topAnchor),
 
-        constraints += [
+            
+            
+            //collection view
             collectionView.heightAnchor.constraint(equalToConstant: 350),
             collectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             collectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             collectionView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor)
-        ]
-        
-        NSLayoutConstraint.activate(constraints)
+            ])
+    
     }
     
     override func viewDidLayoutSubviews() {
@@ -273,5 +287,17 @@ class SummaryViewController: UIViewController, UICollectionViewDelegate, UIColle
     func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
         animateCells()
     }
+    
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return 4
+    }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = summaryTableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath)
+        cell.textLabel?.text = "hey"
+        return cell
+    }
+    
+
 
 }
