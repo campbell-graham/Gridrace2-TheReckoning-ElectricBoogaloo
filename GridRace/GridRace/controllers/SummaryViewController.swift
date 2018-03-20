@@ -115,6 +115,7 @@ class SummaryViewController: UIViewController, UICollectionViewDelegate, UIColle
         summaryTableView.dataSource = self
         summaryTableView.register(UITableViewCell.self, forCellReuseIdentifier: "cell")
         summaryTableView.tableFooterView = UIView()
+        summaryTableView.backgroundColor = AppColors.backgroundColor
 
         setUpLayout()
 
@@ -294,7 +295,10 @@ class SummaryViewController: UIViewController, UICollectionViewDelegate, UIColle
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = summaryTableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath)
+        cell.selectionStyle = .none
         cell.textLabel?.text = "hey"
+        cell.textLabel?.textColor = AppColors.textPrimaryColor
+        cell.backgroundColor = AppColors.backgroundColor
         return cell
     }
     
