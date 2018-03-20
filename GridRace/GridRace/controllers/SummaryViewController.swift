@@ -172,6 +172,41 @@ class SummaryViewController: UIViewController, UICollectionViewDelegate, UIColle
             collectionView.collectionViewLayout = CustomFlowLayout(collectionViewWidth: collectionView.frame.width, collectionViewHeigth: collectionView.frame.height, itemSizePoints: 250)
         }
     }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        animateCells()
+    }
+    
+    func animateCells() {
+        guard collectionView.numberOfItems(inSection: 0) > 0 else {
+            return
+        }
+        
+        if let layout = collectionView.collectionViewLayout as? CustomFlowLayout {
+            let pageWidth = layout.pageWidth()
+            //get index of the current cell using the page width (which is the difference the leading side of each cell)
+            let index: Int = Int(round(collectionView.contentOffset.x / pageWidth))
+            
+            if index < 0 || index > allObjectives.count - 1 {
+                return
+            }
+            
+            let indexForVisibleCell = IndexPath(item: index, section: 0)
+            //save the middle cell
+            let cellToZoom = collectionView.cellForItem(at: indexForVisibleCell) as! ObjectiveSummaryCollectionViewCell
+            
+            //animate cells, making the middle one larger and all the other ones their original size in case they have changed
+            UIView.animate(withDuration: 0.05, animations: {
+                for (cell) in (self.collectionView.visibleCells as! [ObjectiveSummaryCollectionViewCell]) {
+                    if cell == cellToZoom {
+                        cell.transform = CGAffineTransform(scaleX: 1.1, y: 1.1)
+                    } else {
+                        cell.transform = CGAffineTransform(scaleX: 1, y: 1)
+                    }
+                }
+            })
+        }
+    }
 
     //MARK:- collectionView delegate methods
 
@@ -182,10 +217,12 @@ class SummaryViewController: UIViewController, UICollectionViewDelegate, UIColle
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         let data = allData.first(where: {$0.objectiveID == allObjectives[indexPath.row].id})
         data!.correct = !(data!.correct)
-
-        updateLabels()
         
-        collectionView.reloadData()
+        let cell = collectionView.cellForItem(at: indexPath) as! ObjectiveSummaryCollectionViewCell
+        
+        cell.contentView.backgroundColor = data!.correct ? #colorLiteral(red: 0.1529411765, green: 0.6823529412, blue: 0.3764705882, alpha: 1) : #colorLiteral(red: 0.7529411765, green: 0.2235294118, blue: 0.168627451, alpha: 1)
+        
+        updateLabels()
     }
 
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
@@ -219,15 +256,22 @@ class SummaryViewController: UIViewController, UICollectionViewDelegate, UIColle
             cell.responseTextView.text = userData?.textResponse != nil ? userData?.textResponse : "No Response Given"
         }
 
-        if userData!.correct {
-            cell.contentView.backgroundColor = #colorLiteral(red: 0.1529411765, green: 0.6823529412, blue: 0.3764705882, alpha: 1)
-            
-        } else {
-            cell.contentView.backgroundColor = #colorLiteral(red: 0.7529411765, green: 0.2235294118, blue: 0.168627451, alpha: 1)
-            
-        }
+        cell.contentView.backgroundColor = userData!.correct ? #colorLiteral(red: 0.1529411765, green: 0.6823529412, blue: 0.3764705882, alpha: 1) : #colorLiteral(red: 0.7529411765, green: 0.2235294118, blue: 0.168627451, alpha: 1)
 
         return cell
+    }
+    
+    func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
+        guard decelerate else {
+            return
+        }
+        animateCells()
+        
+    }
+    
+    
+    func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
+        animateCells()
     }
 
 }
