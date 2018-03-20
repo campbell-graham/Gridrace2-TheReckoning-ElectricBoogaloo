@@ -255,6 +255,8 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return objectivesToDisplay.count
     }
+
+    var smallFrame = CGRect(x: 0, y: 0, width: 0, height: 0)
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         let objective = objectivesToDisplay[indexPath.row]
@@ -268,17 +270,24 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
         if let detailView = detailViewController!.view {
 
             changeNavBar()
+            let cell = collectionView.cellForItem(at: indexPath)!
+            let currentCellFrame = cell.frame
+            smallFrame = CGRect(x: ((view.frame.width / 2) - (currentCellFrame.width / 2)), y: collectionView.frame.minY + currentCellFrame.minY, width: currentCellFrame.width, height: currentCellFrame.height)
 
-            let currentCell = collectionView.cellForItem(at: indexPath)
-            let smallFrame = CGRect(x: ((view.frame.width / 2) - (currentCell!.frame.width / 2)), y: collectionView.frame.minY + currentCell!.frame.minY, width: currentCell!.frame.width, height: currentCell!.frame.height)
-            detailView.frame = smallFrame
-            view.addSubview(detailView)
+            let snapShotImageView = UIImageView(frame: smallFrame)
+            snapShotImageView.image = cell.contentView.takeSnapshot(bounds: cell.bounds)
+            view.addSubview(snapShotImageView)
+            let fullFrame = CGRect(x: 0, y: self.view.frame.height * 0.4, width: self.view.frame.width, height: self.view.frame.height * 0.6)
 
-            let fullFrame = CGRect(x: 0, y: view.frame.height * 0.4, width: view.frame.width, height: view.frame.height * 0.6)
+
             UIView.animate(withDuration: 0.3, animations: {
 
+                snapShotImageView.frame = fullFrame
+            }, completion: { _ in
+
+                snapShotImageView.removeFromSuperview()
+                self.view.addSubview(detailView)
                 detailView.frame = fullFrame
-                detailView.layoutIfNeeded()
             })
         }
     }
@@ -302,24 +311,22 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
 
     @objc func dismissDetailView() {
 
-
-
         if let detailView = detailViewController!.view {
-            let currentCell = collectionView.cellForItem(at: IndexPath(indexes: [0,0]))
 
-            let smallFrame = CGRect(x: ((view.frame.width / 2) - (currentCell!.frame.width / 2)), y: collectionView.frame.minY + currentCell!.frame.minY, width: currentCell!.frame.width, height: currentCell!.frame.height)
+            let snapShotImageView = UIImageView(frame: detailView.frame)
+            snapShotImageView.image = detailView.takeSnapshot(bounds: detailView.bounds)
+            view.addSubview(snapShotImageView)
+
+            self.detailViewController?.removeFromParentViewController()
+            self.detailViewController?.view.removeFromSuperview()
+            self.detailViewController = nil
 
             UIView.animate(withDuration: 0.3, animations:{
 
-                detailView.frame = smallFrame
-                detailView.layoutIfNeeded()
-
+                snapShotImageView.frame = self.smallFrame
             }, completion: { _ in 
 
-
-                self.detailViewController?.removeFromParentViewController()
-                self.detailViewController?.view.removeFromSuperview()
-                self.detailViewController = nil
+                snapShotImageView.removeFromSuperview()
                 self.changeNavBar()
             })
 
