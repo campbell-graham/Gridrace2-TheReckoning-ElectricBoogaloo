@@ -24,7 +24,13 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
     var showUserLocationButton = UIButton(type: UIButtonType.system)
 
     var timerView = TimerView(frame: CGRect(x: 0, y: 0, width: 100, height: 44))
+
+    //used for animation
     var detailViewController: DetailViewController?
+    var detailView: UIView?
+    var cellFrame: CGRect?
+    let detailViewSnapShotImageView = UIImageView()
+    let cellSnapShotImageView = UIImageView()
     
     lazy var collectionView: UICollectionView = {
         
@@ -43,8 +49,7 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
         segmentedControl.tintColor = AppColors.orangeHighlightColor
         segmentedControl.setTitleTextAttributes([NSAttributedStringKey.font: UIFont.systemFont(ofSize: 15, weight: .medium)],
                                                 for: .normal)
-        
-        
+
         super.init(nibName: nil, bundle: nil)
         
         //tell segmented control to update every time selected value is changed
@@ -256,9 +261,10 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
         return objectivesToDisplay.count
     }
 
-    var smallFrame = CGRect(x: 0, y: 0, width: 0, height: 0)
+
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+
         let objective = objectivesToDisplay[indexPath.row]
         let data = AppResources.ObjectiveData.sharedObjectives.data.first(where: {$0.objectiveID == objective.id})
 
@@ -266,29 +272,12 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
         detailViewController?.delegate = self
         addChildViewController(detailViewController!)
         detailViewController!.didMove(toParentViewController: self)
+        detailView = detailViewController!.view
 
-        if let detailView = detailViewController!.view {
+        if detailView != nil {
 
             changeNavBar()
-            let cell = collectionView.cellForItem(at: indexPath)!
-            let currentCellFrame = cell.frame
-            smallFrame = CGRect(x: ((view.frame.width / 2) - (currentCellFrame.width / 2)), y: collectionView.frame.minY + currentCellFrame.minY, width: currentCellFrame.width, height: currentCellFrame.height)
-
-            let snapShotImageView = UIImageView(frame: smallFrame)
-            snapShotImageView.image = cell.contentView.takeSnapshot(bounds: cell.bounds)
-            view.addSubview(snapShotImageView)
-            let fullFrame = CGRect(x: 0, y: self.view.frame.height * 0.4, width: self.view.frame.width, height: self.view.frame.height * 0.6)
-
-
-            UIView.animate(withDuration: 0.3, animations: {
-
-                snapShotImageView.frame = fullFrame
-            }, completion: { _ in
-
-                snapShotImageView.removeFromSuperview()
-                self.view.addSubview(detailView)
-                detailView.frame = fullFrame
-            })
+            growCellAnimation(cell: collectionView.cellForItem(at: indexPath)!)
         }
     }
 
@@ -311,30 +300,10 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
 
     @objc func dismissDetailView() {
 
-        if let detailView = detailViewController!.view {
+        if detailView != nil {
 
-            let snapShotImageView = UIImageView(frame: detailView.frame)
-            snapShotImageView.image = detailView.takeSnapshot(bounds: detailView.bounds)
-            view.addSubview(snapShotImageView)
-
-            self.detailViewController?.removeFromParentViewController()
-            self.detailViewController?.view.removeFromSuperview()
-            self.detailViewController = nil
-
-            UIView.animate(withDuration: 0.3, animations:{
-
-                snapShotImageView.frame = self.smallFrame
-            }, completion: { _ in 
-
-                snapShotImageView.removeFromSuperview()
-                self.changeNavBar()
-            })
-
-
-
+            shrinkCellAnimation()
         }
-
-        
     }
 
     @objc func completeObjective() {
@@ -342,6 +311,84 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
         detailViewController!.saveData()
         dismissDetailView()
         collectionView.reloadData()
+    }
+
+    private func growCellAnimation(cell: UICollectionViewCell) {
+
+        if cellFrame == nil {
+
+            cellFrame = CGRect(x: ((view.frame.width / 2) - (cell.frame.width / 2)), y: collectionView.frame.minY + cell.frame.minY, width: cell.frame.width, height: cell.frame.height)
+        }
+
+        // take snapshot of tapped cell
+        cellSnapShotImageView.frame = cellFrame!
+        cellSnapShotImageView.image = cell.contentView.takeSnapshot(bounds: cell.bounds)
+
+        //add the detailView and assign it a frame with 60% height
+        self.view.addSubview(detailView!)
+        detailView!.frame = CGRect(x: 0, y: self.view.frame.height * 0.4, width: self.view.frame.width, height: self.view.frame.height * 0.6)
+
+        //take snapShot of full detailView
+        detailViewSnapShotImageView.frame = detailView!.frame
+        detailViewSnapShotImageView.image = detailView!.takeSnapshot(bounds: detailView!.bounds)
+
+        //shrink detailView snapshot to size of cell
+        detailViewSnapShotImageView.frame = cellFrame!
+
+        //hide the full sized detail view
+        detailView!.isHidden = true
+
+        //add both snapshots to view (cell snap ontop)
+        view.addSubview(detailViewSnapShotImageView)
+        view.addSubview(cellSnapShotImageView)
+
+        // ensure both snapshots are opaque
+        self.cellSnapShotImageView.alpha = 1
+        self.detailViewSnapShotImageView.alpha = 1
+
+        UIView.animate(withDuration: 0.3, animations: {
+
+            //make cell snapShot transparent to reveal detailView snapshot below it
+            self.cellSnapShotImageView.alpha = 0
+
+            //grow both snapshots to full size
+            self.cellSnapShotImageView.frame = self.detailView!.frame
+            self.detailViewSnapShotImageView.frame = self.detailView!.frame
+        }, completion: { _ in
+
+            //remove the snapshots
+            self.detailViewSnapShotImageView.removeFromSuperview()
+            self.cellSnapShotImageView.removeFromSuperview()
+
+            //reveal the detailView
+            self.detailView!.isHidden = false
+        })
+    }
+
+    private  func shrinkCellAnimation() {
+
+        view.addSubview(cellSnapShotImageView)
+        view.addSubview(detailViewSnapShotImageView)
+
+        self.detailViewController!.removeFromParentViewController()
+        self.detailView!.removeFromSuperview()
+        self.detailViewController = nil
+        self.detailView = nil
+
+        self.cellSnapShotImageView.alpha = 1
+        self.detailViewSnapShotImageView.alpha = 1
+
+        UIView.animate(withDuration: 0.5, animations:{
+
+            self.detailViewSnapShotImageView.alpha = 0
+            self.cellSnapShotImageView.frame = self.cellFrame!
+            self.detailViewSnapShotImageView.frame = self.cellFrame!
+        }, completion: { _ in
+
+            self.detailViewSnapShotImageView.removeFromSuperview()
+            self.cellSnapShotImageView.removeFromSuperview()
+            self.changeNavBar()
+        })
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
