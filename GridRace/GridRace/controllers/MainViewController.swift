@@ -143,7 +143,9 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
     }
     
     override func viewDidLayoutSubviews() {
-        collectionView.collectionViewLayout = CustomFlowLayout(collectionViewWidth: collectionView.frame.width, collectionViewHeigth: collectionView.frame.height, itemSizePoints: 200)
+        if !(collectionView.collectionViewLayout is CustomFlowLayout) {
+            collectionView.collectionViewLayout = CustomFlowLayout(collectionViewWidth: collectionView.frame.width, collectionViewHeigth: collectionView.frame.height, itemSizePoints: 200)
+        }
         collectionView.layoutIfNeeded()
         mapView.layoutMargins = UIEdgeInsets(top: 16, left: 16, bottom: collectionView.frame.height, right: 16)
         
@@ -171,10 +173,12 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
         }
 
         collectionView.reloadData()
+        collectionView.performBatchUpdates({}, completion: { (finished) in
+                self.animateCells()
+        })
     }
     
     func animateCells() {
-        
         guard collectionView.numberOfItems(inSection: 0) > 0 else {
             return
         }
@@ -252,11 +256,26 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        
         let objective = objectivesToDisplay[indexPath.row]
         let data = AppResources.ObjectiveData.sharedObjectives.data.first(where: {$0.objectiveID == objective.id})
         let destination = MapViewController(objective: objective, data: data!)
         destination.delegate = self
-        navigationController?.pushViewController(destination, animated: true)
+        
+        //check if final task
+        if indexPath.row == objectivesToDisplay.count - 1 {
+            let confirmationAlert = UIAlertController(title: "End Race?", message: "This is the final task for the race, and once you complete it you will not be able to complete any previous objectives. Are you sure you want to continue?", preferredStyle: UIAlertControllerStyle.alert)
+            
+            confirmationAlert.addAction(UIAlertAction(title: "Yes", style: .default, handler: { (action: UIAlertAction!) in
+                self.navigationController?.pushViewController(destination, animated: true)
+            }))
+            
+            confirmationAlert.addAction(UIAlertAction(title: "No", style: .cancel, handler: nil))
+            
+            present(confirmationAlert, animated: true, completion: nil)
+        } else {
+            navigationController?.pushViewController(destination, animated: true)
+        }
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
@@ -267,6 +286,8 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
         cell.descriptionLabel.text = objective.desc
         if (AppResources.ObjectiveData.sharedObjectives.data.first(where: {$0.objectiveID == objective.id})?.completed)! {
             cell.tickImageView.tintColor = AppColors.greenHighlightColor
+        } else {
+            cell.tickImageView.tintColor = AppColors.textSecondaryColor
         }
         return cell
     }
@@ -320,7 +341,6 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
     }
     
     func randBetween(lower: Int, upper: Int) -> Double {
-        
         return Double( Int(arc4random_uniform(UInt32(upper - lower))) + lower)
     }
     
