@@ -252,7 +252,7 @@ class SummaryViewController: UIViewController, UICollectionViewDelegate, UIColle
         if objective.answerType == .photo {
 
             cell.responseImageView.isHidden = false
-            cell.responseTextView.isHidden = true
+            cell.responseTextLabel.isHidden = true
 
             if let path =  userData?.imageResponseURL?.path {
 
@@ -265,10 +265,10 @@ class SummaryViewController: UIViewController, UICollectionViewDelegate, UIColle
             cell.responseImageView.contentMode = .scaleAspectFit
         } else if objective.answerType == .text {
 
-            cell.responseTextView.isHidden = false
+            cell.responseTextLabel.isHidden = false
             cell.responseImageView.isHidden = true
 
-            cell.responseTextView.text = userData?.textResponse != nil ? userData?.textResponse : "No Response Given"
+            cell.responseTextLabel.text = userData?.textResponse != nil ? userData?.textResponse : "No Response Given"
         }
 
         cell.contentView.backgroundColor = userData!.correct ? #colorLiteral(red: 0.1529411765, green: 0.6823529412, blue: 0.3764705882, alpha: 1) : #colorLiteral(red: 0.7529411765, green: 0.2235294118, blue: 0.168627451, alpha: 1)
