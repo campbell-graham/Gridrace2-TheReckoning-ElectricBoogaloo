@@ -14,6 +14,7 @@ class MapViewController: UIViewController, CLLocationManagerDelegate, MKMapViewD
     var objectives = [Objective]()
     let objective: Objective
     private let mapView = MKMapView()
+    private let clearView = UIView()
     private var zoomToUser = false
 
     //user location
@@ -41,7 +42,8 @@ class MapViewController: UIViewController, CLLocationManagerDelegate, MKMapViewD
 
         self.objective = objective
         self.objectives = AppResources.ObjectiveData.sharedObjectives.objectives
-        self.detailViewController = DetailViewController(objective: objective, data: data )
+
+        self.detailViewController = DetailViewController( objective: objective, data: data )
         super.init(nibName: nil, bundle: nil)
 
         addChildViewController(detailViewController)
@@ -66,26 +68,28 @@ class MapViewController: UIViewController, CLLocationManagerDelegate, MKMapViewD
         let collapseGestureRecogniser = UIPanGestureRecognizer(target: self, action: #selector(collapseAnimationHandler))
         detailViewController.panView.addGestureRecognizer(collapseGestureRecogniser)
 
-        // show user, and zoom to objective location
-        mapView.showsUserLocation = true
+        clearView.backgroundColor = UIColor.clear
 
-        addCircles()
-        getUserLocation()
-        showLocations()
+        // show user, and zoom to objective location
+        //mapView.showsUserLocation = true
+
+        //addCircles()
+        //getUserLocation()
+        //showLocations()
     }
 
     private func setUpLayout() {
 
-        for view in [ mapView, collapsableDetailsView] {
+        for view in [ clearView, collapsableDetailsView] {
             view.translatesAutoresizingMaskIntoConstraints = false
             self.view.addSubview(view)
         }
 
         NSLayoutConstraint.activate([
-            mapView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
-            mapView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            mapView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            mapView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
+            clearView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            clearView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            clearView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            clearView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
 
             collapsableDetailsView.heightAnchor.constraint(equalToConstant: view.frame.height * 0.6),
             collapsableDetailsView.leadingAnchor.constraint(equalTo: view.leadingAnchor),

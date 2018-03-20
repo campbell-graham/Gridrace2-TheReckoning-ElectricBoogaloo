@@ -22,6 +22,7 @@ class ObjectiveInformationCollectionViewCell: UICollectionViewCell {
         layer.cornerRadius = 10
         
         backgroundColor = AppColors.backgroundColor
+        contentView.backgroundColor = AppColors.backgroundColor
         
         //image view set up
         tickImageView.image = #imageLiteral(resourceName: "tick").withRenderingMode(.alwaysTemplate)
