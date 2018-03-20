@@ -189,12 +189,13 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
             return
         }
 
-        
-        updateSelectedObjectiveType()
+        collectionView.reloadData()
+        collectionView.performBatchUpdates({}, completion: { (finished) in
+                self.animateCells()
+        })
     }
     
     func animateCells() {
-        
         guard collectionView.numberOfItems(inSection: 0) > 0 else {
             return
         }
@@ -305,7 +306,9 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
         cell.pointsLabel.text = "\(objective.points) Points"
         cell.descriptionLabel.text = objective.desc
         if (AppResources.ObjectiveData.sharedObjectives.data.first(where: {$0.objectiveID == objective.id})?.completed)! {
-            cell.tickImageView.tintColor = AppColors.orangeHighlightColor
+            cell.tickImageView.tintColor = AppColors.greenHighlightColor
+        } else {
+            cell.tickImageView.tintColor = AppColors.textSecondaryColor
         }
         return cell
     }
@@ -359,7 +362,6 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
     }
     
     func randBetween(lower: Int, upper: Int) -> Double {
-        
         return Double( Int(arc4random_uniform(UInt32(upper - lower))) + lower)
     }
     

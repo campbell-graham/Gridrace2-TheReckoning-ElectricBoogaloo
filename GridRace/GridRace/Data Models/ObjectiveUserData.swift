@@ -16,7 +16,7 @@ class ObjectiveUserData: Codable {
     var imageResponseURL: URL?
     var textResponse: String?
 
-    var correct = true
+    var correct = false
     
     var completed: Bool {
 

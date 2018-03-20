@@ -28,7 +28,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         UINavigationBar.appearance().tintColor = AppColors.textPrimaryColor
         UINavigationBar.appearance().titleTextAttributes = [NSAttributedStringKey.foregroundColor : AppColors.orangeHighlightColor]
         UINavigationBar.appearance().largeTitleTextAttributes = [NSAttributedStringKey.foregroundColor : AppColors.orangeHighlightColor]
-        UITabBar.appearance().tintColor = AppColors.greenHighlightColor
+        UITabBar.appearance().tintColor = AppColors.orangeHighlightColor
         
         //create date if first time launching
         if !UserDefaults.standard.bool(forKey: "HasLaunchedOnce") {
