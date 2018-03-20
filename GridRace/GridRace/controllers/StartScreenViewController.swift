@@ -71,7 +71,7 @@ class StartScreenViewController: UIViewController {
     @objc func startRace() {
         //add date object to user defaults
         UserDefaults.standard.set(Date(), forKey: "FirstLaunchDate")
-        
+        UserDefaults.standard.set(true, forKey: "HasLaunchedOnce")
         present(UINavigationController(rootViewController: MainViewController()), animated: true, completion: nil)
     }
     

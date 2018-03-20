@@ -32,7 +32,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         //create date if first time launching
         if !UserDefaults.standard.bool(forKey: "HasLaunchedOnce") {
-            UserDefaults.standard.set(true, forKey: "HasLaunchedOnce")
             window?.rootViewController = StartScreenViewController()
         } else {
             window?.rootViewController = UINavigationController(rootViewController: MainViewController())
