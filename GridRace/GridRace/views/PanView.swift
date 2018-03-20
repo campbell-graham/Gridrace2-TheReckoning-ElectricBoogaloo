@@ -16,10 +16,10 @@ class PanView: UIView {
     override init(frame: CGRect) {
         super.init(frame: frame)
 
-        backgroundColor = AppColors.cellColor
+        backgroundColor = AppColors.backgroundColor
 
         touchView.backgroundColor = AppColors.textPrimaryColor
-        touchView.layer.cornerRadius = 8
+        touchView.layer.cornerRadius = 2
         touchView.layer.masksToBounds = false
 
         touchView.translatesAutoresizingMaskIntoConstraints = false
@@ -28,8 +28,8 @@ class PanView: UIView {
         NSLayoutConstraint.activate([
             touchView.centerXAnchor.constraint(equalTo: self.centerXAnchor),
             touchView.centerYAnchor.constraint(equalTo: self.centerYAnchor),
-            touchView.heightAnchor.constraint(equalToConstant: 10),
-            touchView.widthAnchor.constraint(equalToConstant: 64),
+            touchView.heightAnchor.constraint(equalToConstant: 6),
+            touchView.widthAnchor.constraint(equalToConstant: 80),
         ])
 
     }
