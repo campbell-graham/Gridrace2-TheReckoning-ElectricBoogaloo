@@ -152,7 +152,7 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
 
         if !(collectionView.collectionViewLayout is CustomFlowLayout) {
             collectionView.collectionViewLayout = CustomFlowLayout(collectionViewWidth: collectionView.frame.width, collectionViewHeigth: collectionView.frame.height, itemSizePoints: 200)
-            collectionView.layoutIfNeeded()
+//            collectionView.layoutIfNeeded()
             mapView.layoutMargins = UIEdgeInsets(top: 16, left: 16, bottom: collectionView.frame.height, right: 16)
             
             let blurEffect = UIBlurEffect(style: UIBlurEffectStyle.light)
@@ -354,14 +354,19 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
             //grow both snapshots to full size
             self.cellSnapShotImageView.frame = self.detailView!.frame
             self.detailViewSnapShotImageView.frame = self.detailView!.frame
-        }, completion: { _ in
 
+            self.mapView.layoutMargins = UIEdgeInsets(top: 16, left: 16, bottom: self.detailView!.frame.height - 16, right: 16)
+            self.zoomToLocation()
+        }, completion: { _ in
+            
             //remove the snapshots
             self.detailViewSnapShotImageView.removeFromSuperview()
             self.cellSnapShotImageView.removeFromSuperview()
 
             //reveal the detailView
             self.detailView!.isHidden = false
+
+
         })
     }
 
@@ -383,11 +388,17 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
             self.detailViewSnapShotImageView.alpha = 0
             self.cellSnapShotImageView.frame = self.cellFrame!
             self.detailViewSnapShotImageView.frame = self.cellFrame!
+
+            self.mapView.layoutMargins = UIEdgeInsets(top: 16, left: 16, bottom: self.collectionView.frame.height, right: 16)
+            self.zoomToLocation()
+
         }, completion: { _ in
 
             self.detailViewSnapShotImageView.removeFromSuperview()
             self.cellSnapShotImageView.removeFromSuperview()
             self.changeNavBar()
+
+
         })
     }
     
