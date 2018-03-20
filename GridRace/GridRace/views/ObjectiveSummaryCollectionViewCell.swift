@@ -31,11 +31,13 @@ class ObjectiveSummaryCollectionViewCell: UICollectionViewCell {
         descLabel.isEditable = false
 
         responseImageView.contentMode = .scaleAspectFit
+        responseImageView.layer.cornerRadius = contentView.layer.cornerRadius
+        responseImageView.layer.masksToBounds = true
 
-        responseTextView.layer.cornerRadius = 15
         responseTextView.layer.masksToBounds = true
         responseTextView.isEditable = false
         responseTextView.isEditable = false
+        responseTextView.layer.cornerRadius = contentView.layer.cornerRadius
 
        
 
@@ -59,13 +61,13 @@ class ObjectiveSummaryCollectionViewCell: UICollectionViewCell {
 
             responseImageView.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
             responseImageView.topAnchor.constraint(equalTo: descLabel.bottomAnchor, constant: 16),
-            responseImageView.widthAnchor.constraint(equalToConstant: (contentView.frame.width * 0.7) ),
-            responseImageView.heightAnchor.constraint(equalTo: responseImageView.widthAnchor),
+            responseImageView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -16),
+            responseImageView.widthAnchor.constraint(equalTo: responseImageView.heightAnchor),
 
             responseTextView.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
             responseTextView.topAnchor.constraint(equalTo: descLabel.bottomAnchor, constant: 16),
-            responseTextView.widthAnchor.constraint(equalToConstant: (contentView.frame.width * 0.7) ),
-            responseTextView.heightAnchor.constraint(equalTo: responseTextView.widthAnchor, multiplier: 0.5 ),
+            responseTextView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -16),
+            responseTextView.widthAnchor.constraint(equalTo: responseTextView.heightAnchor)
 
         ])
     }

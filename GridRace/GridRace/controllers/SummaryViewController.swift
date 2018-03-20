@@ -169,7 +169,7 @@ class SummaryViewController: UIViewController, UICollectionViewDelegate, UIColle
     
     override func viewDidLayoutSubviews() {
         if !(collectionView.collectionViewLayout is CustomFlowLayout) {
-            collectionView.collectionViewLayout = CustomFlowLayout(collectionViewWidth: collectionView.frame.width, collectionViewHeigth: collectionView.frame.height, itemSizePoints: 250)
+            collectionView.collectionViewLayout = CustomFlowLayout(collectionViewWidth: collectionView.frame.width, collectionViewHeigth: collectionView.frame.height, itemSizePoints: 200)
         }
     }
     
