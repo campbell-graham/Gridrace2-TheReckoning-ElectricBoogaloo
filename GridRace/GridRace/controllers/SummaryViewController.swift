@@ -159,7 +159,7 @@ class SummaryViewController: UIViewController, UICollectionViewDelegate, UIColle
         constraints += NSLayoutConstraint.constraints(withVisualFormat: "H:|-50-[mainTextLabel]-32-[mainValueLabel]", options: [.alignAllTop, .alignAllBottom], metrics: nil, views: views)
 
         constraints += [
-            collectionView.topAnchor.constraint(equalTo: pointsTextLabel.bottomAnchor),
+            collectionView.heightAnchor.constraint(equalToConstant: 350),
             collectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             collectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             collectionView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor)
@@ -170,7 +170,7 @@ class SummaryViewController: UIViewController, UICollectionViewDelegate, UIColle
     
     override func viewDidLayoutSubviews() {
         if !(collectionView.collectionViewLayout is CustomFlowLayout) {
-            collectionView.collectionViewLayout = CustomFlowLayout(collectionViewWidth: collectionView.frame.width, collectionViewHeigth: collectionView.frame.height, itemSizePoints: 200)
+            collectionView.collectionViewLayout = CustomFlowLayout(collectionViewWidth: collectionView.frame.width, collectionViewHeigth: collectionView.frame.height, itemSizePoints: 220)
         }
     }
     
@@ -233,7 +233,6 @@ class SummaryViewController: UIViewController, UICollectionViewDelegate, UIColle
         let userData = allData.first(where: {$0.objectiveID == objective.id})
 
         cell.nameLabel.text = objective.name
-        cell.descLabel.text = objective.desc
 
         if objective.answerType == .photo {
 
