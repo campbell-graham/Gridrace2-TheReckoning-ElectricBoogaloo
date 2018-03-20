@@ -232,6 +232,11 @@ class SummaryViewController: UIViewController, UICollectionViewDelegate, UIColle
 
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         let data = allData.first(where: {$0.objectiveID == allObjectives[indexPath.row].id})
+        
+        guard (data?.completed)! else {
+            return
+        }
+        
         data!.correct = !(data!.correct)
         
         let cell = collectionView.cellForItem(at: indexPath) as! ObjectiveSummaryCollectionViewCell
