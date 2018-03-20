@@ -248,28 +248,34 @@ class SummaryViewController: UIViewController, UICollectionViewDelegate, UIColle
         let userData = allData.first(where: {$0.objectiveID == objective.id})
 
         cell.nameLabel.text = objective.name
-
-        if objective.answerType == .photo {
-
-            cell.responseImageView.isHidden = false
-            cell.responseTextLabel.isHidden = true
-
-            if let path =  userData?.imageResponseURL?.path {
-
-                cell.responseImageView.image = UIImage(contentsOfFile: path)?.resized(withBounds: CGSize(width: 200, height: 200))
-            } else {
-
-                cell.responseImageView.image = #imageLiteral(resourceName: "nothing")
-                cell.responseImageView.tintColor = AppColors.cellColor
+        
+        if (userData?.completed)! {
+            
+            if objective.answerType == .photo {
+                
+                cell.responseImageView.isHidden = false
+                cell.responseTextLabel.isHidden = true
+                
+                if let path =  userData?.imageResponseURL?.path {
+                    cell.responseImageView.image = UIImage(contentsOfFile: path)?.resized(withBounds: CGSize(width: 200, height: 200))
+                } else {
+                    cell.responseImageView.image = #imageLiteral(resourceName: "nothing")
+                    cell.responseImageView.tintColor = AppColors.cellColor
+                }
+                cell.responseImageView.contentMode = .scaleAspectFit
+            } else if objective.answerType == .text {
+                
+                cell.responseTextLabel.isHidden = false
+                cell.responseImageView.isHidden = true
+                
+                cell.responseTextLabel.text = userData?.textResponse
             }
-            cell.responseImageView.contentMode = .scaleAspectFit
-        } else if objective.answerType == .text {
-
-            cell.responseTextLabel.isHidden = false
+        } else {
             cell.responseImageView.isHidden = true
-
-            cell.responseTextLabel.text = userData?.textResponse != nil ? userData?.textResponse : "No Response Given"
+            cell.responseTextLabel.isHidden = false
+            cell.responseTextLabel.text = "No Response Given"
         }
+
 
         cell.contentView.backgroundColor = userData!.correct ? #colorLiteral(red: 0.1529411765, green: 0.6823529412, blue: 0.3764705882, alpha: 1) : #colorLiteral(red: 0.7529411765, green: 0.2235294118, blue: 0.168627451, alpha: 1)
 
