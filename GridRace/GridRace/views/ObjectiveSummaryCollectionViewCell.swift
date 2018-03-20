@@ -64,6 +64,8 @@ class ObjectiveSummaryCollectionViewCell: UICollectionViewCell {
             responseImageView.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
             responseImageView.topAnchor.constraint(equalTo: descLabel.bottomAnchor, constant: 8),
             responseImageView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -8),
+            responseImageView.leadingAnchor.constraint(greaterThanOrEqualTo: contentView.leadingAnchor, constant: 8),
+            responseImageView.leadingAnchor.constraint(lessThanOrEqualTo: contentView.trailingAnchor, constant: -8),
             responseImageView.widthAnchor.constraint(equalTo: responseImageView.heightAnchor),
 
             responseTextView.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
