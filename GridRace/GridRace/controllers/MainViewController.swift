@@ -68,6 +68,12 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
         
         //styling
         view.backgroundColor = AppColors.backgroundColor
+
+        detailViewSnapShotImageView.layer.cornerRadius = 10
+        cellSnapShotImageView.layer.cornerRadius = 10
+
+        detailViewSnapShotImageView.layer.masksToBounds = true
+        cellSnapShotImageView.layer.masksToBounds = true
         
         //map set up
         locationManager.requestAlwaysAuthorization()
@@ -273,6 +279,10 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
         addChildViewController(detailViewController!)
         detailViewController!.didMove(toParentViewController: self)
         detailView = detailViewController!.view
+
+        detailView!.layer.cornerRadius = 10
+        detailView!.layer.masksToBounds = true
+        detailView!.layer.maskedCorners = [.layerMaxXMinYCorner, .layerMinXMinYCorner]
 
         if detailView != nil {
 
