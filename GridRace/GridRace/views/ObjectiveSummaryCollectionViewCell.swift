@@ -15,13 +15,10 @@ class ObjectiveSummaryCollectionViewCell: UICollectionViewCell {
     //let pointLabel = UILabel()
     let responseImageView = UIImageView()
     let responseTextView = UITextView()
-    let checkMarkImageView = UIImageView()
-    let crossImageView = UIImageView()
 
     override init(frame: CGRect) {
         super.init(frame: frame)
 
-        contentView.backgroundColor = AppColors.cellColor
         contentView.layer.cornerRadius = 15
         contentView.layer.masksToBounds = false
 
@@ -40,15 +37,9 @@ class ObjectiveSummaryCollectionViewCell: UICollectionViewCell {
         responseTextView.isEditable = false
         responseTextView.isEditable = false
 
-        checkMarkImageView.tintColor = #colorLiteral(red: 0.2745098174, green: 0.4862745106, blue: 0.1411764771, alpha: 1)
-        checkMarkImageView.image = #imageLiteral(resourceName: "tick").withRenderingMode(.alwaysTemplate)
-        checkMarkImageView.contentMode = .scaleAspectFit
-        crossImageView.tintColor = #colorLiteral(red: 0, green: 0, blue: 0, alpha: 1)
-        crossImageView.image = #imageLiteral(resourceName: "cross-1").withRenderingMode(.alwaysTemplate)
-        crossImageView.contentMode = .scaleAspectFit
+       
 
-        for view in [nameLabel, descLabel, responseImageView, responseTextView,
-            checkMarkImageView, crossImageView] as! [UIView] {
+        for view in [nameLabel, descLabel, responseImageView, responseTextView] as! [UIView] {
 
                 view.translatesAutoresizingMaskIntoConstraints = false
                 contentView.addSubview(view)
@@ -69,24 +60,13 @@ class ObjectiveSummaryCollectionViewCell: UICollectionViewCell {
             responseImageView.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
             responseImageView.topAnchor.constraint(equalTo: descLabel.bottomAnchor, constant: 16),
             responseImageView.widthAnchor.constraint(equalToConstant: (contentView.frame.width * 0.7) ),
-            responseImageView.heightAnchor.constraint(equalTo: responseImageView.widthAnchor, multiplier: 0.5 ),
+            responseImageView.heightAnchor.constraint(equalTo: responseImageView.widthAnchor),
 
             responseTextView.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
             responseTextView.topAnchor.constraint(equalTo: descLabel.bottomAnchor, constant: 16),
             responseTextView.widthAnchor.constraint(equalToConstant: (contentView.frame.width * 0.7) ),
             responseTextView.heightAnchor.constraint(equalTo: responseTextView.widthAnchor, multiplier: 0.5 ),
 
-            crossImageView.trailingAnchor.constraint(equalTo: contentView.centerXAnchor, constant: -8),
-            crossImageView.topAnchor.constraint(equalTo: responseImageView.bottomAnchor, constant: 8),
-            crossImageView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
-            crossImageView.widthAnchor.constraint(equalToConstant: (contentView.frame.width * 0.2) ),
-            crossImageView.heightAnchor.constraint(equalTo: crossImageView.widthAnchor),
-
-            checkMarkImageView.leadingAnchor.constraint(equalTo: contentView.centerXAnchor, constant: 8),
-            checkMarkImageView.topAnchor.constraint(equalTo: crossImageView.topAnchor),
-            checkMarkImageView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
-            checkMarkImageView.widthAnchor.constraint(equalToConstant: (contentView.frame.width * 0.2) ),
-            checkMarkImageView.heightAnchor.constraint(equalTo: crossImageView.widthAnchor)
         ])
     }
 

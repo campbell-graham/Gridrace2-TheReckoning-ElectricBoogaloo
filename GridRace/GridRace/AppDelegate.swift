@@ -26,9 +26,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         //global styling
         UINavigationBar.appearance().barTintColor = AppColors.backgroundColor
         UINavigationBar.appearance().tintColor = AppColors.textPrimaryColor
-        UINavigationBar.appearance().titleTextAttributes = [NSAttributedStringKey.foregroundColor : AppColors.greenHighlightColor]
-        UINavigationBar.appearance().largeTitleTextAttributes = [NSAttributedStringKey.foregroundColor : AppColors.greenHighlightColor]
-        UITabBar.appearance().tintColor = AppColors.greenHighlightColor
+        UINavigationBar.appearance().titleTextAttributes = [NSAttributedStringKey.foregroundColor : AppColors.orangeHighlightColor]
+        UINavigationBar.appearance().largeTitleTextAttributes = [NSAttributedStringKey.foregroundColor : AppColors.orangeHighlightColor]
+        UITabBar.appearance().tintColor = AppColors.orangeHighlightColor
         
         //create date if first time launching
         if !UserDefaults.standard.bool(forKey: "HasLaunchedOnce") {

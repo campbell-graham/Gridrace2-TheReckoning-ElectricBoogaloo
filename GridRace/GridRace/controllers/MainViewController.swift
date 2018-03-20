@@ -174,7 +174,7 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
 
         collectionView.reloadData()
         collectionView.performBatchUpdates({}, completion: { (finished) in
-            self.animateCells()
+                self.animateCells()
         })
     }
     
