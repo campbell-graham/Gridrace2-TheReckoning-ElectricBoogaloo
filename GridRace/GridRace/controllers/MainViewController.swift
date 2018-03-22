@@ -287,7 +287,7 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
 
         //set up animation panGestureRecognizer
         let collapseGestureRecogniser = UIPanGestureRecognizer(target: self, action: #selector(collapseAnimationHandler))
-        detailViewController!.panView.addGestureRecognizer(collapseGestureRecogniser)
+        detailView!.addGestureRecognizer(collapseGestureRecogniser)
 
         detailView!.layer.cornerRadius = 10
         detailView!.layer.masksToBounds = true
