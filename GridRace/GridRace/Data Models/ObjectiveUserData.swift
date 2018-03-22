@@ -20,14 +20,12 @@ class ObjectiveUserData: Codable {
     
     var completed: Bool {
 
-        if correct {
-            if imageResponseURL != nil || textResponse != nil {
-                return true
-            } else {
-                return false
-            }
+        if imageResponseURL != nil || textResponse != nil {
+            correct = true
+            return true
+        } else {
+            return false
         }
-        return false
     }
     
     init(id: String) {

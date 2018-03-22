@@ -431,5 +431,7 @@ extension DetailViewController: UITextViewDelegate {
             data.textResponse = answerView.textView.text
             delegate?.initiateSave()
         }
+
+        print(data.completed)
     }
 }

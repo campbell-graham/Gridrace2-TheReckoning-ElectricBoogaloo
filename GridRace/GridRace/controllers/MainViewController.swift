@@ -650,13 +650,13 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
         })
     }
 
-    @objc func closeObjective() {
+    /*func closeObjective() {
 
         if detailView != nil {
             shrinkCellAnimation()
             collectionView.reloadData()
         }
-    }
+    } */
 
     private  func shrinkCellAnimation() {
 
@@ -790,6 +790,7 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
 
                 self.detailViewSnapShotImageView.removeFromSuperview()
                 self.cellSnapShotImageView.removeFromSuperview()
+                self.collectionView.reloadData()
             })
         } else {
 
