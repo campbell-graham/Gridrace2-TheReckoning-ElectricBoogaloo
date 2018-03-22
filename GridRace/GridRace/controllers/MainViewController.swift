@@ -191,11 +191,12 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
 
         collectionView.reloadData()
         collectionView.performBatchUpdates({}, completion: { (finished) in
-                self.animateCells()
+                self.animateCellsOnSwipe()
         })
     }
-    
-    func animateCells() {
+
+
+    func animateCellsOnSwipe() {
         guard collectionView.numberOfItems(inSection: 0) > 0 else {
             return
         }
@@ -267,12 +268,12 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
     @objc func showUserLocation() {
         mapView.setRegion(region(for: [MKAnnotation]()), animated: true)
     }
-    
+
+    //MARK:- CollectionView delegate methods
+
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return objectivesToDisplay.count
     }
-
-
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
 
@@ -312,6 +313,16 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
         }
         return cell
     }
+
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
+    //MARK:- Segment Control
+
+    @objc func handleSegmentedChanged() {
+        updateSelectedObjectiveType()
+    }
     
     @objc func updateSelectedObjectiveType() {
         let selectedObjectiveTypeAsString = segmentedControl.titleForSegment(at: segmentedControl.selectedSegmentIndex)?.lowercased()
@@ -321,7 +332,7 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
         //executes when the reload data is complete
         self.collectionView.performBatchUpdates({}, completion: { (finished) in
             self.addMapCircles()
-            self.animateCells()
+            self.animateCellsOnSwipe()
             self.zoomToLocation()
         })
         collectionView.setContentOffset(CGPoint(x:0,y:0), animated: true)
@@ -333,6 +344,8 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
             mapView.userTrackingMode = .none
         }
     }
+
+    //MARK:- Map methods
     
     func addMapCircles() {
         let radius: Double = 150
@@ -380,10 +393,6 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
         return CLLocationCoordinate2D(latitude: lat2 * 180 / Double.pi, longitude: lon2 * 180 / Double.pi)
     }
     
-    @objc func handleSegmentedChanged() {
-        updateSelectedObjectiveType()
-    }
-    
     func region(for annotations: [MKAnnotation]) ->
         MKCoordinateRegion {
             let region: MKCoordinateRegion
@@ -425,10 +434,8 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
             }
             return mapView.regionThatFits(region)
     }
-    
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
+
+    //MARK:- Data saving/loading methods
     
     func objectivesFilePath() -> URL {
         return AppResources.documentsDirectory().appendingPathComponent("Objectives.plist")
@@ -556,7 +563,9 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
         //save this information
         saveLocalData()
     }
-    
+
+    //MARK:- map stuff
+
     func showLocationServicesDeniedAlert() {
         let alert = UIAlertController(
             title: "Location Services Disabled",
@@ -578,22 +587,24 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
             return nil
         }
     }
-    
+
+    //MARK:- scroll view delegate methods
+
     func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
         guard decelerate else {
             return
         }
-        animateCells()
+        animateCellsOnSwipe()
         zoomToLocation()
     }
 
     
     func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
-        animateCells()
+        animateCellsOnSwipe()
         zoomToLocation()
     }
 
-    //Mark- cell animation code
+    //MARK:- cell animation code
 
     private func growCellAnimation(cell: UICollectionViewCell) {
 
@@ -650,14 +661,6 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
         })
     }
 
-    /*func closeObjective() {
-
-        if detailView != nil {
-            shrinkCellAnimation()
-            collectionView.reloadData()
-        }
-    } */
-
     private  func shrinkCellAnimation() {
 
         view.addSubview(cellSnapShotImageView)
@@ -688,7 +691,7 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
         })
     }
 
-    //Mark- pan animation code
+    //MARK:- pan animation code
 
     // the value between the animated views highest possible point and lowest possible point of detailView
     private var totalYMovement: CGFloat = 0.0
