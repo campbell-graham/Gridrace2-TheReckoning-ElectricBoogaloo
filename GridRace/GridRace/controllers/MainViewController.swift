@@ -927,10 +927,6 @@ extension MainViewController: UIGestureRecognizerDelegate{
         }
         return true
     }
-
-    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
-        return true
-    }
 }
 
 protocol ObjectiveTableViewControllerDelegate: class {

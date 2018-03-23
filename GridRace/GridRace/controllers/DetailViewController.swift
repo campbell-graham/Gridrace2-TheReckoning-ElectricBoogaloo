@@ -20,6 +20,7 @@ class DetailViewController: UIViewController {
 
     private let titleLabel = UILabel()
     private let hintImageView = UIImageView()
+    private let completeImageView = UIImageView()
     private let pointLabel = UILabel()
     private let descTextView = UITextView()
     private let responseTextLabel = UILabel()
@@ -113,6 +114,7 @@ class DetailViewController: UIViewController {
         view.backgroundColor = AppColors.backgroundColor
         titleLabel.textColor = AppColors.textPrimaryColor
         hintImageView.tintColor = AppColors.orangeHighlightColor
+        completeImageView.tintColor = data.completed ? AppColors.greenHighlightColor : AppColors.textSecondaryColor
         pointLabel.textColor = AppColors.orangeHighlightColor
         descTextView.textColor = AppColors.textPrimaryColor
         descTextView.backgroundColor = AppColors.backgroundColor
@@ -127,12 +129,14 @@ class DetailViewController: UIViewController {
         // misc stuff
         descTextView.isEditable = false
         hintImageView.contentMode = .scaleAspectFit
+        completeImageView.contentMode = .scaleAspectFit
         answerView.isUserInteractionEnabled = true
 
 
         // set view data
         titleLabel.text = objective.name
         hintImageView.image = #imageLiteral(resourceName: "hint")
+        completeImageView.image = #imageLiteral(resourceName: "tick")
         if objective.answerType == .password {
             descTextView.text = "\(objective.desc) \n attempt: "
         } else {
@@ -171,7 +175,7 @@ class DetailViewController: UIViewController {
 
     private func setUpLayout() {
 
-        for view in [panView, titleLabel, hintImageView, pointLabel, descTextView, responseTextLabel, answerView] {
+        for view in [panView, titleLabel, hintImageView, completeImageView, pointLabel, descTextView, responseTextLabel, answerView] {
             view.translatesAutoresizingMaskIntoConstraints = false
             self.view.addSubview(view)
         }
@@ -194,6 +198,11 @@ class DetailViewController: UIViewController {
             hintImageView.centerYAnchor.constraint(equalTo: titleLabel.centerYAnchor),
             hintImageView.widthAnchor.constraint(equalToConstant: 24),
             hintImageView.heightAnchor.constraint(equalTo: hintImageView.widthAnchor),
+
+            completeImageView.centerXAnchor.constraint(equalTo: view.trailingAnchor, constant: -60),
+            completeImageView.centerYAnchor.constraint(equalTo: titleLabel.centerYAnchor),
+            completeImageView.widthAnchor.constraint(equalToConstant: 44),
+            completeImageView.heightAnchor.constraint(equalTo: completeImageView.widthAnchor),
 
             pointLabel.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 8),
             pointLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
@@ -281,6 +290,7 @@ class DetailViewController: UIViewController {
 
             answerView.textView.text = ""
             data.textResponse = nil
+            completeImageView.tintColor = AppColors.textSecondaryColor
             delegate?.initiateSave()
         }
     }
@@ -404,6 +414,7 @@ RSKImageCropViewControllerDelegate, RSKImageCropViewControllerDataSource {
 
         saveImage(image: resizedImage)
 
+        completeImageView.tintColor = AppColors.greenHighlightColor
         delegate?.initiateSave()
     }
 
@@ -440,6 +451,7 @@ extension DetailViewController: UITextViewDelegate {
         if let answerView = answerView as? TextResponseView {
 
             data.textResponse = answerView.textView.text
+            completeImageView.tintColor = AppColors.greenHighlightColor
             delegate?.initiateSave()
         }
 
