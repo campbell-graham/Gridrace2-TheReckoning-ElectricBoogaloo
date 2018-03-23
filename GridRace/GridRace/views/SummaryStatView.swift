@@ -22,13 +22,15 @@ class SummaryStatView: UIView {
         
         //title label
         titleLabel.textColor = AppColors.textPrimaryColor
-        titleLabel.font = UIFont.systemFont(ofSize: 18, weight: .medium)
+        titleLabel.font = UIFont.systemFont(ofSize: 20, weight: .medium)
         titleLabel.text = "Test"
         
         
         //value label
         valueLabel.textColor = AppColors.orangeHighlightColor
-        valueLabel.font = UIFont.systemFont(ofSize: 24, weight: .semibold)
+        valueLabel.font = UIFont.systemFont(ofSize: 30, weight: .bold)
+        valueLabel.adjustsFontSizeToFitWidth = true
+        valueLabel.minimumScaleFactor = 0.8
         valueLabel.text = "22:32:12"
         
         //add items to view
@@ -41,15 +43,15 @@ class SummaryStatView: UIView {
         
         NSLayoutConstraint.activate([
             //title label
-            titleLabel.topAnchor.constraint(equalTo: topAnchor, constant: 16),
-            titleLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 8),
-            titleLabel.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -8),
+            titleLabel.topAnchor.constraint(equalTo: topAnchor, constant: 24),
+            titleLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 16),
+            titleLabel.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -16),
             
             //value label
-            valueLabel.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 12),
-            valueLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 8),
-            valueLabel.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -8),
-            valueLabel.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -16)
+            valueLabel.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 16),
+            valueLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 16),
+            valueLabel.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -16),
+            valueLabel.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -24)
         ])
     }
     

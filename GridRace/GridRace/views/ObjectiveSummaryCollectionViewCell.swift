@@ -20,18 +20,19 @@ class ObjectiveSummaryCollectionViewCell: UICollectionViewCell {
 
         contentView.layer.cornerRadius = 10
         contentView.layer.masksToBounds = false
-
+        
+        //name label
         nameLabel.textColor = AppColors.textPrimaryColor
         nameLabel.textAlignment = .left
         nameLabel.font = UIFont.boldSystemFont(ofSize: 16)
         nameLabel.setContentHuggingPriority(.required, for: .vertical)
 
+        //response image view
         responseImageView.contentMode = .scaleAspectFit
-        responseImageView.layer.cornerRadius = contentView.layer.cornerRadius
         responseImageView.layer.masksToBounds = true
 
+        //response text label
         responseTextLabel.layer.masksToBounds = true
-        responseTextLabel.layer.cornerRadius = contentView.layer.cornerRadius
         responseTextLabel.backgroundColor = AppColors.cellColor
         responseTextLabel.textColor = AppColors.textPrimaryColor
         responseTextLabel.textAlignment = .center
@@ -52,18 +53,16 @@ class ObjectiveSummaryCollectionViewCell: UICollectionViewCell {
             nameLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -12),
 
             //response image view
-            responseImageView.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
             responseImageView.topAnchor.constraint(equalTo: nameLabel.bottomAnchor, constant: 12),
-            responseImageView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -8),
-            responseImageView.leadingAnchor.constraint(greaterThanOrEqualTo: contentView.leadingAnchor, constant: 8),
-            responseImageView.leadingAnchor.constraint(lessThanOrEqualTo: contentView.trailingAnchor, constant: -8),
-            responseImageView.widthAnchor.constraint(equalTo: responseImageView.heightAnchor),
+            responseImageView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -4),
+            responseImageView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 4),
+            responseImageView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -4),
 
             //response text view
-            responseTextLabel.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
             responseTextLabel.topAnchor.constraint(equalTo: nameLabel.bottomAnchor, constant: 12),
-            responseTextLabel.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -8),
-            responseTextLabel.widthAnchor.constraint(equalTo: responseTextLabel.heightAnchor)
+            responseTextLabel.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -4),
+            responseTextLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 4),
+            responseTextLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -4),
 
         ])
     }
