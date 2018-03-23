@@ -309,16 +309,6 @@ class DetailViewController: UIViewController {
         present(clueViewController, animated: true, completion: nil)
     }
 
-    private func playHudAnimation() {
-
-        let hudView = HudView.hud(inView: navigationController!.view, animated: true)
-        hudView.text = "Complete!"
-
-        DispatchQueue.main.asyncAfter(deadline: .now() + 2.0,
-                                      execute: {
-                                        hudView.hide()
-        })
-    }
 
     private func loadData() {
         switch objective.answerType {
@@ -402,7 +392,6 @@ RSKImageCropViewControllerDelegate, RSKImageCropViewControllerDataSource {
 
         saveImage(image: resizedImage)
 
-        playHudAnimation()
         delegate?.initiateSave()
     }
 
@@ -438,7 +427,6 @@ extension DetailViewController: UITextViewDelegate {
     func textViewDidEndEditing(_ textView: UITextView) {
         if let answerView = answerView as? TextResponseView {
 
-            playHudAnimation()
             data.textResponse = answerView.textView.text
             delegate?.initiateSave()
         }
