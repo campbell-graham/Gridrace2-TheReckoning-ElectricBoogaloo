@@ -28,7 +28,7 @@ class SummaryStatView: UIView {
         
         //value label
         valueLabel.textColor = AppColors.orangeHighlightColor
-        valueLabel.font = UIFont.systemFont(ofSize: 24, weight: .heavy)
+        valueLabel.font = UIFont.systemFont(ofSize: 24, weight: .semibold)
         valueLabel.text = "22:32:12"
         
         //add items to view
