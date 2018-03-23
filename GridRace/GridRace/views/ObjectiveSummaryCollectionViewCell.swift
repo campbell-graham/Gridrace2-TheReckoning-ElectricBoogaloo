@@ -14,6 +14,7 @@ class ObjectiveSummaryCollectionViewCell: UICollectionViewCell {
     let markImageView = UIImageView()
     let responseImageView = UIImageView()
     let responseTextLabel = UILabel()
+    weak var delegate: ObjectiveSummaryCollectionViewCellDelegate?
 
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -33,6 +34,9 @@ class ObjectiveSummaryCollectionViewCell: UICollectionViewCell {
         responseImageView.layer.masksToBounds = true
         responseImageView.layer.cornerRadius = contentView.layer.cornerRadius
         responseImageView.layer.maskedCorners = [.layerMaxXMaxYCorner, .layerMinXMaxYCorner]
+        let tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(openLargeImage))
+        responseImageView.addGestureRecognizer(tapGestureRecognizer)
+        responseImageView.isUserInteractionEnabled = true
 
         //response text label
         responseTextLabel.layer.masksToBounds = true
@@ -81,5 +85,14 @@ class ObjectiveSummaryCollectionViewCell: UICollectionViewCell {
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+    
+    @objc func openLargeImage() {
+        if let image = responseImageView.image {
+            delegate?.openLargeImage(image: image)
+        }
+    }
+}
 
+protocol ObjectiveSummaryCollectionViewCellDelegate: class {
+    func openLargeImage(image: UIImage)
 }

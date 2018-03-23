@@ -8,8 +8,8 @@
 
 import UIKit
 
-class SummaryViewController: UIViewController, UICollectionViewDelegate, UICollectionViewDataSource {
-    
+class SummaryViewController: UIViewController, UICollectionViewDelegate, UICollectionViewDataSource, ObjectiveSummaryCollectionViewCellDelegate {
+   
     let mainStatView = SummaryStatView()
     let bonusStatView = SummaryStatView()
     let timeStatView = SummaryStatView()
@@ -205,7 +205,7 @@ class SummaryViewController: UIViewController, UICollectionViewDelegate, UIColle
 
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "objectiveCell", for: indexPath) as! ObjectiveSummaryCollectionViewCell
-
+        cell.delegate = self
         let objective = allObjectives[indexPath.row]
         let userData = allData.first(where: {$0.objectiveID == objective.id})
 
@@ -248,5 +248,8 @@ class SummaryViewController: UIViewController, UICollectionViewDelegate, UIColle
 
         return cell
     }
-
+    
+    func openLargeImage(image: UIImage) {
+        navigationController?.pushViewController(EnlargenedImageViewController(image: image), animated: true)
+    }
 }

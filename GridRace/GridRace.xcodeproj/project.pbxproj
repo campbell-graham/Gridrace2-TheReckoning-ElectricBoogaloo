@@ -16,6 +16,7 @@
 		377EFC25204FADD900B0D723 /* StartScreenViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 377EFC24204FADD900B0D723 /* StartScreenViewController.swift */; };
 		379AD944204CCD5D00250582 /* ObjectiveUserData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 379AD943204CCD5D00250582 /* ObjectiveUserData.swift */; };
 		37A6331D206486D500E9FAA8 /* SummaryStatView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37A6331C206486D500E9FAA8 /* SummaryStatView.swift */; };
+		37A6331F2064B47200E9FAA8 /* EnlargenedImageViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37A6331E2064B47200E9FAA8 /* EnlargenedImageViewController.swift */; };
 		37A8B93B20588E65000BC310 /* ObjectiveInformationCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37A8B93A20588E65000BC310 /* ObjectiveInformationCollectionViewCell.swift */; };
 		37F2A7EE2043CD0A00BA283B /* AppResources.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37F2A7ED2043CD0A00BA283B /* AppResources.swift */; };
 		37F2A7F22043DA7E00BA283B /* ObjectiveTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37F2A7F12043DA7E00BA283B /* ObjectiveTableViewCell.swift */; };
@@ -52,6 +53,7 @@
 		377EFC24204FADD900B0D723 /* StartScreenViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StartScreenViewController.swift; sourceTree = "<group>"; };
 		379AD943204CCD5D00250582 /* ObjectiveUserData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ObjectiveUserData.swift; sourceTree = "<group>"; };
 		37A6331C206486D500E9FAA8 /* SummaryStatView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SummaryStatView.swift; sourceTree = "<group>"; };
+		37A6331E2064B47200E9FAA8 /* EnlargenedImageViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EnlargenedImageViewController.swift; sourceTree = "<group>"; };
 		37A8B93A20588E65000BC310 /* ObjectiveInformationCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ObjectiveInformationCollectionViewCell.swift; sourceTree = "<group>"; };
 		37F2A7ED2043CD0A00BA283B /* AppResources.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppResources.swift; sourceTree = "<group>"; };
 		37F2A7F12043DA7E00BA283B /* ObjectiveTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ObjectiveTableViewCell.swift; sourceTree = "<group>"; };
@@ -154,6 +156,7 @@
 				377EFC24204FADD900B0D723 /* StartScreenViewController.swift */,
 				AA23AB22204E11FE00F6CCEF /* PasswordViewController.swift */,
 				AAD4B5D9204FB5DA005FBB24 /* SummaryViewController.swift */,
+				37A6331E2064B47200E9FAA8 /* EnlargenedImageViewController.swift */,
 			);
 			path = controllers;
 			sourceTree = "<group>";
@@ -343,6 +346,7 @@
 				AA29A12420438BC500DF3A1C /* AppDelegate.swift in Sources */,
 				AA29C93B204763FE00BE0BAE /* TextFieldViewController.swift in Sources */,
 				37A6331D206486D500E9FAA8 /* SummaryStatView.swift in Sources */,
+				37A6331F2064B47200E9FAA8 /* EnlargenedImageViewController.swift in Sources */,
 				376A5F852043A08D00D69090 /* (null) in Sources */,
 				AA1CD2C2204513820007A0C1 /* UIImageExtension.swift in Sources */,
 				AA29C93D2047644300BE0BAE /* TextResponseView.swift in Sources */,
