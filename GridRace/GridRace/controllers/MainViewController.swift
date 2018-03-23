@@ -116,6 +116,7 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
         collectionView.delegate = self
         collectionView.dataSource = self
         collectionView.backgroundColor = #colorLiteral(red: 1, green: 1, blue: 1, alpha: 0)
+//        collectionView.decelerationRate = UIScrollViewDecelerationRateFast
         collectionView.register(ObjectiveInformationCollectionViewCell.self, forCellWithReuseIdentifier: "objectiveCell")
         
         //layout constraints
@@ -160,9 +161,23 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
     
     override func viewDidLayoutSubviews() {
 
-        if !(collectionView.collectionViewLayout is CustomFlowLayout) {
-            collectionView.collectionViewLayout = CustomFlowLayout(collectionViewWidth: collectionView.frame.width, collectionViewHeigth: collectionView.frame.height, itemSizePoints: 200)
-//            collectionView.layoutIfNeeded()
+        if let layout = collectionView.collectionViewLayout as? UICollectionViewFlowLayout {
+
+            let collectionViewWidth = collectionView.frame.width
+            let collectionViewHeigth = collectionView.frame.height
+            let itemSizePercent = 200 / collectionViewWidth
+            let cellSpacing = (collectionViewWidth * (1 - itemSizePercent)) / 4
+
+            layout.sectionInset = UIEdgeInsets(top: 10, left: (cellSpacing * 2), bottom: 10, right: (cellSpacing  * 2))
+            layout.scrollDirection = .horizontal
+            layout.minimumInteritemSpacing = cellSpacing
+            layout.minimumLineSpacing = cellSpacing
+            layout.itemSize = CGSize(width: collectionViewWidth * itemSizePercent, height: collectionViewHeigth * 0.8)
+
+        }
+
+        if !(buttonsView.subviews.first is UIVisualEffectView) {
+
             mapView.layoutMargins = UIEdgeInsets(top: 16, left: 16, bottom: collectionView.frame.height, right: 16)
             
             let blurEffect = UIBlurEffect(style: UIBlurEffectStyle.light)
@@ -297,7 +312,7 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
             self.cellSnapShotImageView.removeFromSuperview()
 
             //reveal the detailView
-            self.detailView!.isHidden = false
+            self.detailView?.isHidden = false
         })
 
     }
@@ -619,6 +634,31 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
     func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
         animateCellsOnSwipe()
         zoomToLocation()
+    }
+
+    func scrollViewWillEndDragging(_ scrollView: UIScrollView, withVelocity velocity: CGPoint, targetContentOffset: UnsafeMutablePointer<CGPoint>) {
+
+        let collectionViewWidth = collectionView.frame.width
+        let collectionViewHeigth = collectionView.frame.height
+
+        let itemSizePercent = 200 / collectionViewWidth
+        let cellSpacing = (collectionViewWidth * (1 - itemSizePercent)) / 4
+
+        let itemSize = CGSize(width: collectionViewWidth * itemSizePercent, height: collectionViewHeigth * 0.8)
+
+        var contentOffset = targetContentOffset.pointee
+
+        let origin = contentOffset.x
+
+        let index = (origin / (itemSize.width + cellSpacing)).rounded(.toNearestOrAwayFromZero)
+
+        contentOffset.x = (itemSize.width + cellSpacing) * index
+
+        targetContentOffset.pointee = contentOffset
+
+//        print(contentOffset)
+//        let itemWidth = itemSize.width
+
     }
 
     //MARK:- cell animation code
