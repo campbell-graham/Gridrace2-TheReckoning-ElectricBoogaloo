@@ -16,12 +16,15 @@ class ObjectiveUserData: Codable {
     var imageResponseURL: URL?
     var textResponse: String?
 
-    var correct = false
+    var correct = false {
+        didSet {
+            print("Changed")
+        }
+    }
     
     var completed: Bool {
 
         if imageResponseURL != nil || textResponse != nil {
-            correct = true
             return true
         } else {
             return false

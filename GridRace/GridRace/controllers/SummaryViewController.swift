@@ -231,17 +231,18 @@ class SummaryViewController: UIViewController, UICollectionViewDelegate, UIColle
     }
 
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        let data = allData.first(where: {$0.objectiveID == allObjectives[indexPath.row].id})
-        
-        guard (data?.completed)! else {
-            return
-        }
-        
-        data!.correct = !(data!.correct)
+        let objective = allObjectives[indexPath.row]
+        let userData = allData.first(where: {$0.objectiveID == objective.id})
         
         let cell = collectionView.cellForItem(at: indexPath) as! ObjectiveSummaryCollectionViewCell
         
-        cell.contentView.backgroundColor = data!.correct ? #colorLiteral(red: 0.1529411765, green: 0.6823529412, blue: 0.3764705882, alpha: 1) : #colorLiteral(red: 0.7529411765, green: 0.2235294118, blue: 0.168627451, alpha: 1)
+        guard (userData?.completed)! else {
+            return
+        }
+        
+        userData!.correct = !(userData!.correct)
+        
+        cell.contentView.backgroundColor = userData!.correct ? #colorLiteral(red: 0.1529411765, green: 0.6823529412, blue: 0.3764705882, alpha: 1) : #colorLiteral(red: 0.7529411765, green: 0.2235294118, blue: 0.168627451, alpha: 1)
         
         updateLabels()
     }
