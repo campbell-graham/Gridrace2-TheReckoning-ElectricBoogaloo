@@ -16,6 +16,8 @@ class DetailViewController: UIViewController {
 
     let panView = PanView()
 
+    var keyboardVisibile = false
+
     private let titleLabel = UILabel()
     private let hintImageView = UIImageView()
     private let pointLabel = UILabel()
@@ -252,11 +254,14 @@ class DetailViewController: UIViewController {
         var newFrame = originalViewFrame
         newFrame.origin.y = originalViewFrame.minY-keyboardHeight
         self.view.frame = newFrame
+
+        keyboardVisibile = true
     }
 
     @objc func keyboardWillHide(notification: NSNotification) {
         guard originalViewFrame != .zero else { return }
         self.view.frame = originalViewFrame
+        keyboardVisibile = false
     }
 
 

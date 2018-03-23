@@ -632,8 +632,9 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
         detailView = detailViewController!.view
 
         //set up detailView animation panGestureRecognizer
-        let collapseGestureRecogniser = UIPanGestureRecognizer(target: self, action: #selector(collapseAnimationHandler))
-        detailView!.addGestureRecognizer(collapseGestureRecogniser)
+        let panGestureRecogniser = UIPanGestureRecognizer(target: self, action: #selector(collapseAnimationHandler))
+        panGestureRecogniser.delegate = self
+        detailView!.addGestureRecognizer(panGestureRecogniser)
 
         if cellFrame == nil {
 
@@ -917,7 +918,13 @@ extension MainViewController: UIGestureRecognizerDelegate{
                 if translation.y > -1 {
                     return false
                 }
+
+            } else if let detailVC = detailViewController, detailVC.keyboardVisibile {
+
+                return false
             }
+
+
         }
         return true
     }
