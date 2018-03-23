@@ -158,6 +158,8 @@ class DetailViewController: UIViewController {
             let answerView = self.answerView as! TextResponseView
             answerView.textView.delegate = self
 
+            answerView.deleteButton.addTarget(self, action: #selector(clearTextView), for: .touchUpInside)
+
             // create keyboard state observers/ listeners (to reposition view when keyboard apperas/ disappears)
             NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow), name: NSNotification.Name.UIKeyboardWillShow, object: nil)
 
@@ -272,6 +274,16 @@ class DetailViewController: UIViewController {
 
 
     // MARK: - Private Functions
+
+    @objc func clearTextView() {
+
+        if let answerView = answerView as? TextResponseView {
+
+            answerView.textView.text = ""
+            data.textResponse = nil
+            delegate?.initiateSave()
+        }
+    }
 
     @objc private func clueButtonHandler() {
 
