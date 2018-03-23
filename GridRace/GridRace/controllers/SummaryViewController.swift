@@ -192,7 +192,13 @@ class SummaryViewController: UIViewController, UICollectionViewDelegate, UIColle
         
         userData!.correct = !(userData!.correct)
         
-        cell.contentView.backgroundColor = userData!.correct ? #colorLiteral(red: 0.1529411765, green: 0.6823529412, blue: 0.3764705882, alpha: 1) : #colorLiteral(red: 0.7529411765, green: 0.2235294118, blue: 0.168627451, alpha: 1)
+        if (userData?.correct)! {
+            cell.markImageView.image = #imageLiteral(resourceName: "tick").withRenderingMode(.alwaysTemplate)
+            cell.markImageView.tintColor = AppColors.greenHighlightColor
+        } else {
+            cell.markImageView.image = #imageLiteral(resourceName: "cross-1").withRenderingMode(.alwaysTemplate)
+            cell.markImageView.tintColor = UIColor.red
+        }
         
         updateLabels()
     }
@@ -232,7 +238,13 @@ class SummaryViewController: UIViewController, UICollectionViewDelegate, UIColle
             cell.responseTextLabel.text = "No Response Given"
         }
 
-        cell.contentView.backgroundColor = userData!.correct ? #colorLiteral(red: 0.1529411765, green: 0.6823529412, blue: 0.3764705882, alpha: 1) : #colorLiteral(red: 0.7529411765, green: 0.2235294118, blue: 0.168627451, alpha: 1)
+        if (userData?.correct)! {
+            cell.markImageView.image = #imageLiteral(resourceName: "tick").withRenderingMode(.alwaysTemplate)
+            cell.markImageView.tintColor = AppColors.greenHighlightColor
+        } else {
+            cell.markImageView.image = #imageLiteral(resourceName: "cross-1").withRenderingMode(.alwaysTemplate)
+            cell.markImageView.tintColor = UIColor.red
+        }
 
         return cell
     }

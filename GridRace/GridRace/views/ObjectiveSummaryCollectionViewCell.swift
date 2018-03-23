@@ -11,7 +11,7 @@ import UIKit
 class ObjectiveSummaryCollectionViewCell: UICollectionViewCell {
 
     let nameLabel = UILabel()
-    //let pointLabel = UILabel()
+    let markImageView = UIImageView()
     let responseImageView = UIImageView()
     let responseTextLabel = UILabel()
 
@@ -20,6 +20,7 @@ class ObjectiveSummaryCollectionViewCell: UICollectionViewCell {
 
         contentView.layer.cornerRadius = 10
         contentView.layer.masksToBounds = false
+        contentView.backgroundColor = AppColors.cellColor
         
         //name label
         nameLabel.textColor = AppColors.textPrimaryColor
@@ -43,7 +44,7 @@ class ObjectiveSummaryCollectionViewCell: UICollectionViewCell {
 
        
 
-        for view in [nameLabel, responseImageView, responseTextLabel] as! [UIView] {
+        for view in [nameLabel, responseImageView, responseTextLabel, markImageView] as! [UIView] {
 
                 view.translatesAutoresizingMaskIntoConstraints = false
                 contentView.addSubview(view)
@@ -54,7 +55,13 @@ class ObjectiveSummaryCollectionViewCell: UICollectionViewCell {
             //name label
             nameLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 12),
             nameLabel.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 12),
-            nameLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -12),
+            nameLabel.trailingAnchor.constraint(equalTo: markImageView.leadingAnchor),
+            
+            //mark image view
+            markImageView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -12),
+            markImageView.topAnchor.constraint(equalTo: topAnchor, constant: 12),
+            markImageView.bottomAnchor.constraint(equalTo: nameLabel.bottomAnchor),
+            markImageView.widthAnchor.constraint(equalTo: markImageView.heightAnchor),
 
             //response image view
             responseImageView.topAnchor.constraint(equalTo: nameLabel.bottomAnchor, constant: 12),
