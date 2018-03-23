@@ -236,7 +236,7 @@ class SummaryViewController: UIViewController, UICollectionViewDelegate, UIColle
         
         let cell = collectionView.cellForItem(at: indexPath) as! ObjectiveSummaryCollectionViewCell
         
-        guard (userData?.completed)! else {
+        guard (userData != nil && (userData?.completed)!) else {
             return
         }
         
