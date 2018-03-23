@@ -310,7 +310,12 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
         let data = AppResources.ObjectiveData.sharedObjectives.data.first(where: {$0.objectiveID == objective.id})
 
         cell.titleLabel.text = objective.name
-        cell.pointsLabel.text = "\(objective.points) Points"
+
+        if let adjPoints = data?.adjustedPoints {
+            cell.pointsLabel.text =  "\(adjPoints) Points"
+        } else {
+            cell.pointsLabel.text = "\(objective.points) Points"
+        }
         cell.descriptionLabel.text = objective.desc
         if (data!.completed) {
             cell.tickImageView.tintColor = AppColors.greenHighlightColor
