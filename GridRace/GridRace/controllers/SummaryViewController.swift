@@ -250,6 +250,6 @@ class SummaryViewController: UIViewController, UICollectionViewDelegate, UIColle
     }
     
     func openLargeImage(image: UIImage) {
-        navigationController?.pushViewController(EnlargenedImageViewController(image: image), animated: true)
+        present(EnlargenedImageViewController(image: image), animated: true, completion: nil)
     }
 }
