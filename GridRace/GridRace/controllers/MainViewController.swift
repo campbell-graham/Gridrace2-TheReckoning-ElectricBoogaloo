@@ -319,8 +319,9 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
         }
 
         //add panGesture recogniser to cell
-        let collapseGestureRecogniser = UIPanGestureRecognizer(target: self, action: #selector(collapseAnimationHandler))
-        cell.addGestureRecognizer(collapseGestureRecogniser)
+        let panGestureRecogniser = UIPanGestureRecognizer(target: self, action: #selector(collapseAnimationHandler))
+        panGestureRecogniser.delegate = self
+        cell.addGestureRecognizer(panGestureRecogniser)
 
         return cell
     }
@@ -668,18 +669,24 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
 
     private  func shrinkCellAnimationSetUp() {
 
+        //add the snapshot imageViews back to view
         view.addSubview(cellSnapShotImageView)
         view.addSubview(detailViewSnapShotImageView)
 
+        //retake detail snapshot as it may have changed (we can however reuse the cellSnapshot taken when growing the cell)
+        detailViewSnapShotImageView.image = detailView!.takeSnapshot(bounds: detailView!.bounds)
+
+        // hide the detailView
         self.detailView?.isHidden = true
 
+        // ensure both snapshots are completley opaque
         self.cellSnapShotImageView.alpha = 1
         self.detailViewSnapShotImageView.alpha = 1
     }
 
     //MARK:- pan animation code
 
-    // the value between the animated views highest possible point and lowest possible point of detailView
+    // the value between the animated views highest possible point and lowest possible point
     private var totalYMovement: CGFloat = 0.0
 
     @objc private func collapseAnimationHandler(recognizer: UIPanGestureRecognizer) {
@@ -697,13 +704,11 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
         if recognizer.state == .ended {
 
             let velocity = recognizer.velocity(in: view)
-            // whilst the user is panning translate their finger position the progress of the panning animaition of collapsableView
-            panningEndedWithTranslation(recognizer: recognizer, translation: translation, velocity: velocity)
-
-        }
-
-        else {
             // when the user stops panning, decide where the collapsible view should bounce back to
+            panningEndedWithTranslation(recognizer: recognizer, translation: translation, velocity: velocity)
+        }
+        else {
+            // whilst the user is panning translate the progress of the panning animaition
             panningChangedWithTranslation( recognizer: recognizer, translation: translation)
         }
     }
@@ -714,13 +719,14 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
             return
         }
 
+        // if the user is panning from cell to detailView
         if let cell = recognizer.view as? UICollectionViewCell {
 
             growCellAnimationSetup(cell: cell)
 
             totalYMovement = cellFrame!.minY - detailView!.frame.minY
 
-            collapsableDetailsAnimator = UIViewPropertyAnimator(duration: 0.6, curve: .easeIn, animations: {
+            collapsableDetailsAnimator = UIViewPropertyAnimator(duration: 0.3, curve: .easeIn, animations: {
 
                 //make cell snapShot transparent to reveal detailView snapshot below it
                 self.cellSnapShotImageView.alpha = 0
@@ -729,19 +735,32 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
                 self.cellSnapShotImageView.frame = self.detailView!.frame
                 self.detailViewSnapShotImageView.frame = self.detailView!.frame
 
-                self.mapView.layoutMargins = UIEdgeInsets(top: 16, left: 16, bottom: self.detailView!.frame.height - 16, right: 16)
+                //update maps current content insets
+                self.mapView.layoutMargins = UIEdgeInsets(top: 16, left: 16, bottom: self.detailView!.frame.height + 16, right: 16)
                 self.zoomToLocation()
             })
+
+        // else if user is panning from detailView back down to a cell
         } else {
 
             shrinkCellAnimationSetUp()
 
-            totalYMovement = cellFrame!.minY - detailView!.frame.minY
+            if detailView != nil {
+                totalYMovement = cellFrame!.minY - detailView!.frame.minY
+            }
 
-            collapsableDetailsAnimator = UIViewPropertyAnimator(duration: 0.6, curve: .easeIn, animations: {
+            collapsableDetailsAnimator = UIViewPropertyAnimator(duration: 0.3, curve: .easeIn, animations: {
+
+                //make detailView snapShot transparent to reveal cell snapshot below it
                 self.detailViewSnapShotImageView.alpha = 0
+
+                //shrink both snapshots to cell size
                 self.cellSnapShotImageView.frame = self.cellFrame!
                 self.detailViewSnapShotImageView.frame = self.cellFrame!
+
+                //update maps current content insets
+                self.mapView.layoutMargins = UIEdgeInsets(top: 16, left: 16, bottom: self.collectionView.frame.height + 16, right: 16)
+                self.zoomToLocation()
             })
         }
         return
@@ -758,8 +777,10 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
 
         var progress: CGFloat
 
+
         if recognizer.view is UICollectionViewCell {
 
+            // if user swiping up from cell to detailView (convert from negative number to positive)
             progress = -(translation.y / totalYMovement)
         } else {
 
@@ -776,14 +797,11 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
 
         recognizer.isEnabled = false
 
+        //if user swiping up from cell to DetailView
         if recognizer.view is UICollectionViewCell {
 
-            if ( translation.y <= -totalYMovement / 2) {
-
-                self.collapsableDetailsAnimator!.isReversed = false
-
-                self.mapView.layoutMargins = UIEdgeInsets(top: 16, left: 16, bottom: self.detailView!.frame.height + 16, right: 16)
-                self.zoomToLocation()
+            // if animation progress is over 50% complete finish animation or swiped with high velocity
+            if ( translation.y <= -totalYMovement / 2 || velocity.y <= -100) {
 
                 self.collapsableDetailsAnimator!.addCompletion({ final in
                     recognizer.isEnabled = true
@@ -795,6 +813,8 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
                     //reveal the detailView
                     self.detailView!.isHidden = false
                 })
+
+            // else reverse animation
             } else {
 
                 self.collapsableDetailsAnimator!.isReversed = true
@@ -806,31 +826,46 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
                     self.detailViewSnapShotImageView.removeFromSuperview()
                     self.cellSnapShotImageView.removeFromSuperview()
 
-                    //hide the detailView
-                    self.detailView!.isHidden = true
+                    //remove detailView
+                    if self.detailViewController != nil {
+                        self.detailViewController!.removeFromParentViewController()
+                        self.detailView!.removeFromSuperview()
+                        self.detailViewController = nil
+                        self.detailView = nil
+                    }
+
+                    //reset map content insets
+                    self.mapView.layoutMargins = UIEdgeInsets(top: 16, left: 16, bottom: self.collectionView.frame.height + 16, right: 16)
+                    self.zoomToLocation()
                 })
             }
+        //else if user swiping down from DetailView to cell
         } else {
 
-            if (translation.y >= totalYMovement / 2) {
-
-                self.collapsableDetailsAnimator!.isReversed = false
-
-                self.detailViewController!.removeFromParentViewController()
-                self.detailView!.removeFromSuperview()
-                self.detailViewController = nil
-                self.detailView = nil
-
-                self.mapView.layoutMargins = UIEdgeInsets(top: 16, left: 16, bottom: self.collectionView.frame.height + 16, right: 16)
-                self.zoomToLocation()
+            // if animation progress is over 50% complete finish animation or swiped with high velocity
+            if (translation.y >= totalYMovement / 2 || velocity.y >= 100) {
 
                 self.collapsableDetailsAnimator!.addCompletion({ final in
                     recognizer.isEnabled = true
 
+                    if self.detailViewController != nil {
+
+                        //remove the detailView
+                        self.detailViewController!.removeFromParentViewController()
+                        self.detailView!.removeFromSuperview()
+                        self.detailViewController = nil
+                        self.detailView = nil
+                    }
+
+                    //remove the snapShot views
                     self.detailViewSnapShotImageView.removeFromSuperview()
                     self.cellSnapShotImageView.removeFromSuperview()
+
+                    //reload the collection view cells
                     self.collectionView.reloadData()
                 })
+
+            // else reverse animation
             } else {
 
                 self.collapsableDetailsAnimator!.isReversed = true
@@ -838,12 +873,22 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
                 self.collapsableDetailsAnimator!.addCompletion({ final in
                     recognizer.isEnabled = true
 
-                    self.detailView!.isHidden = false
-                    self.detailViewSnapShotImageView.removeFromSuperview()
-                    self.cellSnapShotImageView.removeFromSuperview()
+                    if self.detailView != nil {
+                        //reveal the detailView
+                        self.detailView!.isHidden = false
+
+                        //reset map content insets
+                        self.mapView.layoutMargins = UIEdgeInsets(top: 16, left: 16, bottom: self.detailView!.frame.height + 16, right: 16)
+                        self.zoomToLocation()
+
+                        //remove the snapshots
+                        self.detailViewSnapShotImageView.removeFromSuperview()
+                        self.cellSnapShotImageView.removeFromSuperview()
+                    }
                 })
             }
         }
+
 
         let velocityVector = CGVector(dx: velocity.x / 100, dy: velocity.y / 100)
         let springParameters = UISpringTimingParameters.init(dampingRatio: 0.8, initialVelocity: velocityVector)
@@ -852,6 +897,24 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
     }
 }
 
+extension MainViewController: UIGestureRecognizerDelegate{
+
+    func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
+
+        // if gestureRecogniser is a panGesture & it is attached to a collectionViewCell
+        if let recognizer = gestureRecognizer as? UIPanGestureRecognizer {
+            if recognizer.view is UICollectionViewCell {
+
+                let translation = recognizer.translation(in: view)
+                //only start the recogniser if the upward translation is greater than 1 (allows user to still scroll through collectionViewCells)
+                if translation.y > -1 {
+                    return false
+                }
+            }
+        }
+        return true
+    }
+}
 
 protocol ObjectiveTableViewControllerDelegate: class {
     func initiateSave()
