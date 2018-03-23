@@ -172,8 +172,6 @@ class SummaryViewController: UIViewController, UICollectionViewDelegate, UIColle
             summaryTableView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             summaryTableView.bottomAnchor.constraint(equalTo: collectionView.topAnchor),
 
-            
-            
             //collection view
             collectionView.heightAnchor.constraint(equalToConstant: 300),
             collectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
