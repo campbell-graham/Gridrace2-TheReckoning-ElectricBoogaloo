@@ -798,7 +798,7 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
         recognizer.isEnabled = false
 
         //if user swiping up from cell to DetailView
-        if recognizer.view is UICollectionViewCell {
+        if let cell = recognizer.view as? UICollectionViewCell {
 
             // if animation progress is over 50% complete finish animation or swiped with high velocity
             if ( translation.y <= -totalYMovement / 2 || velocity.y <= -100) {
@@ -863,6 +863,13 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
 
                     //reload the collection view cells
                     self.collectionView.reloadData()
+
+                    //increase cell scale after collectionView reload
+                    self.collectionView.performBatchUpdates({}, completion: { (finished) in
+
+                        self.animateCellsOnSwipe()
+                    })
+
                 })
 
             // else reverse animation
