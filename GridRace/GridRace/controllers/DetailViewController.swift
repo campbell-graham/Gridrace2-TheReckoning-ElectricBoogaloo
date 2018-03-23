@@ -147,8 +147,6 @@ class DetailViewController: UIViewController {
         let hintGestureRecogniser = UITapGestureRecognizer(target: self, action: #selector(clueButtonHandler))
         hintImageView.addGestureRecognizer(hintGestureRecogniser)
 
-
-
         switch answerView {
         case is ImageResponseView :
 
@@ -262,6 +260,14 @@ class DetailViewController: UIViewController {
         guard originalViewFrame != .zero else { return }
         self.view.frame = originalViewFrame
         keyboardVisibile = false
+    }
+
+    @objc func dismissKeyboard() {
+
+        if keyboardVisibile, let answerView = answerView as? TextResponseView {
+
+            answerView.textView.resignFirstResponder()
+        }
     }
 
 
@@ -439,4 +445,5 @@ extension DetailViewController: UITextViewDelegate {
 
         print(data.completed)
     }
+
 }

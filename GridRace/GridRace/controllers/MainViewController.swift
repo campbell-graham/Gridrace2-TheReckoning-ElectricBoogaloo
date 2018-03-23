@@ -921,11 +921,14 @@ extension MainViewController: UIGestureRecognizerDelegate{
 
             } else if let detailVC = detailViewController, detailVC.keyboardVisibile {
 
+                detailVC.dismissKeyboard()
                 return false
             }
-
-
         }
+        return true
+    }
+
+    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
         return true
     }
 }
