@@ -22,7 +22,6 @@
 		AA1CD2BE2044C6DA0007A0C1 /* ClueViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA1CD2BD2044C6DA0007A0C1 /* ClueViewController.swift */; };
 		AA1CD2C02044D29B0007A0C1 /* GradientView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA1CD2BF2044D29A0007A0C1 /* GradientView.swift */; };
 		AA1CD2C2204513820007A0C1 /* UIImageExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA1CD2C1204513820007A0C1 /* UIImageExtension.swift */; };
-		AA1CD2C4204519E10007A0C1 /* HudView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA1CD2C3204519E10007A0C1 /* HudView.swift */; };
 		AA23AB21204E0A8300F6CCEF /* walking.gpx in Resources */ = {isa = PBXBuildFile; fileRef = AA23AB20204E0A8300F6CCEF /* walking.gpx */; };
 		AA23AB23204E11FE00F6CCEF /* PasswordViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA23AB22204E11FE00F6CCEF /* PasswordViewController.swift */; };
 		AA23CECE2048F5FD0003E1D2 /* PanView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA23CECD2048F5FD0003E1D2 /* PanView.swift */; };
@@ -32,7 +31,6 @@
 		AA29A12B20438BC500DF3A1C /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = AA29A12A20438BC500DF3A1C /* Assets.xcassets */; };
 		AA29A12E20438BC500DF3A1C /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = AA29A12C20438BC500DF3A1C /* LaunchScreen.storyboard */; };
 		AA29A1382043D0CF00DF3A1C /* DetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA29A1372043D0CF00DF3A1C /* DetailViewController.swift */; };
-		AA29C93B204763FE00BE0BAE /* TextFieldViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA29C93A204763FE00BE0BAE /* TextFieldViewController.swift */; };
 		AA29C93D2047644300BE0BAE /* TextResponseView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA29C93C2047644300BE0BAE /* TextResponseView.swift */; };
 		AA2D3F4C206084D4008D07B0 /* UIViewExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA2D3F4B206084D4008D07B0 /* UIViewExtension.swift */; };
 		AA3D6E792058DCF900D6632A /* ImageResponseView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA3D6E782058DCF900D6632A /* ImageResponseView.swift */; };
@@ -57,7 +55,6 @@
 		AA1CD2BD2044C6DA0007A0C1 /* ClueViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClueViewController.swift; sourceTree = "<group>"; };
 		AA1CD2BF2044D29A0007A0C1 /* GradientView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GradientView.swift; sourceTree = "<group>"; };
 		AA1CD2C1204513820007A0C1 /* UIImageExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIImageExtension.swift; sourceTree = "<group>"; };
-		AA1CD2C3204519E10007A0C1 /* HudView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HudView.swift; sourceTree = "<group>"; };
 		AA23AB20204E0A8300F6CCEF /* walking.gpx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = walking.gpx; sourceTree = "<group>"; };
 		AA23AB22204E11FE00F6CCEF /* PasswordViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PasswordViewController.swift; sourceTree = "<group>"; };
 		AA23CECD2048F5FD0003E1D2 /* PanView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PanView.swift; sourceTree = "<group>"; };
@@ -69,7 +66,6 @@
 		AA29A12D20438BC500DF3A1C /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		AA29A12F20438BC500DF3A1C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		AA29A1372043D0CF00DF3A1C /* DetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailViewController.swift; sourceTree = "<group>"; };
-		AA29C93A204763FE00BE0BAE /* TextFieldViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TextFieldViewController.swift; sourceTree = "<group>"; };
 		AA29C93C2047644300BE0BAE /* TextResponseView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TextResponseView.swift; sourceTree = "<group>"; };
 		AA2D3F4B206084D4008D07B0 /* UIViewExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIViewExtension.swift; sourceTree = "<group>"; };
 		AA3D6E782058DCF900D6632A /* ImageResponseView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageResponseView.swift; sourceTree = "<group>"; };
@@ -148,7 +144,6 @@
 				AA29A1372043D0CF00DF3A1C /* DetailViewController.swift */,
 				AA1CD2BD2044C6DA0007A0C1 /* ClueViewController.swift */,
 				3712BDE82044D9A300B4C9B3 /* MainViewController.swift */,
-				AA29C93A204763FE00BE0BAE /* TextFieldViewController.swift */,
 				377EFC24204FADD900B0D723 /* StartScreenViewController.swift */,
 				AA23AB22204E11FE00F6CCEF /* PasswordViewController.swift */,
 				AAD4B5D9204FB5DA005FBB24 /* SummaryViewController.swift */,
@@ -163,7 +158,6 @@
 				37F2A7F12043DA7E00BA283B /* ObjectiveTableViewCell.swift */,
 				AA1CD2BF2044D29A0007A0C1 /* GradientView.swift */,
 				AA29C93C2047644300BE0BAE /* TextResponseView.swift */,
-				AA1CD2C3204519E10007A0C1 /* HudView.swift */,
 				AA23CECD2048F5FD0003E1D2 /* PanView.swift */,
 				370BBB01204E16D2005C4A56 /* TimerView.swift */,
 				AA3D6E782058DCF900D6632A /* ImageResponseView.swift */,
@@ -338,13 +332,11 @@
 				AA1CD2C02044D29B0007A0C1 /* GradientView.swift in Sources */,
 				AAD4B5DA204FB5DA005FBB24 /* SummaryViewController.swift in Sources */,
 				AA29A12420438BC500DF3A1C /* AppDelegate.swift in Sources */,
-				AA29C93B204763FE00BE0BAE /* TextFieldViewController.swift in Sources */,
 				376A5F852043A08D00D69090 /* (null) in Sources */,
 				AA1CD2C2204513820007A0C1 /* UIImageExtension.swift in Sources */,
 				AA29C93D2047644300BE0BAE /* TextResponseView.swift in Sources */,
 				AA2D3F4C206084D4008D07B0 /* UIViewExtension.swift in Sources */,
 				379AD944204CCD5D00250582 /* ObjectiveUserData.swift in Sources */,
-				AA1CD2C4204519E10007A0C1 /* HudView.swift in Sources */,
 				377EFC25204FADD900B0D723 /* StartScreenViewController.swift in Sources */,
 				37A8B93B20588E65000BC310 /* ObjectiveInformationCollectionViewCell.swift in Sources */,
 			);
