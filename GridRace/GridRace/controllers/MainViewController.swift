@@ -277,6 +277,29 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
 
+        growCellAnimationSetup(cell: collectionView.cellForItem(at: indexPath)!)
+
+        UIView.animate(withDuration: 0.3, animations: {
+
+            //make cell snapShot transparent to reveal detailView snapshot below it
+            self.cellSnapShotImageView.alpha = 0
+
+            //grow both snapshots to full size
+            self.cellSnapShotImageView.frame = self.detailView!.frame
+            self.detailViewSnapShotImageView.frame = self.detailView!.frame
+
+            self.mapView.layoutMargins = UIEdgeInsets(top: 16, left: 16, bottom: self.detailView!.frame.height - 16, right: 16)
+            self.zoomToLocation()
+        }, completion: { _ in
+
+            //remove the snapshots
+            self.detailViewSnapShotImageView.removeFromSuperview()
+            self.cellSnapShotImageView.removeFromSuperview()
+
+            //reveal the detailView
+            self.detailView!.isHidden = false
+        })
+
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
