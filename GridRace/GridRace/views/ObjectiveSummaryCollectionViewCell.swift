@@ -30,12 +30,16 @@ class ObjectiveSummaryCollectionViewCell: UICollectionViewCell {
         //response image view
         responseImageView.contentMode = .scaleAspectFit
         responseImageView.layer.masksToBounds = true
+        responseImageView.layer.cornerRadius = contentView.layer.cornerRadius
+        responseImageView.layer.maskedCorners = [.layerMaxXMaxYCorner, .layerMinXMaxYCorner]
 
         //response text label
         responseTextLabel.layer.masksToBounds = true
         responseTextLabel.backgroundColor = AppColors.cellColor
         responseTextLabel.textColor = AppColors.textPrimaryColor
         responseTextLabel.textAlignment = .center
+        responseTextLabel.layer.cornerRadius = contentView.layer.cornerRadius
+        responseTextLabel.layer.maskedCorners = [.layerMaxXMaxYCorner, .layerMinXMaxYCorner]
 
        
 
