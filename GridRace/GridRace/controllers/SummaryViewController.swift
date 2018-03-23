@@ -175,7 +175,7 @@ class SummaryViewController: UIViewController, UICollectionViewDelegate, UIColle
             
             
             //collection view
-            collectionView.heightAnchor.constraint(equalToConstant: 350),
+            collectionView.heightAnchor.constraint(equalToConstant: 300),
             collectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             collectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             collectionView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor)
