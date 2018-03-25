@@ -34,10 +34,12 @@ class EnlargenedImageViewController: UIViewController, UIScrollViewDelegate {
         
         //scroll view set up
         scrollView.delegate = self
+        scrollView.clipsToBounds = true
         scrollView.maximumZoomScale = 2
         scrollView.minimumZoomScale = 1
         scrollView.contentSize = CGSize(width: UIScreen.main.bounds.width * 2, height: UIScreen.main.bounds.height * 2)
         scrollView.isUserInteractionEnabled = true
+        scrollView.bouncesZoom = true
         //this still doesn't want to allow it to scroll for some reason
         scrollView.isScrollEnabled = true
         let pinchGR = UIPinchGestureRecognizer(target: self, action: #selector(zoomImage))
