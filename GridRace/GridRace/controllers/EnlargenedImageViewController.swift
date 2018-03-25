@@ -42,8 +42,8 @@ class EnlargenedImageViewController: UIViewController, UIScrollViewDelegate {
         scrollView.bouncesZoom = true
         //this still doesn't want to allow it to scroll for some reason
         scrollView.isScrollEnabled = true
-        let pinchGR = UIPinchGestureRecognizer(target: self, action: #selector(zoomImage))
-        scrollView.addGestureRecognizer(pinchGR)
+        //let pinchGR = UIPinchGestureRecognizer(target: self, action: #selector(zoomImage))
+        //scrollView.addGestureRecognizer(pinchGR)
         
         //close button set up
         closeButton.setTitle("Close", for: .normal)
@@ -88,6 +88,10 @@ class EnlargenedImageViewController: UIViewController, UIScrollViewDelegate {
     @objc func zoomImage(_ sender: UIPinchGestureRecognizer) {
         imageView.transform = imageView.transform.scaledBy(x: sender.scale, y: sender.scale)
         sender.scale = 1
+    }
+    
+    func viewForZooming(in scrollView: UIScrollView) -> UIView? {
+        return imageView
     }
 
     override func didReceiveMemoryWarning() {
