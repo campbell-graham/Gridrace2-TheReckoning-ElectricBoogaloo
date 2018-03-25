@@ -8,9 +8,10 @@
 
 import UIKit
 
-class EnlargenedImageViewController: UIViewController {
+class EnlargenedImageViewController: UIViewController, UIScrollViewDelegate {
     
     let imageView = UIImageView()
+    let scrollView = UIScrollView()
     let closeButton = UIButton()
     
     init(image: UIImage) {
@@ -28,25 +29,47 @@ class EnlargenedImageViewController: UIViewController {
         //styling
         view.backgroundColor = AppColors.backgroundColor
         
+        //image view set up
+        imageView.isUserInteractionEnabled = true
+        
+        //scroll view set up
+        scrollView.delegate = self
+        scrollView.maximumZoomScale = 3
+        scrollView.minimumZoomScale = 1
+        scrollView.contentSize = CGSize(width: UIScreen.main.bounds.width * 3, height: UIScreen.main.bounds.height * 3)
+        scrollView.isUserInteractionEnabled = true
+        let pinchGR = UIPinchGestureRecognizer(target: self, action: #selector(zoomImage))
+        scrollView.addGestureRecognizer(pinchGR)
+        
         //close button set up
         closeButton.setTitle("Close", for: .normal)
         closeButton.setTitleColor(AppColors.textSecondaryColor, for: .normal)
         closeButton.addTarget(self, action: #selector(closeScreen), for: .touchUpInside)
         
         //add items to view
-        view.addSubview(imageView)
         view.addSubview(closeButton)
+        view.addSubview(scrollView)
+        
+        //add image to scroll view
+        scrollView.addSubview(imageView)
         
         //layout constraints
+        scrollView.translatesAutoresizingMaskIntoConstraints = false
         imageView.translatesAutoresizingMaskIntoConstraints = false
         closeButton.translatesAutoresizingMaskIntoConstraints = false
         
         NSLayoutConstraint.activate([
+            //scroll view
+            scrollView.topAnchor.constraint(equalTo: closeButton.bottomAnchor, constant: 8),
+            scrollView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            scrollView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            scrollView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
+            
             //image view
-            imageView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            imageView.centerYAnchor.constraint(equalTo: view.centerYAnchor),
-            imageView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            imageView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            imageView.centerXAnchor.constraint(equalTo: scrollView.centerXAnchor),
+            imageView.centerYAnchor.constraint(equalTo: scrollView.centerYAnchor),
+            imageView.leadingAnchor.constraint(equalTo: scrollView.leadingAnchor),
+            imageView.trailingAnchor.constraint(equalTo: scrollView.trailingAnchor),
             
             //close button
             closeButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 8),
@@ -56,6 +79,11 @@ class EnlargenedImageViewController: UIViewController {
     
     @objc func closeScreen() {
         dismiss(animated: true, completion: nil)
+    }
+    
+    @objc func zoomImage(_ sender: UIPinchGestureRecognizer) {
+        imageView.transform = imageView.transform.scaledBy(x: sender.scale, y: sender.scale)
+        sender.scale = 1
     }
 
     override func didReceiveMemoryWarning() {
