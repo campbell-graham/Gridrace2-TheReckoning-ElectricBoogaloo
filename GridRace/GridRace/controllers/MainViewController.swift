@@ -86,6 +86,9 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
         mapView.showsUserLocation = true
         mapView.userTrackingMode = .none
         mapView.delegate = self
+
+        let mapTap = UITapGestureRecognizer(target: self, action: #selector(didTapMap))
+        mapView.addGestureRecognizer(mapTap)
         
         //buttons view set up
         showUserLocationButton.setImage(#imageLiteral(resourceName: "directional_arrow").withRenderingMode(.alwaysTemplate), for: .normal)
@@ -93,7 +96,7 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
         showUserLocationButton.addTarget(self, action: #selector(showUserLocation), for: .touchUpInside)
         resetMapButton.setImage(#imageLiteral(resourceName: "target").withRenderingMode(.alwaysTemplate), for: .normal)
         resetMapButton.imageView?.tintColor = UIColor.blue
-        resetMapButton.addTarget(self, action: #selector(zoomToLocation), for: .touchUpInside)
+        resetMapButton.addTarget(self, action: #selector(resetMap), for: .touchUpInside)
         buttonsView.layer.cornerRadius = 16
         //buttonsView.backgroundColor = #colorLiteral(red: 1.0, green: 1.0, blue: 1.0, alpha: 1.0)
 
@@ -161,25 +164,26 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
     
     override func viewDidLayoutSubviews() {
 
-        if let layout = collectionView.collectionViewLayout as? UICollectionViewFlowLayout {
-
-            let collectionViewWidth = collectionView.frame.width
-            let collectionViewHeigth = collectionView.frame.height
-            let itemSizePercent = 200 / collectionViewWidth
-            let cellSpacing = (collectionViewWidth * (1 - itemSizePercent)) / 4
-
-            layout.sectionInset = UIEdgeInsets(top: 10, left: (cellSpacing * 2), bottom: 10, right: (cellSpacing  * 2))
-            layout.scrollDirection = .horizontal
-            layout.minimumInteritemSpacing = cellSpacing
-            layout.minimumLineSpacing = cellSpacing
-            layout.itemSize = CGSize(width: collectionViewWidth * itemSizePercent, height: collectionViewHeigth * 0.8)
-
-        }
-
         if !(buttonsView.subviews.first is UIVisualEffectView) {
 
+            if let layout = collectionView.collectionViewLayout as? UICollectionViewFlowLayout {
+
+                let collectionViewWidth = collectionView.frame.width
+                let collectionViewHeigth = collectionView.frame.height
+                let itemSizePercent = 200 / collectionViewWidth
+                let cellSpacing = (collectionViewWidth * (1 - itemSizePercent)) / 4
+
+                layout.sectionInset = UIEdgeInsets(top: 10, left: (cellSpacing * 2), bottom: 10, right: (cellSpacing  * 2))
+                layout.scrollDirection = .horizontal
+                layout.minimumInteritemSpacing = cellSpacing
+                layout.minimumLineSpacing = cellSpacing
+                layout.itemSize = CGSize(width: collectionViewWidth * itemSizePercent, height: collectionViewHeigth * 0.8)
+
+            }
+
             mapView.layoutMargins = UIEdgeInsets(top: 16, left: 16, bottom: collectionView.frame.height, right: 16)
-            
+            zoomToLocation(objIndex: nil)
+
             let blurEffect = UIBlurEffect(style: UIBlurEffectStyle.light)
             let blurEffectView = UIVisualEffectView(effect: blurEffect)
             blurEffectView.frame = buttonsView.bounds
@@ -241,12 +245,23 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
             })
         }
     }
+
+    @objc func resetMap() {
+
+    zoomToLocation(objIndex: nil)
+    }
     
-    @objc func zoomToLocation() {
-        if let layout = collectionView.collectionViewLayout as? CustomFlowLayout {
-            let pageWidth = layout.pageWidth()
+    func zoomToLocation(objIndex: Int?) {
+        if let layout = collectionView.collectionViewLayout as? UICollectionViewFlowLayout {
+            let pageWidth = layout.minimumLineSpacing + layout.itemSize.width
             //get index of the current cell using the page width (which is the difference the leading side of each cell)
-            let index: Int = Int(round(collectionView.contentOffset.x / pageWidth))
+
+            let index: Int
+            if objIndex == nil {
+                index = Int(round(collectionView.contentOffset.x / pageWidth))
+            } else {
+                index = objIndex!
+            }
             
             if index < 0 || index > objectivesToDisplay.count - 1 {
                 return
@@ -304,7 +319,7 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
             self.detailViewSnapShotImageView.frame = self.detailView!.frame
 
             self.mapView.layoutMargins = UIEdgeInsets(top: 16, left: 16, bottom: self.detailView!.frame.height - 16, right: 16)
-            self.zoomToLocation()
+            self.zoomToLocation(objIndex: nil)
         }, completion: { _ in
 
             //remove the snapshots
@@ -365,7 +380,7 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
         self.collectionView.performBatchUpdates({}, completion: { (finished) in
             self.addMapCircles()
             self.animateCellsOnSwipe()
-            self.zoomToLocation()
+            self.zoomToLocation(objIndex: nil)
         })
         collectionView.setContentOffset(CGPoint(x:0,y:0), animated: true)
         
@@ -400,6 +415,7 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
             let randCenter = locationWithBearing(bearing: randOffset, distanceMeters: randOffset, origin: coordinate)
             
             let circle = MKCircle(center: randCenter, radius: radius as CLLocationDistance)
+
             mapView.add(circle)
             currentAnnotations[objective.id] = circle
         }
@@ -465,6 +481,43 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
                 region = MKCoordinateRegion(center: center, span: span)
             }
             return mapView.regionThatFits(region)
+    }
+
+    @objc func didTapMap(gestureRecognizer: UIGestureRecognizer) {
+
+        let tapPoint: CGPoint = gestureRecognizer.location(in: mapView)
+
+        let tapCoordinate = mapView.convert(tapPoint, toCoordinateFrom: mapView)
+
+        let tapMapPoint = MKMapPointForCoordinate(tapCoordinate)
+
+        for overlay in self.mapView.overlays {
+
+            if (overlay is MKCircle)
+            {
+                if let circle = overlay as? MKCircle {
+
+                    let circleCenterMapPoint = MKMapPointForCoordinate(circle.coordinate)
+
+                    let distanceFromCircleCenter = MKMetersBetweenMapPoints(circleCenterMapPoint, tapMapPoint)
+
+                    if distanceFromCircleCenter <= circle.radius {
+
+                        var index = 0
+                        for obj in objectivesToDisplay {
+
+                            if let circleAnnot = currentAnnotations[obj.id] as? MKCircle, circleAnnot.coordinate == circle.coordinate {
+
+                                self.collectionView.scrollToItem(at: IndexPath(row: index, section: 0), at: .centeredHorizontally, animated: true)
+                                self.zoomToLocation(objIndex: index)
+                            }
+                            index += 1
+                        }
+                        break
+                    }
+                }
+            }
+        }
     }
 
     //MARK:- Data saving/loading methods
@@ -627,13 +680,13 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
             return
         }
         animateCellsOnSwipe()
-        zoomToLocation()
+        zoomToLocation(objIndex: nil)
     }
 
     
     func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
         animateCellsOnSwipe()
-        zoomToLocation()
+        zoomToLocation(objIndex: nil)
     }
 
     func scrollViewWillEndDragging(_ scrollView: UIScrollView, withVelocity velocity: CGPoint, targetContentOffset: UnsafeMutablePointer<CGPoint>) {
@@ -783,7 +836,7 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
 
                 //update maps current content insets
                 self.mapView.layoutMargins = UIEdgeInsets(top: 16, left: 16, bottom: self.detailView!.frame.height + 16, right: 16)
-                self.zoomToLocation()
+                self.zoomToLocation(objIndex: nil)
             })
 
         // else if user is panning from detailView back down to a cell
@@ -806,7 +859,7 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
 
                 //update maps current content insets
                 self.mapView.layoutMargins = UIEdgeInsets(top: 16, left: 16, bottom: self.collectionView.frame.height + 16, right: 16)
-                self.zoomToLocation()
+                self.zoomToLocation(objIndex: nil)
             })
         }
         return
@@ -882,7 +935,7 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
 
                     //reset map content insets
                     self.mapView.layoutMargins = UIEdgeInsets(top: 16, left: 16, bottom: self.collectionView.frame.height + 16, right: 16)
-                    self.zoomToLocation()
+                    self.zoomToLocation(objIndex: nil)
                 })
             }
         //else if user swiping down from DetailView to cell
@@ -932,7 +985,7 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
 
                         //reset map content insets
                         self.mapView.layoutMargins = UIEdgeInsets(top: 16, left: 16, bottom: self.detailView!.frame.height + 16, right: 16)
-                        self.zoomToLocation()
+                        self.zoomToLocation(objIndex: nil)
 
                         //remove the snapshots
                         self.detailViewSnapShotImageView.removeFromSuperview()

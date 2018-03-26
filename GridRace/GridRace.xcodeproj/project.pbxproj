@@ -19,6 +19,7 @@
 		37F2A7EE2043CD0A00BA283B /* AppResources.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37F2A7ED2043CD0A00BA283B /* AppResources.swift */; };
 		37F2A7F22043DA7E00BA283B /* ObjectiveTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37F2A7F12043DA7E00BA283B /* ObjectiveTableViewCell.swift */; };
 		AA090A9D2050BFC60086C3CD /* ObjectiveSummaryCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA090A9C2050BFC60086C3CD /* ObjectiveSummaryCollectionViewCell.swift */; };
+		AA13276320685DFE0008D51A /* CLLocationCoordinate2D_extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA13276220685DFE0008D51A /* CLLocationCoordinate2D_extension.swift */; };
 		AA1CD2BE2044C6DA0007A0C1 /* ClueViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA1CD2BD2044C6DA0007A0C1 /* ClueViewController.swift */; };
 		AA1CD2C02044D29B0007A0C1 /* GradientView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA1CD2BF2044D29A0007A0C1 /* GradientView.swift */; };
 		AA1CD2C2204513820007A0C1 /* UIImageExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA1CD2C1204513820007A0C1 /* UIImageExtension.swift */; };
@@ -52,6 +53,7 @@
 		37F2A7ED2043CD0A00BA283B /* AppResources.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppResources.swift; sourceTree = "<group>"; };
 		37F2A7F12043DA7E00BA283B /* ObjectiveTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ObjectiveTableViewCell.swift; sourceTree = "<group>"; };
 		AA090A9C2050BFC60086C3CD /* ObjectiveSummaryCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ObjectiveSummaryCollectionViewCell.swift; sourceTree = "<group>"; };
+		AA13276220685DFE0008D51A /* CLLocationCoordinate2D_extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CLLocationCoordinate2D_extension.swift; sourceTree = "<group>"; };
 		AA1CD2BD2044C6DA0007A0C1 /* ClueViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClueViewController.swift; sourceTree = "<group>"; };
 		AA1CD2BF2044D29A0007A0C1 /* GradientView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GradientView.swift; sourceTree = "<group>"; };
 		AA1CD2C1204513820007A0C1 /* UIImageExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIImageExtension.swift; sourceTree = "<group>"; };
@@ -175,6 +177,7 @@
 				3712BDEE2045174100B4C9B3 /* Objective.swift */,
 				379AD943204CCD5D00250582 /* ObjectiveUserData.swift */,
 				AA2D3F4B206084D4008D07B0 /* UIViewExtension.swift */,
+				AA13276220685DFE0008D51A /* CLLocationCoordinate2D_extension.swift */,
 			);
 			path = "Data Models";
 			sourceTree = "<group>";
@@ -319,6 +322,7 @@
 				AA090A9D2050BFC60086C3CD /* ObjectiveSummaryCollectionViewCell.swift in Sources */,
 				AA23AB23204E11FE00F6CCEF /* PasswordViewController.swift in Sources */,
 				370BBB02204E16D2005C4A56 /* TimerView.swift in Sources */,
+				AA13276320685DFE0008D51A /* CLLocationCoordinate2D_extension.swift in Sources */,
 				AA1CD2BE2044C6DA0007A0C1 /* ClueViewController.swift in Sources */,
 				37F2A7EE2043CD0A00BA283B /* AppResources.swift in Sources */,
 				AA23CECE2048F5FD0003E1D2 /* PanView.swift in Sources */,
