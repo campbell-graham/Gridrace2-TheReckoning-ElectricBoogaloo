@@ -14,10 +14,9 @@ class DetailViewController: UIViewController {
     var objective: Objective
     var data: ObjectiveUserData
 
-    let panView = PanView()
-
     var keyboardVisibile = false
 
+    private let panView = UIView()
     private let titleLabel = UILabel()
     private let hintImageView = UIImageView()
     private let completeImageView = UIImageView()
@@ -112,6 +111,7 @@ class DetailViewController: UIViewController {
 
         //Colors
         view.backgroundColor = AppColors.backgroundColor
+        panView.backgroundColor = AppColors.textPrimaryColor
         titleLabel.textColor = AppColors.textPrimaryColor
         hintImageView.tintColor = AppColors.orangeHighlightColor
         completeImageView.tintColor = data.completed ? AppColors.greenHighlightColor : AppColors.textSecondaryColor
@@ -127,6 +127,8 @@ class DetailViewController: UIViewController {
         responseTextLabel.font = UIFont.boldSystemFont(ofSize: 20)
 
         // misc stuff
+        panView.layer.cornerRadius = 2
+        panView.layer.masksToBounds = false
         descTextView.isEditable = false
         hintImageView.contentMode = .scaleAspectFit
         completeImageView.contentMode = .scaleAspectFit
@@ -184,10 +186,10 @@ class DetailViewController: UIViewController {
 
         var constraints = ([
 
-            panView.topAnchor.constraint(equalTo: view.topAnchor),
-            panView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            panView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            panView.heightAnchor.constraint(equalToConstant: 30),
+            panView.topAnchor.constraint(equalTo: view.topAnchor, constant: 16),
+            panView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            panView.heightAnchor.constraint(equalToConstant: 6),
+            panView.widthAnchor.constraint(equalToConstant: 80),
 
             titleLabel.topAnchor.constraint(equalTo: panView.bottomAnchor, constant: 16),
             titleLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),

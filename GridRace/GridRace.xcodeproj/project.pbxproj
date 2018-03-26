@@ -25,7 +25,6 @@
 		AA1CD2C2204513820007A0C1 /* UIImageExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA1CD2C1204513820007A0C1 /* UIImageExtension.swift */; };
 		AA23AB21204E0A8300F6CCEF /* walking.gpx in Resources */ = {isa = PBXBuildFile; fileRef = AA23AB20204E0A8300F6CCEF /* walking.gpx */; };
 		AA23AB23204E11FE00F6CCEF /* PasswordViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA23AB22204E11FE00F6CCEF /* PasswordViewController.swift */; };
-		AA23CECE2048F5FD0003E1D2 /* PanView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA23CECD2048F5FD0003E1D2 /* PanView.swift */; };
 		AA25AD7020521DB200A983BD /* CustomFlowLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA25AD6F20521DB200A983BD /* CustomFlowLayout.swift */; };
 		AA29A12420438BC500DF3A1C /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA29A12320438BC500DF3A1C /* AppDelegate.swift */; };
 		AA29A12920438BC500DF3A1C /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = AA29A12720438BC500DF3A1C /* Main.storyboard */; };
@@ -36,6 +35,7 @@
 		AA2D3F4C206084D4008D07B0 /* UIViewExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA2D3F4B206084D4008D07B0 /* UIViewExtension.swift */; };
 		AA3D6E792058DCF900D6632A /* ImageResponseView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA3D6E782058DCF900D6632A /* ImageResponseView.swift */; };
 		AAD4B5DA204FB5DA005FBB24 /* SummaryViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAD4B5D9204FB5DA005FBB24 /* SummaryViewController.swift */; };
+		AAE63FA3206890DD0029DFE3 /* MapButtonsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAE63FA2206890DD0029DFE3 /* MapButtonsView.swift */; };
 		D6F94F1D7B3362B4876B49D2 /* Pods_GridRace.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F14FC92863F3F26C6A68D7BE /* Pods_GridRace.framework */; };
 /* End PBXBuildFile section */
 
@@ -59,7 +59,6 @@
 		AA1CD2C1204513820007A0C1 /* UIImageExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIImageExtension.swift; sourceTree = "<group>"; };
 		AA23AB20204E0A8300F6CCEF /* walking.gpx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = walking.gpx; sourceTree = "<group>"; };
 		AA23AB22204E11FE00F6CCEF /* PasswordViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PasswordViewController.swift; sourceTree = "<group>"; };
-		AA23CECD2048F5FD0003E1D2 /* PanView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PanView.swift; sourceTree = "<group>"; };
 		AA25AD6F20521DB200A983BD /* CustomFlowLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomFlowLayout.swift; sourceTree = "<group>"; };
 		AA29A12020438BC500DF3A1C /* GridRace.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = GridRace.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		AA29A12320438BC500DF3A1C /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -72,6 +71,7 @@
 		AA2D3F4B206084D4008D07B0 /* UIViewExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIViewExtension.swift; sourceTree = "<group>"; };
 		AA3D6E782058DCF900D6632A /* ImageResponseView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageResponseView.swift; sourceTree = "<group>"; };
 		AAD4B5D9204FB5DA005FBB24 /* SummaryViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SummaryViewController.swift; sourceTree = "<group>"; };
+		AAE63FA2206890DD0029DFE3 /* MapButtonsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapButtonsView.swift; sourceTree = "<group>"; };
 		F14FC92863F3F26C6A68D7BE /* Pods_GridRace.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_GridRace.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -160,12 +160,12 @@
 				37F2A7F12043DA7E00BA283B /* ObjectiveTableViewCell.swift */,
 				AA1CD2BF2044D29A0007A0C1 /* GradientView.swift */,
 				AA29C93C2047644300BE0BAE /* TextResponseView.swift */,
-				AA23CECD2048F5FD0003E1D2 /* PanView.swift */,
 				370BBB01204E16D2005C4A56 /* TimerView.swift */,
 				AA3D6E782058DCF900D6632A /* ImageResponseView.swift */,
 				AA090A9C2050BFC60086C3CD /* ObjectiveSummaryCollectionViewCell.swift */,
 				AA25AD6F20521DB200A983BD /* CustomFlowLayout.swift */,
 				37A8B93A20588E65000BC310 /* ObjectiveInformationCollectionViewCell.swift */,
+				AAE63FA2206890DD0029DFE3 /* MapButtonsView.swift */,
 			);
 			path = views;
 			sourceTree = "<group>";
@@ -325,7 +325,6 @@
 				AA13276320685DFE0008D51A /* CLLocationCoordinate2D_extension.swift in Sources */,
 				AA1CD2BE2044C6DA0007A0C1 /* ClueViewController.swift in Sources */,
 				37F2A7EE2043CD0A00BA283B /* AppResources.swift in Sources */,
-				AA23CECE2048F5FD0003E1D2 /* PanView.swift in Sources */,
 				3712BDEB2044E9EB00B4C9B3 /* CustomTableHeaderView.swift in Sources */,
 				3712BDE92044D9A300B4C9B3 /* MainViewController.swift in Sources */,
 				AA3D6E792058DCF900D6632A /* ImageResponseView.swift in Sources */,
@@ -335,6 +334,7 @@
 				AA29A1382043D0CF00DF3A1C /* DetailViewController.swift in Sources */,
 				AA1CD2C02044D29B0007A0C1 /* GradientView.swift in Sources */,
 				AAD4B5DA204FB5DA005FBB24 /* SummaryViewController.swift in Sources */,
+				AAE63FA3206890DD0029DFE3 /* MapButtonsView.swift in Sources */,
 				AA29A12420438BC500DF3A1C /* AppDelegate.swift in Sources */,
 				376A5F852043A08D00D69090 /* (null) in Sources */,
 				AA1CD2C2204513820007A0C1 /* UIImageExtension.swift in Sources */,
