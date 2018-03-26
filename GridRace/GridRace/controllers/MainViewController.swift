@@ -682,6 +682,10 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
                 self.cellSnapShotImageView.frame = self.detailView!.frame
                 self.detailViewSnapShotImageView.frame = self.detailView!.frame
 
+                // unround the bottom corners
+                self.cellSnapShotImageView.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
+                self.detailViewSnapShotImageView.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
+
                 //update maps current content insets
                 self.mapView.layoutMargins = UIEdgeInsets(top: 16, left: 16, bottom: self.detailView!.frame.height + 16, right: 16)
                 self.zoomToLocation(objIndex: nil)
@@ -713,6 +717,10 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
                     //shrink both snapshots to cell size
                     self.cellSnapShotImageView.frame = cellFrame
                     self.detailViewSnapShotImageView.frame = cellFrame
+
+                    // round all corners
+                    self.cellSnapShotImageView.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner, .layerMinXMaxYCorner, .layerMinXMaxYCorner]
+                    self.detailViewSnapShotImageView.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner, .layerMinXMaxYCorner, .layerMinXMaxYCorner]
 
                     //update maps current content insets
                     self.mapView.layoutMargins = UIEdgeInsets(top: 16, left: 16, bottom: self.collectionView.frame.height + 16, right: 16)

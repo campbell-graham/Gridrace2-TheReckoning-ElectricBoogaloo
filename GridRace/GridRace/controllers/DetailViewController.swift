@@ -84,6 +84,9 @@ class DetailViewController: UIViewController {
         //Delete: wont be in nav bar
         navigationController?.navigationBar.prefersLargeTitles = false
         title = objective.name
+        view.layer.cornerRadius = 6
+        view.layer.masksToBounds = true
+        view.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
 
         setUpLayout()
         initialiseViews()
