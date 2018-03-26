@@ -12,9 +12,7 @@ class ObjectiveSummaryCollectionViewCell: UICollectionViewCell {
 
     let nameLabel = UILabel()
     let tickImageView = UIImageView()
-    let tickBackgroundCirlceImageView = UIImageView()
     let crossImageView = UIImageView()
-    let crossBackgroundCircleImageView = UIImageView()
     let responseImageView = UIImageView()
     let responseTextLabel = UILabel()
     weak var delegate: ObjectiveSummaryCollectionViewCellDelegate?
@@ -33,9 +31,7 @@ class ObjectiveSummaryCollectionViewCell: UICollectionViewCell {
         nameLabel.setContentHuggingPriority(.required, for: .vertical)
         
         //tick and cross set up
-        tickBackgroundCirlceImageView.image = #imageLiteral(resourceName: "filled_circle").withRenderingMode(.alwaysTemplate)
         tickImageView.image = #imageLiteral(resourceName: "tick-new").withRenderingMode(.alwaysTemplate)
-        crossBackgroundCircleImageView.image = #imageLiteral(resourceName: "filled_circle").withRenderingMode(.alwaysTemplate)
         crossImageView.image = #imageLiteral(resourceName: "cross-new").withRenderingMode(.alwaysTemplate)
 
         //response image view
@@ -57,7 +53,7 @@ class ObjectiveSummaryCollectionViewCell: UICollectionViewCell {
 
        
 
-        for view in [nameLabel, responseImageView, responseTextLabel, tickBackgroundCirlceImageView, tickImageView, crossBackgroundCircleImageView, crossImageView] as! [UIView] {
+        for view in [nameLabel, responseImageView, responseTextLabel, tickImageView, crossImageView] as! [UIView] {
 
                 view.translatesAutoresizingMaskIntoConstraints = false
                 contentView.addSubview(view)
@@ -68,33 +64,18 @@ class ObjectiveSummaryCollectionViewCell: UICollectionViewCell {
             //name label
             nameLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 12),
             nameLabel.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 12),
-            nameLabel.trailingAnchor.constraint(equalTo: tickBackgroundCirlceImageView.leadingAnchor),
-            
-            //tick backround circle image view
-            tickBackgroundCirlceImageView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -12),
-            tickBackgroundCirlceImageView.topAnchor.constraint(equalTo: topAnchor, constant: 4),
-            tickBackgroundCirlceImageView.bottomAnchor.constraint(equalTo: responseImageView.topAnchor, constant: -4),
-            tickBackgroundCirlceImageView.widthAnchor.constraint(equalTo: tickBackgroundCirlceImageView.heightAnchor),
+            nameLabel.trailingAnchor.constraint(equalTo: tickImageView.leadingAnchor),
             
             //tick image view
-            tickImageView.centerXAnchor.constraint(equalTo: tickBackgroundCirlceImageView.centerXAnchor),
-            tickImageView.centerYAnchor.constraint(equalTo: tickBackgroundCirlceImageView.centerYAnchor),
-            tickImageView.topAnchor.constraint(equalTo: tickBackgroundCirlceImageView.topAnchor, constant: 4),
-            tickImageView.bottomAnchor.constraint(equalTo: tickBackgroundCirlceImageView.bottomAnchor, constant: -4),
+            tickImageView.topAnchor.constraint(equalTo: topAnchor, constant: 4),
+            tickImageView.bottomAnchor.constraint(equalTo: responseImageView.topAnchor, constant: -4),
+            tickImageView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -12),
             tickImageView.widthAnchor.constraint(equalTo: tickImageView.heightAnchor),
             
-            
-            //cross background circle image view
-            crossBackgroundCircleImageView.trailingAnchor.constraint(equalTo: tickBackgroundCirlceImageView.leadingAnchor, constant: -12),
-            crossBackgroundCircleImageView.topAnchor.constraint(equalTo: topAnchor, constant: 4),
-            crossBackgroundCircleImageView.bottomAnchor.constraint(equalTo: responseImageView.topAnchor, constant: -4),
-            crossBackgroundCircleImageView.widthAnchor.constraint(equalTo: crossBackgroundCircleImageView.heightAnchor),
-            
             //cross image view
-            crossImageView.centerXAnchor.constraint(equalTo: crossBackgroundCircleImageView.centerXAnchor),
-            crossImageView.centerYAnchor.constraint(equalTo: crossBackgroundCircleImageView.centerYAnchor),
-            crossImageView.topAnchor.constraint(equalTo: crossBackgroundCircleImageView.topAnchor, constant: 4),
-            crossImageView.bottomAnchor.constraint(equalTo: crossBackgroundCircleImageView.bottomAnchor, constant: -4),
+            crossImageView.topAnchor.constraint(equalTo: topAnchor, constant: 4),
+            crossImageView.bottomAnchor.constraint(equalTo: responseImageView.topAnchor, constant: -4),
+            crossImageView.trailingAnchor.constraint(equalTo: tickImageView.leadingAnchor, constant: -12),
             crossImageView.widthAnchor.constraint(equalTo: crossImageView.heightAnchor),
 
             //response image view

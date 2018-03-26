@@ -184,27 +184,14 @@ class SummaryViewController: UIViewController, UICollectionViewDelegate, UIColle
         let objective = allObjectives[indexPath.row]
         let userData = allData.first(where: {$0.objectiveID == objective.id})
         
-        let cell = collectionView.cellForItem(at: indexPath) as! ObjectiveSummaryCollectionViewCell
-        
         guard (userData != nil && (userData?.completed)!) else {
             return
         }
         
         userData!.correct = !(userData!.correct)
         
-        if (userData?.correct)! {
-            cell.tickImageView.tintColor = UIColor.green
-            cell.tickBackgroundCirlceImageView.tintColor = AppColors.textPrimaryColor
-            cell.crossImageView.tintColor = AppColors.textSecondaryColor
-            cell.crossBackgroundCircleImageView.tintColor = AppColors.cellColor
-        } else {
-            cell.tickImageView.tintColor = AppColors.textSecondaryColor
-            cell.tickBackgroundCirlceImageView.tintColor = AppColors.cellColor
-            cell.crossImageView.tintColor = UIColor.red
-            cell.crossBackgroundCircleImageView.tintColor = AppColors.textPrimaryColor
-        }
-        
         updateLabels()
+        collectionView.reloadData()
     }
 
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
@@ -244,14 +231,10 @@ class SummaryViewController: UIViewController, UICollectionViewDelegate, UIColle
 
         if (userData?.correct)! {
             cell.tickImageView.tintColor = UIColor.green
-            cell.tickBackgroundCirlceImageView.tintColor = AppColors.textPrimaryColor
             cell.crossImageView.tintColor = AppColors.textSecondaryColor
-            cell.crossBackgroundCircleImageView.tintColor = AppColors.cellColor
         } else {
             cell.tickImageView.tintColor = AppColors.textSecondaryColor
-            cell.tickBackgroundCirlceImageView.tintColor = AppColors.cellColor
             cell.crossImageView.tintColor = UIColor.red
-            cell.crossBackgroundCircleImageView.tintColor = AppColors.textPrimaryColor
         }
 
         return cell
