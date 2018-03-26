@@ -307,9 +307,9 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
         cell.pointsLabel.text = "\(objective.points) Points"
         cell.descriptionLabel.text = objective.desc
         if (AppResources.ObjectiveData.sharedObjectives.data.first(where: {$0.objectiveID == objective.id})?.completed)! {
-            cell.tickImageView.tintColor = AppColors.greenHighlightColor
+            cell.tickImageView.image = #imageLiteral(resourceName: "correct_selected")
         } else {
-            cell.tickImageView.tintColor = AppColors.textSecondaryColor
+            cell.tickImageView.image = #imageLiteral(resourceName: "correct_unselected")
         }
         return cell
     }
