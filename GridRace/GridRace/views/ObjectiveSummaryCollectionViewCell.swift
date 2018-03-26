@@ -27,7 +27,7 @@ class ObjectiveSummaryCollectionViewCell: UICollectionViewCell {
         //name label
         nameLabel.textColor = AppColors.textPrimaryColor
         nameLabel.textAlignment = .left
-        nameLabel.font = UIFont.boldSystemFont(ofSize: 16)
+        nameLabel.font = UIFont.boldSystemFont(ofSize: 20)
         nameLabel.setContentHuggingPriority(.required, for: .vertical)
         
         //tick and cross set up
@@ -62,24 +62,24 @@ class ObjectiveSummaryCollectionViewCell: UICollectionViewCell {
         NSLayoutConstraint.activate([
 
             //name label
-            nameLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 12),
-            nameLabel.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 12),
-            nameLabel.trailingAnchor.constraint(equalTo: tickImageView.leadingAnchor),
+            nameLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 18),
+            nameLabel.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 18),
+            nameLabel.trailingAnchor.constraint(equalTo: crossImageView.leadingAnchor, constant: -12),
             
             //tick image view
-            tickImageView.topAnchor.constraint(equalTo: topAnchor, constant: 4),
-            tickImageView.bottomAnchor.constraint(equalTo: responseImageView.topAnchor, constant: -4),
-            tickImageView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -12),
+            tickImageView.topAnchor.constraint(equalTo: nameLabel.topAnchor),
+            tickImageView.bottomAnchor.constraint(equalTo: nameLabel.bottomAnchor),
+            tickImageView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -18),
             tickImageView.widthAnchor.constraint(equalTo: tickImageView.heightAnchor),
             
             //cross image view
-            crossImageView.topAnchor.constraint(equalTo: topAnchor, constant: 4),
-            crossImageView.bottomAnchor.constraint(equalTo: responseImageView.topAnchor, constant: -4),
-            crossImageView.trailingAnchor.constraint(equalTo: tickImageView.leadingAnchor, constant: -12),
+            crossImageView.topAnchor.constraint(equalTo: nameLabel.topAnchor),
+            crossImageView.bottomAnchor.constraint(equalTo: nameLabel.bottomAnchor),
+            crossImageView.trailingAnchor.constraint(equalTo: tickImageView.leadingAnchor, constant: -18),
             crossImageView.widthAnchor.constraint(equalTo: crossImageView.heightAnchor),
 
             //response image view
-            responseImageView.topAnchor.constraint(equalTo: nameLabel.bottomAnchor, constant: 12),
+            responseImageView.topAnchor.constraint(equalTo: nameLabel.bottomAnchor, constant: 18),
             responseImageView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -4),
             responseImageView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 4),
             responseImageView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -4),
