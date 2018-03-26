@@ -52,7 +52,7 @@ class SummaryViewController: UIViewController, UICollectionViewDelegate, UIColle
         var result = 0
         for objective in mainObjectives {
             let data = allData.first(where: {$0.objectiveID == objective.id})
-            if data?.completed == true {
+            if (data?.correct)! {
                 result += 1
             }
         }
@@ -63,7 +63,7 @@ class SummaryViewController: UIViewController, UICollectionViewDelegate, UIColle
         var result = 0
         for objective in bonusObjectives {
             let data = allData.first(where: {$0.objectiveID == objective.id})
-            if data?.completed == true {
+            if (data?.correct)! {
                 result += 1
             }
         }
