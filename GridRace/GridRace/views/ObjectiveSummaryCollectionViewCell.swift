@@ -29,10 +29,6 @@ class ObjectiveSummaryCollectionViewCell: UICollectionViewCell {
         nameLabel.textAlignment = .left
         nameLabel.font = UIFont.boldSystemFont(ofSize: 20)
         nameLabel.setContentHuggingPriority(.required, for: .vertical)
-        
-        //tick and cross set up
-        tickImageView.image = #imageLiteral(resourceName: "tick-new").withRenderingMode(.alwaysTemplate)
-        crossImageView.image = #imageLiteral(resourceName: "cross-new").withRenderingMode(.alwaysTemplate)
 
         //response image view
         responseImageView.contentMode = .scaleAspectFit

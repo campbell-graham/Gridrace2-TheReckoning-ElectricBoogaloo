@@ -230,11 +230,11 @@ class SummaryViewController: UIViewController, UICollectionViewDelegate, UIColle
         }
 
         if (userData?.correct)! {
-            cell.tickImageView.tintColor = UIColor.green
-            cell.crossImageView.tintColor = AppColors.textSecondaryColor
+            cell.tickImageView.image = #imageLiteral(resourceName: "correct_selected")
+            cell.crossImageView.image = #imageLiteral(resourceName: "incorrect_unselected")
         } else {
-            cell.tickImageView.tintColor = AppColors.textSecondaryColor
-            cell.crossImageView.tintColor = UIColor.red
+            cell.tickImageView.image = #imageLiteral(resourceName: "correct_unselected")
+            cell.crossImageView.image = #imageLiteral(resourceName: "incorrect_selected")
         }
 
         return cell
