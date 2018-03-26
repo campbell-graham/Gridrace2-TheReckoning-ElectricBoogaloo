@@ -74,7 +74,7 @@ class SummaryViewController: UIViewController, UICollectionViewDelegate, UIColle
         var result = 0
         for objective in allObjectives {
             let dataForObject = allData.first(where: {$0.objectiveID == objective.id})
-            if (dataForObject?.completed)! {
+            if (dataForObject?.correct)! {
                 result += dataForObject?.adjustedPoints != nil ? (dataForObject?.adjustedPoints)! : objective.points
             }
         }
@@ -108,8 +108,19 @@ class SummaryViewController: UIViewController, UICollectionViewDelegate, UIColle
 
         setUpLayout()
 
+       
+        
+        //set up labels that don't change
+        mainStatView.titleLabel.text = "Main"
+        bonusStatView.titleLabel.text = "Bonus"
+        timeStatView.titleLabel.text = "Time"
+        pointsStatView.titleLabel.text = "Points"
+        timeStatView.valueLabel.text = finishTime
+        
+        //update labels that change
         updateLabels()
 
+        //collection view set up
         collectionView.delegate = self
         collectionView.dataSource = self
         collectionView.backgroundColor = AppColors.backgroundColor
@@ -118,7 +129,9 @@ class SummaryViewController: UIViewController, UICollectionViewDelegate, UIColle
     }
 
     func updateLabels() {
-        //to be implemented
+        mainStatView.valueLabel.text = "\(completedPlacesObjectivesCount)/\(mainObjectives.count)"
+        bonusStatView.valueLabel.text = "\(completedBonusObjectivesCount)/\(bonusObjectives.count)"
+        pointsStatView.valueLabel.text = "\(userPoints)/\(totalPoints)"
     }
 
     func setUpLayout() {
