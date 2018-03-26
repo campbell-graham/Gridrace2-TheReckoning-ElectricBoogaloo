@@ -25,7 +25,6 @@ class SummaryStatView: UIView {
         titleLabel.font = UIFont.systemFont(ofSize: 20, weight: .medium)
         titleLabel.text = "Test"
         
-        
         //value label
         valueLabel.textColor = AppColors.orangeHighlightColor
         valueLabel.font = UIFont.systemFont(ofSize: 30, weight: .bold)

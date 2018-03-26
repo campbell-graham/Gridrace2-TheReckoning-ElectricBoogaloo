@@ -24,6 +24,18 @@ class ObjectiveSummaryCollectionViewCell: UICollectionViewCell {
         contentView.layer.masksToBounds = false
         contentView.backgroundColor = AppColors.cellColor
         
+        //shadow
+        contentView.layer.borderWidth = 1.0
+        contentView.layer.borderColor = UIColor.clear.cgColor
+        contentView.layer.masksToBounds = true
+        layer.shadowColor = #colorLiteral(red: 0, green: 0, blue: 0, alpha: 1)
+        layer.shadowOffset = CGSize(width: 0, height: 2.0)
+        layer.shadowRadius = 2.0
+        layer.shadowOpacity = 0.5
+        layer.masksToBounds = false
+        layer.shadowPath = UIBezierPath(roundedRect: bounds, cornerRadius: contentView.layer.cornerRadius).cgPath
+        
+        
         //name label
         nameLabel.textColor = AppColors.textPrimaryColor
         nameLabel.textAlignment = .left
