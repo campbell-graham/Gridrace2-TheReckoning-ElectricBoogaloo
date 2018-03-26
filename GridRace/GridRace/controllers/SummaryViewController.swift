@@ -193,11 +193,15 @@ class SummaryViewController: UIViewController, UICollectionViewDelegate, UIColle
         userData!.correct = !(userData!.correct)
         
         if (userData?.correct)! {
-            cell.markImageView.image = #imageLiteral(resourceName: "tick").withRenderingMode(.alwaysTemplate)
-            cell.markImageView.tintColor = AppColors.greenHighlightColor
+            cell.tickImageView.tintColor = UIColor.green
+            cell.tickBackgroundCirlceImageView.tintColor = AppColors.textPrimaryColor
+            cell.crossImageView.tintColor = AppColors.textSecondaryColor
+            cell.crossBackgroundCircleImageView.tintColor = AppColors.cellColor
         } else {
-            cell.markImageView.image = #imageLiteral(resourceName: "cross-1").withRenderingMode(.alwaysTemplate)
-            cell.markImageView.tintColor = UIColor.red
+            cell.tickImageView.tintColor = AppColors.textSecondaryColor
+            cell.tickBackgroundCirlceImageView.tintColor = AppColors.cellColor
+            cell.crossImageView.tintColor = UIColor.red
+            cell.crossBackgroundCircleImageView.tintColor = AppColors.textPrimaryColor
         }
         
         updateLabels()
@@ -239,11 +243,15 @@ class SummaryViewController: UIViewController, UICollectionViewDelegate, UIColle
         }
 
         if (userData?.correct)! {
-            cell.markImageView.image = #imageLiteral(resourceName: "tick").withRenderingMode(.alwaysTemplate)
-            cell.markImageView.tintColor = AppColors.greenHighlightColor
+            cell.tickImageView.tintColor = UIColor.green
+            cell.tickBackgroundCirlceImageView.tintColor = AppColors.textPrimaryColor
+            cell.crossImageView.tintColor = AppColors.textSecondaryColor
+            cell.crossBackgroundCircleImageView.tintColor = AppColors.cellColor
         } else {
-            cell.markImageView.image = #imageLiteral(resourceName: "cross-1").withRenderingMode(.alwaysTemplate)
-            cell.markImageView.tintColor = UIColor.red
+            cell.tickImageView.tintColor = AppColors.textSecondaryColor
+            cell.tickBackgroundCirlceImageView.tintColor = AppColors.cellColor
+            cell.crossImageView.tintColor = UIColor.red
+            cell.crossBackgroundCircleImageView.tintColor = AppColors.textPrimaryColor
         }
 
         return cell
