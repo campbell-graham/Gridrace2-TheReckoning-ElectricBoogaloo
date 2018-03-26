@@ -780,7 +780,7 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
                 self.collapsableDetailsAnimator!.addCompletion({ final in
                     recognizer.isEnabled = true
 
-                    removeDetailView()()
+                    removeDetailView()
                     adjustMapTo(self.collectionView)
                 })
             }
