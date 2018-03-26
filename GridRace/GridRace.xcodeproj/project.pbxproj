@@ -9,7 +9,6 @@
 /* Begin PBXBuildFile section */
 		370BBB02204E16D2005C4A56 /* TimerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 370BBB01204E16D2005C4A56 /* TimerView.swift */; };
 		3712BDE92044D9A300B4C9B3 /* MainViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3712BDE82044D9A300B4C9B3 /* MainViewController.swift */; };
-		3712BDEB2044E9EB00B4C9B3 /* CustomTableHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3712BDEA2044E9EB00B4C9B3 /* CustomTableHeaderView.swift */; };
 		3712BDEF2045174100B4C9B3 /* Objective.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3712BDEE2045174100B4C9B3 /* Objective.swift */; };
 		376A5F852043A08D00D69090 /* (null) in Sources */ = {isa = PBXBuildFile; };
 		377D9B88204646B8001E7466 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 377D9B87204646B8001E7466 /* GoogleService-Info.plist */; };
@@ -44,7 +43,6 @@
 		2727F62BE70A41A8EF9B4686 /* Pods-GridRace.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-GridRace.release.xcconfig"; path = "Pods/Target Support Files/Pods-GridRace/Pods-GridRace.release.xcconfig"; sourceTree = "<group>"; };
 		370BBB01204E16D2005C4A56 /* TimerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimerView.swift; sourceTree = "<group>"; };
 		3712BDE82044D9A300B4C9B3 /* MainViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainViewController.swift; sourceTree = "<group>"; };
-		3712BDEA2044E9EB00B4C9B3 /* CustomTableHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomTableHeaderView.swift; sourceTree = "<group>"; };
 		3712BDEE2045174100B4C9B3 /* Objective.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Objective.swift; sourceTree = "<group>"; };
 		377D9B87204646B8001E7466 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		377EFC24204FADD900B0D723 /* StartScreenViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StartScreenViewController.swift; sourceTree = "<group>"; };
@@ -156,7 +154,6 @@
 		AA29C93F2047B10C00BE0BAE /* views */ = {
 			isa = PBXGroup;
 			children = (
-				3712BDEA2044E9EB00B4C9B3 /* CustomTableHeaderView.swift */,
 				37F2A7F12043DA7E00BA283B /* ObjectiveTableViewCell.swift */,
 				AA1CD2BF2044D29A0007A0C1 /* GradientView.swift */,
 				AA29C93C2047644300BE0BAE /* TextResponseView.swift */,
@@ -325,7 +322,6 @@
 				AA13276320685DFE0008D51A /* CLLocationCoordinate2D_extension.swift in Sources */,
 				AA1CD2BE2044C6DA0007A0C1 /* ClueViewController.swift in Sources */,
 				37F2A7EE2043CD0A00BA283B /* AppResources.swift in Sources */,
-				3712BDEB2044E9EB00B4C9B3 /* CustomTableHeaderView.swift in Sources */,
 				3712BDE92044D9A300B4C9B3 /* MainViewController.swift in Sources */,
 				AA3D6E792058DCF900D6632A /* ImageResponseView.swift in Sources */,
 				37F2A7F22043DA7E00BA283B /* ObjectiveTableViewCell.swift in Sources */,
