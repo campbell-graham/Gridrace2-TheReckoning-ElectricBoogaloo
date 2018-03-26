@@ -375,31 +375,22 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
         let tapMapPoint = MKMapPointForCoordinate(tapCoordinate)
 
         for overlay in self.mapView.overlays {
+            guard let circle = overlay as? MKCircle else { continue }
 
-            if (overlay is MKCircle)
-            {
-                if let circle = overlay as? MKCircle {
+            let circleCenterMapPoint = MKMapPointForCoordinate(circle.coordinate)
+            let distanceFromCircleCenter = MKMetersBetweenMapPoints(circleCenterMapPoint, tapMapPoint)
 
-                    let circleCenterMapPoint = MKMapPointForCoordinate(circle.coordinate)
+            guard distanceFromCircleCenter <= circle.radius else { continue }
 
-                    let distanceFromCircleCenter = MKMetersBetweenMapPoints(circleCenterMapPoint, tapMapPoint)
+            for obj in objectivesToDisplay.enumerated() {
+                guard let circleAnnot = currentAnnotations[obj.element.id] as? MKCircle else { continue }
+                guard circleAnnot.coordinate == circle.coordinate else { continue }
 
-                    if distanceFromCircleCenter <= circle.radius {
-
-                        var index = 0
-                        for obj in objectivesToDisplay {
-
-                            if let circleAnnot = currentAnnotations[obj.id] as? MKCircle, circleAnnot.coordinate == circle.coordinate {
-
-                                self.collectionView.scrollToItem(at: IndexPath(row: index, section: 0), at: .centeredHorizontally, animated: true)
-                                self.zoomToLocation(objIndex: index)
-                            }
-                            index += 1
-                        }
-                        break
-                    }
-                }
+                let index = obj.offset
+                self.collectionView.scrollToItem(at: IndexPath(row: index, section: 0), at: .centeredHorizontally, animated: true)
+                self.zoomToLocation(objIndex: index)
             }
+            break
         }
     }
 
@@ -415,15 +406,14 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
     }
 
     func mapView(_ mapView: MKMapView!, rendererFor overlay: MKOverlay!) -> MKOverlayRenderer! {
-        if overlay is MKCircle {
-            let circle = MKCircleRenderer(overlay: overlay)
-            circle.strokeColor = AppColors.orangeHighlightColor
-            circle.fillColor = AppColors.cellColor.withAlphaComponent(0.7)
-            circle.lineWidth = 1
-            return circle
-        } else {
-            return nil
-        }
+
+        guard overlay is MKCircle else { return nil }
+
+        let circle = MKCircleRenderer(overlay: overlay)
+        circle.strokeColor = AppColors.orangeHighlightColor
+        circle.fillColor = AppColors.cellColor.withAlphaComponent(0.7)
+        circle.lineWidth = 1
+        return circle
     }
 
     //MARK:- CollectionView delegate methods
@@ -464,21 +454,17 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "objectiveCell", for: indexPath) as! ObjectiveInformationCollectionViewCell
 
         let objective = objectivesToDisplay[indexPath.row]
-        let data = AppResources.ObjectiveData.sharedObjectives.data.first(where: {$0.objectiveID == objective.id})
+        guard let data = AppResources.ObjectiveData.sharedObjectives.data.first(where: {$0.objectiveID == objective.id}) else { return cell }
 
         cell.titleLabel.text = objective.name
 
-        if let adjPoints = data?.adjustedPoints {
+        if let adjPoints = data.adjustedPoints {
             cell.pointsLabel.text =  "\(adjPoints) Points"
         } else {
             cell.pointsLabel.text = "\(objective.points) Points"
         }
         cell.descriptionLabel.text = objective.desc
-        if (data!.completed) {
-            cell.tickImageView.tintColor = AppColors.greenHighlightColor
-        } else {
-            cell.tickImageView.tintColor = AppColors.textSecondaryColor
-        }
+        cell.tickImageView.tintColor = data.completed ? AppColors.greenHighlightColor : AppColors.textSecondaryColor
 
         //add panGesture recogniser to cell
         let panGestureRecogniser = UIPanGestureRecognizer(target: self, action: #selector(collapseAnimationHandler))
@@ -523,10 +509,6 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
         contentOffset.x = (itemSize.width + cellSpacing) * index
 
         targetContentOffset.pointee = contentOffset
-
-//        print(contentOffset)
-//        let itemWidth = itemSize.width
-
     }
 
     //MARK:- cell animation code
@@ -536,33 +518,28 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
             return
         }
 
-        if let layout = collectionView.collectionViewLayout as? UICollectionViewFlowLayout {
+        guard let layout = collectionView.collectionViewLayout as? UICollectionViewFlowLayout else { return }
 
-            let pageWidth = layout.minimumLineSpacing + layout.itemSize.width
-            //get index of the current cell using the page width (which is the difference the leading side of each cell)
-            let index: Int = Int(round(collectionView.contentOffset.x / pageWidth))
+        let pageWidth = layout.minimumLineSpacing + layout.itemSize.width
+        //get index of the current cell using the page width (which is the difference the leading side of each cell)
+        let index: Int = Int(round(collectionView.contentOffset.x / pageWidth))
 
-            if index < 0 || index > objectivesToDisplay.count - 1 {
-                return
-            }
-
-            let indexForVisibleCell = IndexPath(item: index, section: 0)
-            //save the middle cell
-            let cellToZoom = collectionView.cellForItem(at: indexForVisibleCell) as! ObjectiveInformationCollectionViewCell
-
-            //animate cells, making the middle one larger and all the other ones their original size in case they have changed
-            UIView.animate(withDuration: 0.05, animations: {
-                for (cell) in (self.collectionView.visibleCells as! [ObjectiveInformationCollectionViewCell]) {
-                    if cell == cellToZoom {
-                        cell.transform = CGAffineTransform(scaleX: 1.1, y: 1.1)
-                    } else {
-                        cell.transform = CGAffineTransform(scaleX: 1, y: 1)
-                    }
-                }
-            })
+        if index < 0 || index > objectivesToDisplay.count - 1 {
+            return
         }
-    }
 
+        let indexForVisibleCell = IndexPath(item: index, section: 0)
+        //save the middle cell
+        let cellToZoom = collectionView.cellForItem(at: indexForVisibleCell) as! ObjectiveInformationCollectionViewCell
+
+        //animate cells, making the middle one larger and all the other ones their original size in case they have changed
+        UIView.animate(withDuration: 0.05, animations: {
+            for (cell) in (self.collectionView.visibleCells as! [ObjectiveInformationCollectionViewCell]) {
+                let value: CGFloat = (cell == cellToZoom) ? 1.1 : 1.0
+                cell.transform = CGAffineTransform(scaleX: value, y: value)
+            }
+        })
+    }
 
     private func growCellAnimationSetup(cell: UICollectionViewCell) {
 
@@ -581,7 +558,6 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
         let panGestureRecogniser = UIPanGestureRecognizer(target: self, action: #selector(collapseAnimationHandler))
         panGestureRecogniser.delegate = self
         detailView!.addGestureRecognizer(panGestureRecogniser)
-
 
         let cellFrame = view.convert(cell.frame, from: collectionView)
 
