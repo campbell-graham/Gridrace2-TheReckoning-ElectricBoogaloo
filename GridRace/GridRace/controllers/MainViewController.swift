@@ -463,7 +463,6 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
     }
     
     func initiateSave() {
-        print("Saving!")
         saveLocalData()
     }
     
