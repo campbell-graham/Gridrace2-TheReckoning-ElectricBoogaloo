@@ -11,12 +11,13 @@ import MapKit
 import Firebase
 import FirebaseDatabase
 
-class MainViewController: UIViewController, UICollectionViewDelegate, UICollectionViewDataSource, ObjectiveTableViewControllerDelegate, CLLocationManagerDelegate, MKMapViewDelegate  {
+class MainViewController: UIViewController, UICollectionViewDelegate, UICollectionViewDataSource, CLLocationManagerDelegate, MKMapViewDelegate, DataManagerDelgate  {
     
     let segmentItems = [ObjectiveType.main.rawValue.capitalized, ObjectiveType.bonus.rawValue.capitalized]
     let segmentedControl: UISegmentedControl
     let mapView: MKMapView = MKMapView()
     let locationManager = CLLocationManager()
+    let dataManager = DataManager()
     var objectivesToDisplay = [Objective]()
     var currentAnnotations = [String: MKAnnotation]()
     var buttonsView = MapButtonsView()
@@ -26,7 +27,6 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
     //used for cell animation
     var detailViewController: DetailViewController?
     var detailView: UIView?
-    var cellFrame: CGRect?
     let detailViewSnapShotImageView = UIImageView()
     let cellSnapShotImageView = UIImageView()
 
@@ -59,7 +59,8 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
         title = "Objectives"
         
         //start a load of local data which will also make comparisons with the data that firebase has
-        loadLocalData()
+        dataManager.delegate = self
+        dataManager.loadLocalData()
     }
 
     required init?(coder aDecoder: NSCoder) {
@@ -156,7 +157,6 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
             }
 
             mapView.layoutMargins = UIEdgeInsets(top: 16, left: 16, bottom: collectionView.frame.height, right: 16)
-            zoomToLocation(objIndex: nil)
 
             let blurEffect = UIBlurEffect(style: UIBlurEffectStyle.light)
             let blurEffectView = UIVisualEffectView(effect: blurEffect)
@@ -191,6 +191,14 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
     //MARK:- Segment Control
 
     @objc func handleSegmentedChanged() {
+        updateSelectedObjectiveType()
+    }
+
+    func didRetriveData(alert: UIAlertController?) {
+
+        if let alert = alert {
+            present(alert, animated: false, completion: nil)
+        }
         updateSelectedObjectiveType()
     }
     
@@ -521,135 +529,6 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
 
     }
 
-    //MARK:- Data saving/loading methods
-
-    func objectivesFilePath() -> URL {
-        return AppResources.documentsDirectory().appendingPathComponent("Objectives.plist")
-    }
-
-    func userDataFilePath() -> URL {
-        return AppResources.documentsDirectory().appendingPathComponent("UserData.plist")
-    }
-
-    func saveLocalData() {
-        let encoder = PropertyListEncoder()
-        do {
-            //encode data
-            let objectivesDataToWrite = try encoder.encode(AppResources.ObjectiveData.sharedObjectives.objectives)
-            let userDataToWrite = try encoder.encode(AppResources.ObjectiveData.sharedObjectives.data)
-
-            //write to files
-            try objectivesDataToWrite.write(to: objectivesFilePath())
-            try userDataToWrite.write(to: userDataFilePath())
-
-        } catch {
-            print ("Something went wrong when saving")
-        }
-
-    }
-
-    func initiateSave() {
-        print("Saving!")
-        saveLocalData()
-    }
-
-
-    func loadLocalData() {
-        //load objectives, points and completed data
-        if let objectivesDataToRead = try? Data(contentsOf: objectivesFilePath()), let userDataToRead = try? Data(contentsOf: userDataFilePath()) {
-            let decoder = PropertyListDecoder()
-            do {
-                let objectives = try decoder.decode([Objective].self, from: objectivesDataToRead)
-                for (objective) in objectives {
-                    AppResources.ObjectiveData.sharedObjectives.objectives.append(objective)
-                }
-                let data = try decoder.decode([ObjectiveUserData].self, from: userDataToRead)
-                for (item) in data {
-                    AppResources.ObjectiveData.sharedObjectives.data.append(item)
-                }
-            } catch {
-                print("Error decoding the local array, will re-download")
-                //delete local files if there are issues assiging to local variables
-                resetLocalData()
-            }
-        } else {
-            //files don't exist or have issues so reset
-            resetLocalData()
-        }
-
-        //a download is always called at the end so that comparisons can be made, and local data overwritten if it is no longer valid. Wait until download is complete and then run comparisons with local data
-        AppResources.returnDownloadedObjectives() {tempObjectives in
-            if tempObjectives.isEmpty {
-                let alert = UIAlertController(title: "Failed to download!", message: "Using locally saved data fow now, however we recommend restarting with app whilst having an internet connection", preferredStyle: .alert)
-                alert.addAction(UIAlertAction(title: "Okay", style: .cancel, handler: nil))
-                self.present(alert, animated: true, completion: nil)
-                self.updateSelectedObjectiveType()
-                return
-            }
-
-            //bool to determine whether to show "data was reset" alert
-            var dataReset = false
-
-            //check that they are the same length and have the same data, reset if not
-            if tempObjectives.count == AppResources.ObjectiveData.sharedObjectives.objectives.count {
-                for (index, objective) in tempObjectives.enumerated() {
-                    if !(objective == AppResources.ObjectiveData.sharedObjectives.objectives[index]) {
-                        AppResources.ObjectiveData.sharedObjectives.objectives = tempObjectives
-                        self.resetLocalData()
-                        dataReset = true
-                        UserDefaults.standard.set(Date(), forKey: "FirstLaunchDate")
-                        break
-                    }
-                }
-            } else {
-                //we don't want to set dataReset to be true if objectives.count is 0, which means they're setting up the app for the first time
-                if AppResources.ObjectiveData.sharedObjectives.objectives.count != 0 {
-                    dataReset = true
-                }
-                AppResources.ObjectiveData.sharedObjectives.objectives = tempObjectives
-                self.resetLocalData()
-            }
-
-            //alert the user if their data has been reset
-            if dataReset {
-                let alert = UIAlertController(title: "Data Reset!", message: "Application did not have up to date data, and so it has been reset", preferredStyle: UIAlertControllerStyle.alert)
-                alert.addAction(UIAlertAction(title: "Okay", style: UIAlertActionStyle.default, handler: nil))
-                self.present(alert, animated: true, completion: nil)
-            }
-            self.saveLocalData()
-            self.updateSelectedObjectiveType()
-        }
-    }
-
-    func deleteDocumentData() {
-        do {
-            try FileManager.default.removeItem(at: objectivesFilePath())
-            try FileManager.default.removeItem(at: userDataFilePath())
-            for (data) in AppResources.ObjectiveData.sharedObjectives.data {
-                if let imageURL = data.imageResponseURL {
-                    try FileManager.default.removeItem(at: imageURL)
-                }
-            }
-        } catch {
-            print("Error deleting documents")
-        }
-    }
-
-    func resetLocalData() {
-        //delete everything from local documents
-        deleteDocumentData()
-
-        //re-populate user data
-        AppResources.ObjectiveData.sharedObjectives.data.removeAll()
-        for (objective) in AppResources.ObjectiveData.sharedObjectives.objectives {
-            AppResources.ObjectiveData.sharedObjectives.data.append(ObjectiveUserData(id: objective.id))
-        }
-
-
-        //save this information
-        saveLocalData()
-    }
-
     //MARK:- cell animation code
 
     func scaleCellAnimation() {
@@ -693,7 +572,7 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
         let data = AppResources.ObjectiveData.sharedObjectives.data.first(where: {$0.objectiveID == objective.id})
 
         self.detailViewController = DetailViewController(objective: objective, data: data!)
-        detailViewController?.delegate = self
+        detailViewController?.delegate = dataManager
         addChildViewController(detailViewController!)
         detailViewController!.didMove(toParentViewController: self)
         detailView = detailViewController!.view
@@ -703,13 +582,11 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
         panGestureRecogniser.delegate = self
         detailView!.addGestureRecognizer(panGestureRecogniser)
 
-        if cellFrame == nil {
 
-            cellFrame = CGRect(x: ((view.frame.width / 2) - (cell.frame.width / 2)), y: collectionView.frame.minY + cell.frame.minY, width: cell.frame.width, height: cell.frame.height)
-        }
+        let cellFrame = view.convert(cell.frame, from: collectionView)
 
         // take snapshot of tapped cell
-        cellSnapShotImageView.frame = cellFrame!
+        cellSnapShotImageView.frame = cellFrame
         cellSnapShotImageView.image = cell.contentView.takeSnapshot(bounds: cell.bounds)
 
         //add the detailView and assign it a frame with 60% height
@@ -721,7 +598,7 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
         detailViewSnapShotImageView.image = detailView!.takeSnapshot(bounds: detailView!.bounds)
 
         //shrink detailView snapshot to size of cell
-        detailViewSnapShotImageView.frame = cellFrame!
+        detailViewSnapShotImageView.frame = cellFrame
 
         //hide the full sized detail view
         detailView!.isHidden = true
@@ -790,9 +667,11 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
         // if the user is panning from cell to detailView
         if let cell = recognizer.view as? UICollectionViewCell {
 
+            let cellFrame = view.convert(cell.frame, from: collectionView)
+
             growCellAnimationSetup(cell: cell)
 
-            totalYMovement = cellFrame!.minY - detailView!.frame.minY
+            totalYMovement = cellFrame.minY - detailView!.frame.minY
 
             collapsableDetailsAnimator = UIViewPropertyAnimator(duration: 0.3, curve: .easeIn, animations: {
 
@@ -811,25 +690,35 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
         // else if user is panning from detailView back down to a cell
         } else {
 
-            shrinkCellAnimationSetUp()
+            if let layer = collectionView.collectionViewLayout as? UICollectionViewFlowLayout {
 
-            if detailView != nil {
-                totalYMovement = cellFrame!.minY - detailView!.frame.minY
+                //retrive current cell
+                let pageWidth = layer.itemSize.width + layer.minimumInteritemSpacing
+                let cellIndex = collectionView.contentOffset.x / pageWidth
+                let cell = collectionView.cellForItem(at: IndexPath(row: Int(cellIndex), section: 0))
+                let cellFrame = view.convert(cell!.frame, from: collectionView)
+
+
+                shrinkCellAnimationSetUp()
+
+                if detailView != nil {
+                    totalYMovement = cellFrame.minY - detailView!.frame.minY
+                }
+
+                collapsableDetailsAnimator = UIViewPropertyAnimator(duration: 0.3, curve: .easeIn, animations: {
+
+                    //make detailView snapShot transparent to reveal cell snapshot below it
+                    self.detailViewSnapShotImageView.alpha = 0
+
+                    //shrink both snapshots to cell size
+                    self.cellSnapShotImageView.frame = cellFrame
+                    self.detailViewSnapShotImageView.frame = cellFrame
+
+                    //update maps current content insets
+                    self.mapView.layoutMargins = UIEdgeInsets(top: 16, left: 16, bottom: self.collectionView.frame.height + 16, right: 16)
+                    self.zoomToLocation(objIndex: nil)
+                })
             }
-
-            collapsableDetailsAnimator = UIViewPropertyAnimator(duration: 0.3, curve: .easeIn, animations: {
-
-                //make detailView snapShot transparent to reveal cell snapshot below it
-                self.detailViewSnapShotImageView.alpha = 0
-
-                //shrink both snapshots to cell size
-                self.cellSnapShotImageView.frame = self.cellFrame!
-                self.detailViewSnapShotImageView.frame = self.cellFrame!
-
-                //update maps current content insets
-                self.mapView.layoutMargins = UIEdgeInsets(top: 16, left: 16, bottom: self.collectionView.frame.height + 16, right: 16)
-                self.zoomToLocation(objIndex: nil)
-            })
         }
         return
     }
@@ -998,8 +887,4 @@ extension MainViewController: UIGestureRecognizerDelegate{
     }
 }
 
-//MARK:- Protocols
 
-protocol ObjectiveTableViewControllerDelegate: class {
-    func initiateSave()
-}
