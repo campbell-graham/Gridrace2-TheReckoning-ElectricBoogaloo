@@ -23,6 +23,7 @@ class ImageResponseView: UIView {
         responseImageView.contentMode = .scaleAspectFit
         responseImageView.layer.cornerRadius = 16
         responseImageView.layer.masksToBounds = true
+        responseImageView.contentMode = .scaleAspectFill
         responseImageView.isHidden = true
 
         cameraLabel.text = "Add Photo"
