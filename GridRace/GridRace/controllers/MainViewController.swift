@@ -422,32 +422,49 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
     }
 
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-
-        growCellAnimationSetup(cell: collectionView.cellForItem(at: indexPath)!)
-
-        guard let detailView = detailViewController?.view else { return }
-
-        UIView.animate(withDuration: 0.3, animations: {
-
-            //make cell snapShot transparent to reveal detailView snapshot below it
-            self.cellSnapShotImageView.alpha = 0
-
-            //grow both snapshots to full size
-            self.cellSnapShotImageView.frame = detailView.frame
-            self.detailViewSnapShotImageView.frame = detailView.frame
-
-            self.mapView.layoutMargins = UIEdgeInsets(top: 16, left: 16, bottom: detailView.frame.height - 16, right: 16)
-            self.zoomToLocation(objIndex: nil)
-        }, completion: { _ in
-
-            //remove the snapshots
-            self.detailViewSnapShotImageView.removeFromSuperview()
-            self.cellSnapShotImageView.removeFromSuperview()
-
-            //reveal the detailView
-            detailView.isHidden = false
-        })
-
+        
+        func openDetail() {
+            growCellAnimationSetup(cell: collectionView.cellForItem(at: indexPath)!)
+            
+            guard let detailView = detailViewController?.view else { return }
+            
+            UIView.animate(withDuration: 0.3, animations: {
+                
+                //make cell snapShot transparent to reveal detailView snapshot below it
+                self.cellSnapShotImageView.alpha = 0
+                
+                //grow both snapshots to full size
+                self.cellSnapShotImageView.frame = detailView.frame
+                self.detailViewSnapShotImageView.frame = detailView.frame
+                
+                self.mapView.layoutMargins = UIEdgeInsets(top: 16, left: 16, bottom: detailView.frame.height - 16, right: 16)
+                self.zoomToLocation(objIndex: nil)
+            }, completion: { _ in
+                
+                //remove the snapshots
+                self.detailViewSnapShotImageView.removeFromSuperview()
+                self.cellSnapShotImageView.removeFromSuperview()
+                
+                //reveal the detailView
+                detailView.isHidden = false
+            })
+        }
+        
+        //if they've selected the last main objective (i.e. the final one with the PIN) then alert them to confirm they want to continue
+        if objectivesToDisplay[indexPath.row] == objectivesToDisplay.filter({$0.objectiveType == .main}).last {
+            let refreshAlert = UIAlertController(title: "Continue?", message: "This is the end of the race, and once you finish you will be unable to get any more points. Are you sure you wish to continue?", preferredStyle: UIAlertControllerStyle.alert)
+            
+            refreshAlert.addAction(UIAlertAction(title: "Yes", style: .default, handler: { (action: UIAlertAction!) in
+                openDetail()
+            }))
+            
+            refreshAlert.addAction(UIAlertAction(title: "No", style: .cancel, handler: nil))
+            
+            present(refreshAlert, animated: true, completion: nil)
+            
+        } else {
+            openDetail()
+        }
     }
 
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
