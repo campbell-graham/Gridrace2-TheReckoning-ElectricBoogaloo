@@ -367,6 +367,8 @@ UIImagePickerControllerDelegate, UINavigationControllerDelegate {
 
     @objc private func selectPhoto() {
         
+        guard let answerView = answerView as? ImageResponseView else { return }
+        
         func takeNewPhoto() {
             let imagePicker = UIImagePickerController()
             imagePicker.sourceType = UIImagePickerController.isSourceTypeAvailable(.camera) ? .camera : .photoLibrary
@@ -374,23 +376,19 @@ UIImagePickerControllerDelegate, UINavigationControllerDelegate {
             present(imagePicker, animated: true, completion: nil)
         }
         
-        if let answerView = answerView as? ImageResponseView {
-            if let image = answerView.responseImageView.image {
-                let alert = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
-                let actionView = UIAlertAction(title: "View Photo", style: .default, handler: {_ in
-                    self.present(EnlargenedImageViewController(image: image), animated: true, completion: nil)
-                })
-                let actionTakePhoto = UIAlertAction(title: "Take New Photo", style: .default, handler: {_ in
-                    takeNewPhoto()
-                })
-                let actionCancel = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
-                alert.addAction(actionView)
-                alert.addAction(actionTakePhoto)
-                alert.addAction(actionCancel)
-                present(alert, animated: true, completion: nil)
-            } else {
+        if let image = answerView.responseImageView.image {
+            let alert = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
+            let actionView = UIAlertAction(title: "View Photo", style: .default, handler: {_ in
+                self.present(EnlargenedImageViewController(image: image), animated: true, completion: nil)
+            })
+            let actionTakePhoto = UIAlertAction(title: "Take New Photo", style: .default, handler: {_ in
                 takeNewPhoto()
-            }
+            })
+            let actionCancel = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
+            alert.addAction(actionView)
+            alert.addAction(actionTakePhoto)
+            alert.addAction(actionCancel)
+            present(alert, animated: true, completion: nil)
         } else {
             takeNewPhoto()
         }
