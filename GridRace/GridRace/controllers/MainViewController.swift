@@ -468,7 +468,7 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "objectiveCell", for: indexPath) as1 ObjectiveInformationCollectionViewCell
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "objectiveCell", for: indexPath) as! ObjectiveInformationCollectionViewCell
         
         let objective = objectivesToDisplay[indexPath.row]
         guard let data = AppResources.ObjectiveData.sharedObjectives.data.first(where: {$0.objectiveID == objective.id}) else { return cell }
@@ -584,7 +584,7 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
 
         self.detailViewController = DetailViewController(objective: objective, data: data)
         detailViewController?.delegate = dataManager
-        addChildViewController(detailViewController?)
+        addChildViewController(detailViewController!)
         detailViewController?.didMove(toParentViewController: self)
         
         guard let detailView = detailViewController?.view else { return false }
