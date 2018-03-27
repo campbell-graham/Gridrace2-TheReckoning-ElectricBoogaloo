@@ -10,25 +10,46 @@ import UIKit
 
 class TextResponseView: UIView {
 
+    let backgroundView = UIView()
     let textView = UITextView()
+    let submitButton = UIButton()
 
     override init(frame: CGRect) {
         super.init(frame: frame)
 
+        backgroundView.backgroundColor = AppColors.textPrimaryColor
+        backgroundView.layer.cornerRadius = 16
+        backgroundView.layer.masksToBounds = false
+
         textView.backgroundColor = AppColors.textPrimaryColor
         textView.font = UIFont.systemFont(ofSize: 14)
-        textView.layer.cornerRadius = 16
-        textView.layer.masksToBounds = false
-        textView.textContainerInset = .init(top: 32, left: 32, bottom: 32, right: 32)
 
-        textView.translatesAutoresizingMaskIntoConstraints = false
-        self.addSubview(textView)
+        let atribs: [NSAttributedStringKey : Any] = [NSAttributedStringKey.font : UIFont.boldSystemFont(ofSize: 16),
+                                                     NSAttributedStringKey.foregroundColor : #colorLiteral(red: 0.0431372549, green: 0.1137254902, blue: 0.1921568627, alpha: 1) ]
+        let atribString = NSAttributedString(string: "Submit", attributes: atribs)
+        submitButton.setAttributedTitle(atribString, for: .normal)
+
+        for view in [ backgroundView, textView, submitButton] as [UIView] {
+            view.translatesAutoresizingMaskIntoConstraints = false
+            self.addSubview(view)
+        }
 
         NSLayoutConstraint.activate([
-            textView.topAnchor.constraint(equalTo: self.topAnchor, constant: 16),
-            textView.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: 16),
-            textView.trailingAnchor.constraint(equalTo: self.trailingAnchor, constant: -16),
-            textView.bottomAnchor.constraint(equalTo: self.bottomAnchor, constant: -16)
+
+            backgroundView.topAnchor.constraint(equalTo: self.topAnchor, constant: 16),
+            backgroundView.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: 16),
+            backgroundView.trailingAnchor.constraint(equalTo: self.trailingAnchor, constant: -16),
+            backgroundView.bottomAnchor.constraint(equalTo: self.bottomAnchor, constant: -16),
+
+            textView.topAnchor.constraint(equalTo: backgroundView.topAnchor, constant: 16),
+            textView.leadingAnchor.constraint(equalTo: backgroundView.leadingAnchor, constant: 16),
+            textView.trailingAnchor.constraint(equalTo: backgroundView.trailingAnchor, constant: -16),
+            textView.bottomAnchor.constraint(equalTo: backgroundView.bottomAnchor, constant: -60),
+
+            submitButton.topAnchor.constraint(equalTo: textView.bottomAnchor, constant: 16),
+            submitButton.leadingAnchor.constraint(greaterThanOrEqualTo: textView.leadingAnchor, constant: 16),
+            submitButton.trailingAnchor.constraint(equalTo: textView.trailingAnchor, constant: -8),
+            submitButton.bottomAnchor.constraint(equalTo: backgroundView.bottomAnchor, constant: -16)
         ])
 
     }

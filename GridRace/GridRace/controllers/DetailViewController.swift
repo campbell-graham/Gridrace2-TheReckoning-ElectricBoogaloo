@@ -9,15 +9,23 @@
 import UIKit
 import RSKImageCropper
 
+//MARK:- Protocols
+
+protocol DetailViewControllerDelegate: class {
+    func initiateSave()
+}
+
 class DetailViewController: UIViewController {
 
     var objective: Objective
     var data: ObjectiveUserData
 
-    let panView = PanView()
+    var keyboardVisibile = false
 
+    private let panView = UIView()
     private let titleLabel = UILabel()
     private let hintImageView = UIImageView()
+    private let completeImageView = UIImageView()
     private let pointLabel = UILabel()
     private let descTextView = UITextView()
     private let responseTextLabel = UILabel()
@@ -28,7 +36,7 @@ class DetailViewController: UIViewController {
 
     private var passwordViewController: PasswordViewController?
 
-    var delegate: ObjectiveTableViewControllerDelegate?
+    var delegate: DetailViewControllerDelegate?
 
     init(objective: Objective, data: ObjectiveUserData) {
 
@@ -82,6 +90,9 @@ class DetailViewController: UIViewController {
         //Delete: wont be in nav bar
         navigationController?.navigationBar.prefersLargeTitles = false
         title = objective.name
+        view.layer.cornerRadius = 6
+        view.layer.masksToBounds = true
+        view.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
 
         setUpLayout()
         initialiseViews()
@@ -109,8 +120,10 @@ class DetailViewController: UIViewController {
 
         //Colors
         view.backgroundColor = AppColors.backgroundColor
+        panView.backgroundColor = AppColors.textPrimaryColor
         titleLabel.textColor = AppColors.textPrimaryColor
         hintImageView.tintColor = AppColors.orangeHighlightColor
+        completeImageView.tintColor = data.completed ? AppColors.greenHighlightColor : AppColors.textSecondaryColor
         pointLabel.textColor = AppColors.orangeHighlightColor
         descTextView.textColor = AppColors.textPrimaryColor
         descTextView.backgroundColor = AppColors.backgroundColor
@@ -123,14 +136,18 @@ class DetailViewController: UIViewController {
         responseTextLabel.font = UIFont.boldSystemFont(ofSize: 20)
 
         // misc stuff
+        panView.layer.cornerRadius = 2
+        panView.layer.masksToBounds = false
         descTextView.isEditable = false
         hintImageView.contentMode = .scaleAspectFit
+        completeImageView.contentMode = .scaleAspectFit
         answerView.isUserInteractionEnabled = true
 
 
         // set view data
         titleLabel.text = objective.name
         hintImageView.image = #imageLiteral(resourceName: "hint")
+        completeImageView.image = #imageLiteral(resourceName: "tick")
         if objective.answerType == .password {
             descTextView.text = "\(objective.desc) \n attempt: "
         } else {
@@ -145,8 +162,6 @@ class DetailViewController: UIViewController {
         let hintGestureRecogniser = UITapGestureRecognizer(target: self, action: #selector(clueButtonHandler))
         hintImageView.addGestureRecognizer(hintGestureRecogniser)
 
-
-
         switch answerView {
         case is ImageResponseView :
 
@@ -157,6 +172,8 @@ class DetailViewController: UIViewController {
             //assign TextViewDelegate
             let answerView = self.answerView as! TextResponseView
             answerView.textView.delegate = self
+
+            answerView.submitButton.addTarget(self, action: #selector(dismissKeyboard), for: .touchUpInside)
 
             // create keyboard state observers/ listeners (to reposition view when keyboard apperas/ disappears)
             NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow), name: NSNotification.Name.UIKeyboardWillShow, object: nil)
@@ -169,7 +186,7 @@ class DetailViewController: UIViewController {
 
     private func setUpLayout() {
 
-        for view in [panView, titleLabel, hintImageView, pointLabel, descTextView, responseTextLabel, answerView] {
+        for view in [panView, titleLabel, hintImageView, completeImageView, pointLabel, descTextView, responseTextLabel, answerView] {
             view.translatesAutoresizingMaskIntoConstraints = false
             self.view.addSubview(view)
         }
@@ -178,10 +195,10 @@ class DetailViewController: UIViewController {
 
         var constraints = ([
 
-            panView.topAnchor.constraint(equalTo: view.topAnchor),
-            panView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            panView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            panView.heightAnchor.constraint(equalToConstant: 30),
+            panView.topAnchor.constraint(equalTo: view.topAnchor, constant: 16),
+            panView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            panView.heightAnchor.constraint(equalToConstant: 6),
+            panView.widthAnchor.constraint(equalToConstant: 80),
 
             titleLabel.topAnchor.constraint(equalTo: panView.bottomAnchor, constant: 16),
             titleLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
@@ -192,6 +209,11 @@ class DetailViewController: UIViewController {
             hintImageView.centerYAnchor.constraint(equalTo: titleLabel.centerYAnchor),
             hintImageView.widthAnchor.constraint(equalToConstant: 24),
             hintImageView.heightAnchor.constraint(equalTo: hintImageView.widthAnchor),
+
+            completeImageView.centerXAnchor.constraint(equalTo: view.trailingAnchor, constant: -60),
+            completeImageView.centerYAnchor.constraint(equalTo: titleLabel.centerYAnchor),
+            completeImageView.widthAnchor.constraint(equalToConstant: 44),
+            completeImageView.heightAnchor.constraint(equalTo: completeImageView.widthAnchor),
 
             pointLabel.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 8),
             pointLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
@@ -252,15 +274,37 @@ class DetailViewController: UIViewController {
         var newFrame = originalViewFrame
         newFrame.origin.y = originalViewFrame.minY-keyboardHeight
         self.view.frame = newFrame
+
+        keyboardVisibile = true
     }
 
     @objc func keyboardWillHide(notification: NSNotification) {
         guard originalViewFrame != .zero else { return }
         self.view.frame = originalViewFrame
+        keyboardVisibile = false
+    }
+
+    @objc func dismissKeyboard() {
+
+        if keyboardVisibile, let answerView = answerView as? TextResponseView {
+
+            answerView.textView.resignFirstResponder()
+        }
     }
 
 
     // MARK: - Private Functions
+
+    @objc func clearTextView() {
+
+        if let answerView = answerView as? TextResponseView {
+
+            answerView.textView.text = ""
+            data.textResponse = nil
+            completeImageView.tintColor = AppColors.textSecondaryColor
+            delegate?.initiateSave()
+        }
+    }
 
     @objc private func clueButtonHandler() {
 
@@ -298,16 +342,6 @@ class DetailViewController: UIViewController {
         present(clueViewController, animated: true, completion: nil)
     }
 
-    private func playHudAnimation() {
-
-        let hudView = HudView.hud(inView: navigationController!.view, animated: true)
-        hudView.text = "Complete!"
-
-        DispatchQueue.main.asyncAfter(deadline: .now() + 2.0,
-                                      execute: {
-                                        hudView.hide()
-        })
-    }
 
     private func loadData() {
         switch objective.answerType {
@@ -391,7 +425,7 @@ RSKImageCropViewControllerDelegate, RSKImageCropViewControllerDataSource {
 
         saveImage(image: resizedImage)
 
-        playHudAnimation()
+        completeImageView.tintColor = AppColors.greenHighlightColor
         delegate?.initiateSave()
     }
 
@@ -427,11 +461,10 @@ extension DetailViewController: UITextViewDelegate {
     func textViewDidEndEditing(_ textView: UITextView) {
         if let answerView = answerView as? TextResponseView {
 
-            playHudAnimation()
             data.textResponse = answerView.textView.text
+            completeImageView.tintColor = AppColors.greenHighlightColor
             delegate?.initiateSave()
         }
-
-        print(data.completed)
     }
+
 }
