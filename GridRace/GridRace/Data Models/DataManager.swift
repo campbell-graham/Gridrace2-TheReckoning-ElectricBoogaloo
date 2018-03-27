@@ -10,7 +10,7 @@ import UIKit
 
 protocol DataManagerDelgate {
 
-    func didRetriveData(alert: UIAlertController?)
+    func didRetrieveData(alert: UIAlertController?)
 }
 
 class DataManager: NSObject, DetailViewControllerDelegate {
@@ -80,7 +80,7 @@ class DataManager: NSObject, DetailViewControllerDelegate {
                 let alert = UIAlertController(title: "Failed to download!", message: "Using locally saved data fow now, however we recommend restarting with app whilst having an internet connection", preferredStyle: .alert)
                 alert.addAction(UIAlertAction(title: "Okay", style: .cancel, handler: nil))
                 returnAlert = alert
-                self.delegate?.didRetriveData(alert: returnAlert)
+                self.delegate?.didRetrieveData(alert: returnAlert)
             }
 
             //bool to determine whether to show "data was reset" alert
@@ -113,7 +113,7 @@ class DataManager: NSObject, DetailViewControllerDelegate {
                 returnAlert = alert
             }
             self.saveLocalData()
-            self.delegate?.didRetriveData(alert: returnAlert)
+            self.delegate?.didRetrieveData(alert: returnAlert)
 
         }
     }

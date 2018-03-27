@@ -193,7 +193,7 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
         updateSelectedObjectiveType()
     }
 
-    func didRetriveData(alert: UIAlertController?) {
+    func didRetrieveData(alert: UIAlertController?) {
 
         if let alert = alert {
             present(alert, animated: false, completion: nil)
@@ -677,7 +677,7 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
 
             if let layer = collectionView.collectionViewLayout as? UICollectionViewFlowLayout {
 
-                //retrive current cell
+                //retrieve current cell
                 let pageWidth = layer.itemSize.width + layer.minimumInteritemSpacing
                 let cellIndex = collectionView.contentOffset.x / pageWidth
                 let cell = collectionView.cellForItem(at: IndexPath(row: Int(cellIndex), section: 0))
