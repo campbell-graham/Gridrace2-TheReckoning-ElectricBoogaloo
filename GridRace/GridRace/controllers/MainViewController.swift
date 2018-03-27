@@ -216,11 +216,10 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
         collectionView.reloadData()
         //executes when the reload data is complete
         self.collectionView.performBatchUpdates({}, completion: { (finished) in
+            self.collectionView.setContentOffset(CGPoint(x:0,y:0), animated: true)
             self.addMapCircles()
-            self.scaleCellAnimation()
             self.zoomToLocation(objIndex: nil)
         })
-        collectionView.setContentOffset(CGPoint(x:0,y:0), animated: true)
         
         //set follow mode if bonus, eitherwise turn off
         mapView.userTrackingMode = objectiveTypeToFilter == .bonus ? .follow : .none
