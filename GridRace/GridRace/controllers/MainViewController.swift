@@ -247,10 +247,17 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
             } else {
                 index = objIndex!
             }
-
-            if index < 0 || index > objectivesToDisplay.count - 1 {
+            
+            
+            //check that the index is valid
+            guard index >= 0 && index < objectivesToDisplay.count else {
                 return
             }
+            
+//            //check that the objective is a main, as we do not want to trigger a zoom for bonus objectives
+//            guard objectivesToDisplay[index].objectiveType == .main else {
+//                return
+//            }
 
             //zoom to location on map
             if let coordinate = currentAnnotations[objectivesToDisplay[index].id]?.coordinate {
@@ -270,7 +277,7 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
                 let span:MKCoordinateSpan = MKCoordinateSpanMake(latDelta, lonDelta)
                 let region: MKCoordinateRegion = MKCoordinateRegionMake(coordinate, span)
                 mapView.setRegion(region, animated: true)
-            } else {
+            } else if mapView.overlays.count > 0 {
                 for (overlay) in mapView.overlays as! [MKCircle] {
                     let circleRenderer = (mapView.renderer(for: overlay) as! MKCircleRenderer)
                     circleRenderer.fillColor = AppColors.cellColor.withAlphaComponent(0.7)
