@@ -190,7 +190,15 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
     //MARK:- Segment Control
 
     @objc func handleSegmentedChanged() {
-        updateSelectedObjectiveType()
+
+        if detailViewController != nil {
+
+            playShrinkCellAnimation(completion: updateSelectedObjectiveType)
+        }
+        else {
+            updateSelectedObjectiveType()
+        }
+
     }
 
     func didRetrieveData(alert: UIAlertController?) {
@@ -428,7 +436,7 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
         func openDetail() {
 
             if let currentCell = retrieveCurrentCell(), collectionView.indexPath(for: currentCell) == indexPath {
-                growCellAnimation(cell: (collectionView.cellForItem(at: indexPath))!)
+                playGrowCellAnimation(cell: (collectionView.cellForItem(at: indexPath))!)
             }
             collectionView.scrollToItem(at: indexPath, at: .centeredHorizontally, animated: true)
         }
@@ -452,7 +460,7 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
     func scrollViewDidEndScrollingAnimation(_ scrollView: UIScrollView) {
 
         guard let currentCell = retrieveCurrentCell() else { return }
-        growCellAnimation(cell: currentCell)
+        playGrowCellAnimation(cell: currentCell)
     }
 
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
@@ -625,7 +633,7 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
         self.detailViewSnapShotImageView.alpha = 1
     }
 
-    func growCellAnimation(cell: UICollectionViewCell) {
+    func playGrowCellAnimation(cell: UICollectionViewCell) {
 
         growCellAnimationSetup(cell: cell)
 
@@ -650,6 +658,40 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
 
         //reveal the detailView
         detailView.isHidden = false
+        })
+    }
+
+    func playShrinkCellAnimation(completion: @escaping ()->()) {
+        guard let cell = retrieveCurrentCell() else { return }
+        let cellFrame = view.convert(cell.frame, from: collectionView)
+
+        shrinkCellAnimationSetUp()
+        guard let detailView = detailViewController?.view else { return }
+
+        UIView.animate(withDuration: 0.3, animations: {
+
+            //make detailView snapShot transparent to reveal cell snapshot below it
+            self.detailViewSnapShotImageView.alpha = 0
+
+            //shrink both snapshots to cell size
+            self.cellSnapShotImageView.frame = cellFrame
+            self.detailViewSnapShotImageView.frame = cellFrame
+
+            // round all corners
+            self.cellSnapShotImageView.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner, .layerMinXMaxYCorner, .layerMinXMaxYCorner]
+            self.detailViewSnapShotImageView.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner, .layerMinXMaxYCorner, .layerMinXMaxYCorner]
+
+            //update maps current content insets
+            self.mapView.layoutMargins = UIEdgeInsets(top: 16, left: 16, bottom: self.collectionView.frame.height + 16, right: 16)
+            self.zoomToLocation(objIndex: nil)
+        }, completion: { _ in
+
+            self.detailViewController!.removeFromParentViewController()
+            self.detailViewController = nil
+            self.detailViewSnapShotImageView.removeFromSuperview()
+            self.cellSnapShotImageView.removeFromSuperview()
+
+            completion()
         })
     }
 
