@@ -173,7 +173,7 @@ class DetailViewController: UIViewController {
             let answerView = self.answerView as! TextResponseView
             answerView.textView.delegate = self
 
-            answerView.deleteButton.addTarget(self, action: #selector(clearTextView), for: .touchUpInside)
+            answerView.submitButton.addTarget(self, action: #selector(dismissKeyboard), for: .touchUpInside)
 
             // create keyboard state observers/ listeners (to reposition view when keyboard apperas/ disappears)
             NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow), name: NSNotification.Name.UIKeyboardWillShow, object: nil)
