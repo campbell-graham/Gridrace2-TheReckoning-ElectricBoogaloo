@@ -60,7 +60,7 @@ class DetailViewController: UIViewController {
             if passwordViewController != nil {
                 addChildViewController(passwordViewController!)
                 passwordViewController!.didMove(toParentViewController: self)
-                passwordViewController?.buttonCompletion = self.updateLabel
+                //passwordViewController?.buttonCompletion = self.updateLabel
             }
         }
     }
@@ -112,7 +112,7 @@ class DetailViewController: UIViewController {
         //Delete: this seems dodgy (make password view controller seperate and only call at end? dont tie it to objectives?)
         if let VC = childViewControllers.last as? PasswordViewController {
 
-            VC.activateButtonConstraints()
+            //VC.activateButtonConstraints()
         }
     }
 
