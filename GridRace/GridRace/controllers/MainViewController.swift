@@ -425,13 +425,11 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
 
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
 
-        guard let currentCell = retrieveCurrentCell() else { return }
-        if collectionView.indexPath(for: currentCell) == indexPath {
+        if let currentCell = retrieveCurrentCell(), collectionView.indexPath(for: currentCell) == indexPath {
             growCellAnimation(cell: (collectionView.cellForItem(at: indexPath))!)
         }
+
         collectionView.scrollToItem(at: indexPath, at: .centeredHorizontally, animated: true)
-
-
     }
 
     func scrollViewDidEndScrollingAnimation(_ scrollView: UIScrollView) {
