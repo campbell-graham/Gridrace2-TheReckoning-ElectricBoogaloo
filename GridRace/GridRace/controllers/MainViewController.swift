@@ -223,11 +223,7 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
         collectionView.setContentOffset(CGPoint(x:0,y:0), animated: true)
         
         //set follow mode if bonus, eitherwise turn off
-        if objectiveTypeToFilter == .bonus {
-            mapView.userTrackingMode = .follow
-        } else {
-            mapView.userTrackingMode = .none
-        }
+        mapView.userTrackingMode = objectiveTypeToFilter == .bonus ? .follow : .none
     }
 
     //MARK:- Map methods
