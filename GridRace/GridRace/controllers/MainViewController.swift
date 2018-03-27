@@ -445,6 +445,7 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
                     collectionView.scrollToItem(at: indexPath, at: .centeredHorizontally, animated: false)},
                                completion: {_ in
                                 self.playGrowCellAnimation(cell: (collectionView.cellForItem(at: indexPath))!)
+                                self.scaleCellAnimation()
                 })
                 
             }
