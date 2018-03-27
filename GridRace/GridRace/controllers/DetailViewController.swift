@@ -123,7 +123,6 @@ class DetailViewController: UIViewController {
         panView.backgroundColor = AppColors.textPrimaryColor
         titleLabel.textColor = AppColors.textPrimaryColor
         hintImageView.tintColor = AppColors.orangeHighlightColor
-        completeImageView.tintColor = data.completed ? AppColors.greenHighlightColor : AppColors.textSecondaryColor
         pointLabel.textColor = AppColors.orangeHighlightColor
         descTextView.textColor = AppColors.textPrimaryColor
         descTextView.backgroundColor = AppColors.backgroundColor
@@ -147,7 +146,7 @@ class DetailViewController: UIViewController {
         // set view data
         titleLabel.text = objective.name
         hintImageView.image = #imageLiteral(resourceName: "hint")
-        completeImageView.image = #imageLiteral(resourceName: "tick")
+        completeImageView.image = data.completed ? #imageLiteral(resourceName: "correct_selected") : #imageLiteral(resourceName: "correct_unselected")
         if objective.answerType == .password {
             descTextView.text = "\(objective.desc) \n attempt: "
         } else {
@@ -301,7 +300,7 @@ class DetailViewController: UIViewController {
 
             answerView.textView.text = ""
             data.textResponse = nil
-            completeImageView.tintColor = AppColors.textSecondaryColor
+            completeImageView.image = #imageLiteral(resourceName: "correct_unselected")
             delegate?.initiateSave()
         }
     }
@@ -425,7 +424,7 @@ RSKImageCropViewControllerDelegate, RSKImageCropViewControllerDataSource {
 
         saveImage(image: resizedImage)
 
-        completeImageView.tintColor = AppColors.greenHighlightColor
+        completeImageView.image = #imageLiteral(resourceName: "correct_selected")
         delegate?.initiateSave()
     }
 
@@ -462,7 +461,7 @@ extension DetailViewController: UITextViewDelegate {
         if let answerView = answerView as? TextResponseView {
 
             data.textResponse = answerView.textView.text
-            completeImageView.tintColor = AppColors.greenHighlightColor
+            completeImageView.image = #imageLiteral(resourceName: "correct_selected")
             delegate?.initiateSave()
         }
     }
