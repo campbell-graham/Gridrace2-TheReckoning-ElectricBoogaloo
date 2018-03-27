@@ -106,7 +106,7 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
         collectionView.delegate = self
         collectionView.dataSource = self
         collectionView.backgroundColor = #colorLiteral(red: 1, green: 1, blue: 1, alpha: 0)
-//        collectionView.decelerationRate = UIScrollViewDecelerationRateFast
+        collectionView.decelerationRate = UIScrollViewDecelerationRateFast
         collectionView.register(ObjectiveInformationCollectionViewCell.self, forCellWithReuseIdentifier: "objectiveCell")
         
         //layout constraints
