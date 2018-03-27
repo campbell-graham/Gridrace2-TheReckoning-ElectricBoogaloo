@@ -51,8 +51,8 @@ class SummaryViewController: UIViewController, UICollectionViewDelegate, UIColle
     var completedPlacesObjectivesCount: Int {
         var result = 0
         for objective in mainObjectives {
-            let data = allData.first(where: {$0.objectiveID == objective.id})
-            if (data?.correct)! {
+            let userData = allData.first(where: {$0.objectiveID == objective.id})
+            if let data = userData, data.correct {
                 result += 1
             }
         }
@@ -62,8 +62,8 @@ class SummaryViewController: UIViewController, UICollectionViewDelegate, UIColle
     var completedBonusObjectivesCount: Int {
         var result = 0
         for objective in bonusObjectives {
-            let data = allData.first(where: {$0.objectiveID == objective.id})
-            if (data?.correct)! {
+            let userData = allData.first(where: {$0.objectiveID == objective.id})
+            if let data = userData, data.correct {
                 result += 1
             }
         }
@@ -73,9 +73,9 @@ class SummaryViewController: UIViewController, UICollectionViewDelegate, UIColle
     var userPoints: Int {
         var result = 0
         for objective in allObjectives {
-            let dataForObject = allData.first(where: {$0.objectiveID == objective.id})
-            if (dataForObject?.correct)! {
-                result += dataForObject?.adjustedPoints != nil ? (dataForObject?.adjustedPoints)! : objective.points
+            let userData = allData.first(where: {$0.objectiveID == objective.id})
+            if let data = userData, data.correct {
+                result += data.adjustedPoints != nil ? data.adjustedPoints! : objective.points
             }
         }
         return result
@@ -197,11 +197,15 @@ class SummaryViewController: UIViewController, UICollectionViewDelegate, UIColle
         let objective = allObjectives[indexPath.row]
         let userData = allData.first(where: {$0.objectiveID == objective.id})
         
-        guard (userData != nil && (userData?.completed)!) else {
+        guard let data = userData else {
             return
         }
         
-        userData!.correct = !(userData!.correct)
+        guard data.completed else {
+            return
+        }
+        
+        data.correct = !data.correct
         
         updateLabels()
         collectionView.reloadData()
@@ -212,10 +216,14 @@ class SummaryViewController: UIViewController, UICollectionViewDelegate, UIColle
         cell.delegate = self
         let objective = allObjectives[indexPath.row]
         let userData = allData.first(where: {$0.objectiveID == objective.id})
+        
+        guard let data = userData else {
+            return cell
+        }
 
         cell.nameLabel.text = objective.name
         
-        if (userData?.completed)! {
+        if data.completed {
             
             if objective.answerType == .photo {
                 
@@ -242,13 +250,8 @@ class SummaryViewController: UIViewController, UICollectionViewDelegate, UIColle
             cell.responseTextLabel.text = "No Response Given"
         }
 
-        if (userData?.correct)! {
-            cell.tickImageView.image = #imageLiteral(resourceName: "correct_selected")
-            cell.crossImageView.image = #imageLiteral(resourceName: "incorrect_unselected")
-        } else {
-            cell.tickImageView.image = #imageLiteral(resourceName: "correct_unselected")
-            cell.crossImageView.image = #imageLiteral(resourceName: "incorrect_selected")
-        }
+        cell.tickImageView.image = data.correct ? #imageLiteral(resourceName: "correct_selected")  : #imageLiteral(resourceName: "correct_unselected")
+        cell.crossImageView.image = data.correct ? #imageLiteral(resourceName: "incorrect_unselected")  : #imageLiteral(resourceName: "incorrect_selected")
 
         return cell
     }
