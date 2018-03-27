@@ -465,8 +465,6 @@ extension DetailViewController: UITextViewDelegate {
             completeImageView.tintColor = AppColors.greenHighlightColor
             delegate?.initiateSave()
         }
-
-        print(data.completed)
     }
 
 }

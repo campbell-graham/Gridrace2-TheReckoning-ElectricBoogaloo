@@ -43,7 +43,6 @@ class DataManager: NSObject, DetailViewControllerDelegate {
     }
 
     func initiateSave() {
-        print("Saving!")
         saveLocalData()
     }
 

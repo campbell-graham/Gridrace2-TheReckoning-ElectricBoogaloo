@@ -465,7 +465,7 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
             cell.pointsLabel.text = "\(objective.points) Points"
         }
         cell.descriptionLabel.text = objective.desc
-        cell.tickImageView.tintColor = data.completed ? AppColors.greenHighlightColor : AppColors.textSecondaryColor
+        cell.tickImageView.image = data.completed ? #imageLiteral(resourceName: "correct_selected"): #imageLiteral(resourceName: "correct_unselected")
 
         //add panGesture recogniser to cell
         let panGestureRecogniser = UIPanGestureRecognizer(target: self, action: #selector(collapseAnimationHandler))
@@ -716,8 +716,6 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
         if let animator = self.collapsableDetailsAnimator, animator.isRunning {
             return
         }
-
-        print("Translation", translation)
 
         var progress: CGFloat
 
