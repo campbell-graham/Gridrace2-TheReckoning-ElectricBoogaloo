@@ -491,7 +491,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 13733228498CCA006EAA6DCA /* Pods-GridRace.debug.xcconfig */;
 			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = "AppIcon-1";
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = FNW7L4X44S;
 				INFOPLIST_FILE = GridRace/Info.plist;
@@ -508,7 +508,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 2727F62BE70A41A8EF9B4686 /* Pods-GridRace.release.xcconfig */;
 			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = "AppIcon-1";
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = FNW7L4X44S;
 				INFOPLIST_FILE = GridRace/Info.plist;
