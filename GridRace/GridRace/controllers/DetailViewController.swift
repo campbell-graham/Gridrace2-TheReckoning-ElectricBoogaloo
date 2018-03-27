@@ -366,91 +366,57 @@ extension DetailViewController:
 UIImagePickerControllerDelegate, UINavigationControllerDelegate {
 
     @objc private func selectPhoto() {
-
-        let imagePicker = UIImagePickerController()
-        imagePicker.sourceType = UIImagePickerController.isSourceTypeAvailable(.camera) ? .camera : .photoLibrary
-        imagePicker.delegate = self
-        present(imagePicker, animated: true, completion: nil)
+        
+        guard let answerView = answerView as? ImageResponseView else { return }
+        
+        func takeNewPhoto() {
+            let imagePicker = UIImagePickerController()
+            imagePicker.sourceType = UIImagePickerController.isSourceTypeAvailable(.camera) ? .camera : .photoLibrary
+            imagePicker.delegate = self
+            present(imagePicker, animated: true, completion: nil)
+        }
+        
+        if let image = answerView.responseImageView.image {
+            let alert = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
+            let actionView = UIAlertAction(title: "View Photo", style: .default, handler: {_ in
+                self.present(EnlargenedImageViewController(image: image), animated: true, completion: nil)
+            })
+            let actionTakePhoto = UIAlertAction(title: "Take New Photo", style: .default, handler: {_ in
+                takeNewPhoto()
+            })
+            let actionCancel = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
+            alert.addAction(actionView)
+            alert.addAction(actionTakePhoto)
+            alert.addAction(actionCancel)
+            present(alert, animated: true, completion: nil)
+        } else {
+            takeNewPhoto()
+        }
+    }
+    
+    func saveImage(image: UIImage) {
+        
+        let imageData = UIImageJPEGRepresentation(image, 1)
+        let imageFilePath = AppResources.documentsDirectory().appendingPathComponent("Photo_\(objective.id).jpeg")
+        do {
+            try imageData?.write(to: imageFilePath)
+            data.imageResponseURL = imageFilePath
+            delegate?.initiateSave()
+        } catch {
+            print("Failed to save image")
+        }
     }
 
     // MARK:- Image Picker Delegates
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : Any]) {
 
         if let image = info[UIImagePickerControllerOriginalImage] as? UIImage {
-
-            let imageCropperViewController = RSKImageCropViewController(image: image)
-
-            imageCropperViewController.cropMode = RSKImageCropMode.custom
-            imageCropperViewController.delegate = self
-            imageCropperViewController.dataSource = self
-            imageCropperViewController.alwaysBounceVertical = true
-            imageCropperViewController.avoidEmptySpaceAroundImage = true
-            picker.pushViewController(imageCropperViewController, animated: true)
+            saveImage(image: image)
+            if let answerView = answerView as? ImageResponseView {
+                answerView.setImage(image: image)
+                completeImageView.image = #imageLiteral(resourceName: "correct_selected")
+            }
         }
-    }
-
-    func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
-
-        dismiss(animated: true, completion: nil)
-    }
-
-}
-
-extension DetailViewController:
-RSKImageCropViewControllerDelegate, RSKImageCropViewControllerDataSource {
-
-    func saveImage(image: UIImage) {
-
-        let imageData = UIImageJPEGRepresentation(image, 1)
-        let imageFilePath = AppResources.documentsDirectory().appendingPathComponent("Photo_\(objective.id).jpeg")
-        do {
-            try imageData?.write(to: imageFilePath)
-            data.imageResponseURL = imageFilePath
-        } catch {
-            print("Failed to save image")
-        }
-    }
-
-    // MARK:- Image Croper Delegates
-
-    func imageCropViewController(_ controller: RSKImageCropViewController, didCropImage croppedImage: UIImage, usingCropRect cropRect: CGRect, rotationAngle: CGFloat) {
-
-        // crop and resize chosen image to size of UIImageView controller
-        let resizedImage = croppedImage.resized(withBounds:  CGSize(width: answerView.frame.width, height: answerView.frame.height))
-        if let answerView = answerView as? ImageResponseView {
-            answerView.setImage(image: resizedImage)
-        }
-        dismiss(animated: true, completion: nil)
-
-        saveImage(image: resizedImage)
-
-        completeImageView.image = #imageLiteral(resourceName: "correct_selected")
-        delegate?.initiateSave()
-    }
-
-    func imageCropViewControllerCustomMovementRect(_ controller: RSKImageCropViewController) -> CGRect {
-        return maskRect(controller: controller)
-    }
-
-    func imageCropViewControllerCustomMaskRect(_ controller: RSKImageCropViewController) -> CGRect {
-        return maskRect(controller: controller)
-    }
-
-    func maskRect(controller: RSKImageCropViewController) -> CGRect {
-        let maskSize = CGSize(width: view.frame.width, height: answerView.bounds.height)
-        let viewHeight = controller.view.frame.height
-
-        // create and return shape for cropping image
-        return CGRect(x: 0, y: viewHeight * 0.5 - maskSize.height / 2.0, width: maskSize.width, height: maskSize.height)
-    }
-
-    func imageCropViewControllerCustomMaskPath(_ controller: RSKImageCropViewController) -> UIBezierPath {
-
-        // return path from mask shape
-        return UIBezierPath(rect: controller.maskRect);
-    }
-
-    func imageCropViewControllerDidCancelCrop(_ controller: RSKImageCropViewController) {
         dismiss(animated: true, completion: nil)
     }
 }
