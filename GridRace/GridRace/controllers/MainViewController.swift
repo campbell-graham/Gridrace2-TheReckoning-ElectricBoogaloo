@@ -504,6 +504,10 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
     
     //MARK:- scroll view delegate methods
     
+    func scrollViewDidEndScrollingAnimation(_ scrollView: UIScrollView) {
+        scaleCellAnimation()
+    }
+    
     func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
         guard decelerate else {
             return
