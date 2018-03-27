@@ -28,6 +28,7 @@ class TextResponseView: UIView {
                                                      NSAttributedStringKey.foregroundColor : #colorLiteral(red: 0.0431372549, green: 0.1137254902, blue: 0.1921568627, alpha: 1) ]
         let atribString = NSAttributedString(string: "Submit", attributes: atribs)
         submitButton.setAttributedTitle(atribString, for: .normal)
+        submitButton.isHidden = true
 
         for view in [ backgroundView, textView, submitButton] as [UIView] {
             view.translatesAutoresizingMaskIntoConstraints = false

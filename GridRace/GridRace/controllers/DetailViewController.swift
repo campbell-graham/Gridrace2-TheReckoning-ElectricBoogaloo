@@ -274,12 +274,19 @@ class DetailViewController: UIViewController {
         newFrame.origin.y = originalViewFrame.minY-keyboardHeight
         self.view.frame = newFrame
 
+        if let answerView = answerView as? TextResponseView {
+            answerView.submitButton.isHidden = false
+        }
         keyboardVisibile = true
     }
 
     @objc func keyboardWillHide(notification: NSNotification) {
         guard originalViewFrame != .zero else { return }
         self.view.frame = originalViewFrame
+
+        if let answerView = answerView as? TextResponseView {
+            answerView.submitButton.isHidden = true
+        }
         keyboardVisibile = false
     }
 
