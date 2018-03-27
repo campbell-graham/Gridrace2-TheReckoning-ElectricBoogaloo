@@ -421,33 +421,23 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
         return objectivesToDisplay.count
     }
 
+
+
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
 
-        growCellAnimationSetup(cell: collectionView.cellForItem(at: indexPath)!)
+        guard let currentCell = retrieveCurrentCell() else { return }
+        if collectionView.indexPath(for: currentCell) == indexPath {
+            growCellAnimation(cell: (collectionView.cellForItem(at: indexPath))!)
+        }
+        collectionView.scrollToItem(at: indexPath, at: .centeredHorizontally, animated: true)
 
-        guard let detailView = detailViewController?.view else { return }
 
-        UIView.animate(withDuration: 0.3, animations: {
+    }
 
-            //make cell snapShot transparent to reveal detailView snapshot below it
-            self.cellSnapShotImageView.alpha = 0
+    func scrollViewDidEndScrollingAnimation(_ scrollView: UIScrollView) {
 
-            //grow both snapshots to full size
-            self.cellSnapShotImageView.frame = detailView.frame
-            self.detailViewSnapShotImageView.frame = detailView.frame
-
-            self.mapView.layoutMargins = UIEdgeInsets(top: 16, left: 16, bottom: detailView.frame.height - 16, right: 16)
-            self.zoomToLocation(objIndex: nil)
-        }, completion: { _ in
-
-            //remove the snapshots
-            self.detailViewSnapShotImageView.removeFromSuperview()
-            self.cellSnapShotImageView.removeFromSuperview()
-
-            //reveal the detailView
-            detailView.isHidden = false
-        })
-
+        guard let currentCell = retrieveCurrentCell() else { return }
+        growCellAnimation(cell: currentCell)
     }
 
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
@@ -473,6 +463,17 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
         cell.addGestureRecognizer(panGestureRecogniser)
 
         return cell
+    }
+
+    func retrieveCurrentCell()-> UICollectionViewCell? {
+
+        if let layer = collectionView.collectionViewLayout as? UICollectionViewFlowLayout {
+
+            let pageWidth = layer.itemSize.width + layer.minimumInteritemSpacing
+            let cellIndex = collectionView.contentOffset.x / pageWidth
+            return collectionView.cellForItem(at: IndexPath(row: Int(cellIndex), section: 0))
+        }
+        return nil
     }
 
     //MARK:- scroll view delegate methods
@@ -609,6 +610,34 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
         self.detailViewSnapShotImageView.alpha = 1
     }
 
+    func growCellAnimation(cell: UICollectionViewCell) {
+
+        growCellAnimationSetup(cell: cell)
+
+        guard let detailView = detailViewController?.view else { return }
+
+        UIView.animate(withDuration: 0.3, animations: {
+
+        //make cell snapShot transparent to reveal detailView snapshot below it
+        self.cellSnapShotImageView.alpha = 0
+
+        //grow both snapshots to full size
+        self.cellSnapShotImageView.frame = detailView.frame
+        self.detailViewSnapShotImageView.frame = detailView.frame
+
+        self.mapView.layoutMargins = UIEdgeInsets(top: 16, left: 16, bottom: detailView.frame.height - 16, right: 16)
+        self.zoomToLocation(objIndex: nil)
+        }, completion: { _ in
+
+        //remove the snapshots
+        self.detailViewSnapShotImageView.removeFromSuperview()
+        self.cellSnapShotImageView.removeFromSuperview()
+
+        //reveal the detailView
+        detailView.isHidden = false
+        })
+    }
+
     //MARK:- pan animation code
 
     // the value between the animated views highest possible point and lowest possible point
@@ -675,37 +704,31 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
         // else if user is panning from detailView back down to a cell
         } else {
 
-            if let layer = collectionView.collectionViewLayout as? UICollectionViewFlowLayout {
+            guard let cell = retrieveCurrentCell() else { return }
+            let cellFrame = view.convert(cell.frame, from: collectionView)
 
-                //retrieve current cell
-                let pageWidth = layer.itemSize.width + layer.minimumInteritemSpacing
-                let cellIndex = collectionView.contentOffset.x / pageWidth
-                let cell = collectionView.cellForItem(at: IndexPath(row: Int(cellIndex), section: 0))
-                let cellFrame = view.convert(cell!.frame, from: collectionView)
+            shrinkCellAnimationSetUp()
+            guard let detailView = detailViewController?.view else { return }
 
-                shrinkCellAnimationSetUp()
-                guard let detailView = detailViewController?.view else { return }
+            totalYMovement = cellFrame.minY - detailView.frame.minY
 
-                totalYMovement = cellFrame.minY - detailView.frame.minY
+            collapsableDetailsAnimator = UIViewPropertyAnimator(duration: 0.3, curve: .easeIn, animations: {
 
-                collapsableDetailsAnimator = UIViewPropertyAnimator(duration: 0.3, curve: .easeIn, animations: {
+                //make detailView snapShot transparent to reveal cell snapshot below it
+                self.detailViewSnapShotImageView.alpha = 0
 
-                    //make detailView snapShot transparent to reveal cell snapshot below it
-                    self.detailViewSnapShotImageView.alpha = 0
+                //shrink both snapshots to cell size
+                self.cellSnapShotImageView.frame = cellFrame
+                self.detailViewSnapShotImageView.frame = cellFrame
 
-                    //shrink both snapshots to cell size
-                    self.cellSnapShotImageView.frame = cellFrame
-                    self.detailViewSnapShotImageView.frame = cellFrame
+                // round all corners
+                self.cellSnapShotImageView.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner, .layerMinXMaxYCorner, .layerMinXMaxYCorner]
+                self.detailViewSnapShotImageView.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner, .layerMinXMaxYCorner, .layerMinXMaxYCorner]
 
-                    // round all corners
-                    self.cellSnapShotImageView.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner, .layerMinXMaxYCorner, .layerMinXMaxYCorner]
-                    self.detailViewSnapShotImageView.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner, .layerMinXMaxYCorner, .layerMinXMaxYCorner]
-
-                    //update maps current content insets
-                    self.mapView.layoutMargins = UIEdgeInsets(top: 16, left: 16, bottom: self.collectionView.frame.height + 16, right: 16)
-                    self.zoomToLocation(objIndex: nil)
-                })
-            }
+                //update maps current content insets
+                self.mapView.layoutMargins = UIEdgeInsets(top: 16, left: 16, bottom: self.collectionView.frame.height + 16, right: 16)
+                self.zoomToLocation(objIndex: nil)
+            })
         }
         return
     }
