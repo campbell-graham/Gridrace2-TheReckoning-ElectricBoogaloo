@@ -13,7 +13,7 @@ protocol DataManagerDelgate {
     func didRetriveData(alert: UIAlertController?)
 }
 
-class DataManager: NSObject, ObjectiveTableViewControllerDelegate {
+class DataManager: NSObject, DetailViewControllerDelegate {
 
     var delegate: DataManagerDelgate? = nil
 
@@ -148,12 +148,6 @@ class DataManager: NSObject, ObjectiveTableViewControllerDelegate {
     }
 
 
-}
-
-//MARK:- Protocols
-
-protocol ObjectiveTableViewControllerDelegate: class {
-    func initiateSave()
 }
 
 

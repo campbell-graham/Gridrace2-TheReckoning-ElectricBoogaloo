@@ -9,6 +9,12 @@
 import UIKit
 import RSKImageCropper
 
+//MARK:- Protocols
+
+protocol DetailViewControllerDelegate: class {
+    func initiateSave()
+}
+
 class DetailViewController: UIViewController {
 
     var objective: Objective
@@ -30,7 +36,7 @@ class DetailViewController: UIViewController {
 
     private var passwordViewController: PasswordViewController?
 
-    var delegate: ObjectiveTableViewControllerDelegate?
+    var delegate: DetailViewControllerDelegate?
 
     init(objective: Objective, data: ObjectiveUserData) {
 

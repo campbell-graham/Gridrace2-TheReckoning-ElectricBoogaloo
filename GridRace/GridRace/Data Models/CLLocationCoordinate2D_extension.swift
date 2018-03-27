@@ -13,12 +13,6 @@ extension CLLocationCoordinate2D {
 
     static func ==(left: CLLocationCoordinate2D, right: CLLocationCoordinate2D) -> Bool { 
 
-        if left.latitude == right.latitude {
-            if left.longitude == right.longitude {
-
-                return true
-            }
-        }
-        return false
+        return ( left.latitude == right.latitude && left.longitude == right.longitude)
     }
 }
