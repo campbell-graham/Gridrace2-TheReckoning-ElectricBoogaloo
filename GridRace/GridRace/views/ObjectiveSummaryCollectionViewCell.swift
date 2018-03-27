@@ -11,33 +11,57 @@ import UIKit
 class ObjectiveSummaryCollectionViewCell: UICollectionViewCell {
 
     let nameLabel = UILabel()
-    //let pointLabel = UILabel()
+    let tickImageView = UIImageView()
+    let crossImageView = UIImageView()
     let responseImageView = UIImageView()
     let responseTextLabel = UILabel()
+    weak var delegate: ObjectiveSummaryCollectionViewCellDelegate?
 
     override init(frame: CGRect) {
         super.init(frame: frame)
 
-        contentView.layer.cornerRadius = 15
+        contentView.layer.cornerRadius = 10
         contentView.layer.masksToBounds = false
-
+        contentView.backgroundColor = AppColors.cellColor
+        
+        //shadow
+        contentView.layer.borderWidth = 1.0
+        contentView.layer.borderColor = UIColor.clear.cgColor
+        contentView.layer.masksToBounds = true
+        layer.shadowColor = #colorLiteral(red: 0, green: 0, blue: 0, alpha: 1)
+        layer.shadowOffset = CGSize(width: 0.0, height: 2.0)
+        layer.shadowRadius = 2.0
+        layer.shadowOpacity = 0.5
+        layer.masksToBounds = false
+        layer.shadowPath = UIBezierPath(roundedRect: bounds, cornerRadius: contentView.layer.cornerRadius).cgPath
+        
+        
+        //name label
         nameLabel.textColor = AppColors.textPrimaryColor
-        nameLabel.textAlignment = .center
-        nameLabel.font = UIFont.boldSystemFont(ofSize: 16)
+        nameLabel.textAlignment = .left
+        nameLabel.font = UIFont.boldSystemFont(ofSize: 20)
+        nameLabel.setContentHuggingPriority(.required, for: .vertical)
 
+        //response image view
         responseImageView.contentMode = .scaleAspectFit
-        responseImageView.layer.cornerRadius = contentView.layer.cornerRadius
         responseImageView.layer.masksToBounds = true
+        responseImageView.layer.cornerRadius = contentView.layer.cornerRadius
+        responseImageView.layer.maskedCorners = [.layerMaxXMaxYCorner, .layerMinXMaxYCorner]
+        let tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(openLargeImage))
+        responseImageView.addGestureRecognizer(tapGestureRecognizer)
+        responseImageView.isUserInteractionEnabled = true
 
+        //response text label
         responseTextLabel.layer.masksToBounds = true
-        responseTextLabel.layer.cornerRadius = contentView.layer.cornerRadius
         responseTextLabel.backgroundColor = AppColors.cellColor
         responseTextLabel.textColor = AppColors.textPrimaryColor
         responseTextLabel.textAlignment = .center
+        responseTextLabel.layer.cornerRadius = contentView.layer.cornerRadius
+        responseTextLabel.layer.maskedCorners = [.layerMaxXMaxYCorner, .layerMinXMaxYCorner]
 
        
 
-        for view in [nameLabel, responseImageView, responseTextLabel] as! [UIView] {
+        for view in [nameLabel, responseImageView, responseTextLabel, tickImageView, crossImageView] as! [UIView] {
 
                 view.translatesAutoresizingMaskIntoConstraints = false
                 contentView.addSubview(view)
@@ -45,22 +69,34 @@ class ObjectiveSummaryCollectionViewCell: UICollectionViewCell {
 
         NSLayoutConstraint.activate([
 
-            nameLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
-            nameLabel.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 8),
-            nameLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
-            nameLabel.heightAnchor.constraint(equalToConstant: 44),
+            //name label
+            nameLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 18),
+            nameLabel.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 18),
+            nameLabel.trailingAnchor.constraint(equalTo: crossImageView.leadingAnchor, constant: -12),
+            
+            //tick image view
+            tickImageView.topAnchor.constraint(equalTo: nameLabel.topAnchor),
+            tickImageView.bottomAnchor.constraint(equalTo: nameLabel.bottomAnchor),
+            tickImageView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -18),
+            tickImageView.widthAnchor.constraint(equalTo: tickImageView.heightAnchor),
+            
+            //cross image view
+            crossImageView.topAnchor.constraint(equalTo: nameLabel.topAnchor),
+            crossImageView.bottomAnchor.constraint(equalTo: nameLabel.bottomAnchor),
+            crossImageView.trailingAnchor.constraint(equalTo: tickImageView.leadingAnchor, constant: -18),
+            crossImageView.widthAnchor.constraint(equalTo: crossImageView.heightAnchor),
 
-            responseImageView.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
-            responseImageView.topAnchor.constraint(equalTo: nameLabel.bottomAnchor, constant: 8),
-            responseImageView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -8),
-            responseImageView.leadingAnchor.constraint(greaterThanOrEqualTo: contentView.leadingAnchor, constant: 8),
-            responseImageView.leadingAnchor.constraint(lessThanOrEqualTo: contentView.trailingAnchor, constant: -8),
-            responseImageView.widthAnchor.constraint(equalTo: responseImageView.heightAnchor),
+            //response image view
+            responseImageView.topAnchor.constraint(equalTo: nameLabel.bottomAnchor, constant: 18),
+            responseImageView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -4),
+            responseImageView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 4),
+            responseImageView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -4),
 
-            responseTextLabel.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
-            responseTextLabel.topAnchor.constraint(equalTo: nameLabel.bottomAnchor, constant: 8),
-            responseTextLabel.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -8),
-            responseTextLabel.widthAnchor.constraint(equalTo: responseTextLabel.heightAnchor)
+            //response text view
+            responseTextLabel.topAnchor.constraint(equalTo: nameLabel.bottomAnchor, constant: 12),
+            responseTextLabel.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -4),
+            responseTextLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 4),
+            responseTextLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -4),
 
         ])
     }
@@ -68,5 +104,14 @@ class ObjectiveSummaryCollectionViewCell: UICollectionViewCell {
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+    
+    @objc func openLargeImage() {
+        if let image = responseImageView.image {
+            delegate?.openLargeImage(image: image)
+        }
+    }
+}
 
+protocol ObjectiveSummaryCollectionViewCellDelegate: class {
+    func openLargeImage(image: UIImage)
 }
