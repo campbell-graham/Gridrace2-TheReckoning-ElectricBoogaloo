@@ -403,6 +403,7 @@ UIImagePickerControllerDelegate, UINavigationControllerDelegate {
         do {
             try imageData?.write(to: imageFilePath)
             data.imageResponseURL = imageFilePath
+            delegate?.initiateSave()
         } catch {
             print("Failed to save image")
         }
@@ -415,6 +416,7 @@ UIImagePickerControllerDelegate, UINavigationControllerDelegate {
             saveImage(image: image)
             if let answerView = answerView as? ImageResponseView {
                 answerView.setImage(image: image)
+                completeImageView.image = #imageLiteral(resourceName: "correct_selected")
             }
         }
         dismiss(animated: true, completion: nil)
