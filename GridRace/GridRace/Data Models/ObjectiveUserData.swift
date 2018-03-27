@@ -21,7 +21,6 @@ class ObjectiveUserData: Codable {
     var completed: Bool {
 
         if imageResponseURL != nil || textResponse != nil {
-            correct = true
             return true
         } else {
             return false

@@ -24,10 +24,6 @@ class ObjectiveInformationCollectionViewCell: UICollectionViewCell {
         backgroundColor = AppColors.backgroundColor
         contentView.backgroundColor = AppColors.backgroundColor
         
-        //image view set up
-        tickImageView.image = #imageLiteral(resourceName: "tick").withRenderingMode(.alwaysTemplate)
-        tickImageView.tintColor = AppColors.textSecondaryColor
-        
         //label set up
         titleLabel.font = UIFont.systemFont(ofSize: 16, weight: .medium)
         titleLabel.textColor = AppColors.textPrimaryColor
