@@ -50,6 +50,7 @@ class PasswordResponseView: UIView {
         print(attempt)
         if attempt.count == passcode.count {
             if attempt == passcode {
+                textField.resignFirstResponder()
                 delegate?.presentSummaryScreen()
             } else {
                 transform = CGAffineTransform(translationX: 6, y: 0)
