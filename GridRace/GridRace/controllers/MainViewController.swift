@@ -208,6 +208,8 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
     @objc func updateSelectedObjectiveType() {
         let selectedObjectiveTypeAsString = segmentedControl.titleForSegment(at: segmentedControl.selectedSegmentIndex)?.lowercased()
         let objectiveTypeToFilter = ObjectiveType(rawValue: selectedObjectiveTypeAsString!)
+        //set follow mode if bonus, eitherwise turn off
+        mapView.userTrackingMode = objectiveTypeToFilter == .bonus ? .follow : .none
         objectivesToDisplay = AppResources.ObjectiveData.sharedObjectives.objectives.filter({$0.objectiveType == objectiveTypeToFilter})
         collectionView.reloadData()
         //executes when the reload data is complete
@@ -219,8 +221,7 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
             self.zoomToLocation(objIndex: nil)
         })
         
-        //set follow mode if bonus, eitherwise turn off
-        mapView.userTrackingMode = objectiveTypeToFilter == .bonus ? .follow : .none
+     
     }
 
     func updateProgressLabel() {
@@ -243,6 +244,12 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
     }
     
     func zoomToLocation(objIndex: Int?) {
+        
+        guard mapView.userTrackingMode == .none else {
+            return
+        }
+        
+        
         if let layout = collectionView.collectionViewLayout as? UICollectionViewFlowLayout {
             let pageWidth = layout.minimumLineSpacing + layout.itemSize.width
             //get index of the current cell using the page width (which is the difference the leading side of each cell)
@@ -309,7 +316,7 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
         currentAnnotations.removeAll()
         
         //zoom map to show new locations
-        for (objective) in objectivesToDisplay.filter({$0.coordinate != nil}) {
+        for (objective) in AppResources.ObjectiveData.sharedObjectives.objectives.filter({$0.coordinate != nil}) {
             let coordinate = CLLocationCoordinate2D(latitude: objective.latitude!, longitude: objective.longitude!)
             // generate a random offset in meters that is within the radius (so that the objective location will fall in new circle)
             let randOffset = coordinate.latitude + (randBetween(lower: Int(round(-radius / 3)), upper: Int(round(radius / 3))) as CLLocationDistance)
@@ -322,7 +329,6 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
             mapView.add(circle)
             currentAnnotations[objective.id] = circle
         }
-        mapView.setRegion(region(for: Array(currentAnnotations.values)), animated: true)
     }
     
     func randBetween(lower: Int, upper: Int) -> Double {
