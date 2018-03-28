@@ -571,34 +571,6 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
         cell.transform = CGAffineTransform(scaleX: 1.15, y: 1.15)
     }
     
-    /*func scaleCellAnimation() {
-        guard collectionView.numberOfItems(inSection: 0) > 0 else {
-            return
-        }
-        
-        guard let layout = collectionView.collectionViewLayout as? UICollectionViewFlowLayout else { return }
-        
-        let pageWidth = layout.minimumLineSpacing + layout.itemSize.width
-        //get index of the current cell using the page width (which is the difference the leading side of each cell)
-        let index: Int = Int(round(collectionView.contentOffset.x / pageWidth))
-        
-        if index < 0 || index > objectivesToDisplay.count - 1 {
-            return
-        }
-        
-        let indexForVisibleCell = IndexPath(item: index, section: 0)
-        //save the middle cell
-        let cellToZoom = collectionView.cellForItem(at: indexForVisibleCell) as! ObjectiveInformationCollectionViewCell
-        
-        //animate cells, making the middle one larger and all the other ones their original size in case they have changed
-        UIView.animate(withDuration: 0.05, animations: {
-            for (cell) in (self.collectionView.visibleCells as! [ObjectiveInformationCollectionViewCell]) {
-                let value: CGFloat = (cell == cellToZoom) ? 1.1 : 1.0
-                cell.transform = CGAffineTransform(scaleX: value, y: value)
-            }
-        })
-    } */
-    
     private func growCellAnimationSetup(cell: UICollectionViewCell) -> Bool {
         
         let indexPath = collectionView.indexPath(for: cell)
