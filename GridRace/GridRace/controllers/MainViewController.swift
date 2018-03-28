@@ -152,7 +152,6 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
                 layout.minimumInteritemSpacing = cellSpacing
                 layout.minimumLineSpacing = cellSpacing
                 layout.itemSize = CGSize(width: collectionViewWidth * itemSizePercent, height: collectionViewHeigth * 0.8)
-                
             }
             
             mapView.layoutMargins = UIEdgeInsets(top: 16, left: 16, bottom: collectionView.frame.height, right: 16)
@@ -180,11 +179,6 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
             showLocationServicesDeniedAlert()
             return
         }
-        
-        collectionView.reloadData()
-        collectionView.performBatchUpdates({}, completion: { (finished) in
-            self.scaleCellAnimation()
-        })
     }
     
     //MARK:- Segment Control
@@ -217,6 +211,7 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
         //executes when the reload data is complete
         self.collectionView.performBatchUpdates({}, completion: { (finished) in
             self.collectionView.setContentOffset(CGPoint(x:0,y:0), animated: true)
+            self.scaleCurrentCell()
             self.addMapCircles()
             self.zoomToLocation(objIndex: nil)
         })
@@ -444,7 +439,7 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
                     collectionView.scrollToItem(at: indexPath, at: .centeredHorizontally, animated: false)},
                                completion: {_ in
                                 self.playGrowCellAnimation(cell: (collectionView.cellForItem(at: indexPath))!)
-                                self.scaleCellAnimation()
+                                self.scaleCurrentCell()
                 })
                 
             }
@@ -487,7 +482,10 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
         let panGestureRecogniser = UIPanGestureRecognizer(target: self, action: #selector(panAnimationHandler))
         panGestureRecogniser.delegate = self
         cell.addGestureRecognizer(panGestureRecogniser)
-        
+
+        if cell == retrieveCurrentCell() {
+            cell.transform = CGAffineTransform(scaleX: 1.5, y: 1.5)
+        }
         return cell
     }
     
@@ -503,22 +501,44 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
     }
     
     //MARK:- scroll view delegate methods
-    
-    func scrollViewDidEndScrollingAnimation(_ scrollView: UIScrollView) {
-        scaleCellAnimation()
+
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+
+        guard let layout = collectionView.collectionViewLayout as? UICollectionViewFlowLayout else { return }
+        let centerpPoint:CGPoint = view.convert(collectionView.center, to: collectionView)
+        let distanceToStartScaling = (layout.itemSize.width / 2 ) + layout.minimumLineSpacing
+
+        for cell in collectionView.visibleCells {
+
+            //calculate cells distance from center of screen
+            let distance = abs(centerpPoint.x - cell.center.x)
+
+            //check if the cells distance is close enough to start scaling
+            if (distance <= distanceToStartScaling) {
+
+                let distancePercentage: CGFloat = (100 - (distance / distanceToStartScaling) * 100)
+
+                // convert distance percentage to a scale between 1.0 & 1.15
+                let scale = 1.0 + ((distancePercentage * 0.001) * 1.5)
+                cell.transform = CGAffineTransform(scaleX: scale, y: scale)
+
+            // ensure other cells are set to standard scale
+            } else {
+
+                //cell.transform = CGAffineTransform(scaleX: 1.0, y: 1.0)
+            }
+        }
     }
     
     func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
         guard decelerate else {
             return
         }
-        scaleCellAnimation()
         zoomToLocation(objIndex: nil)
     }
     
     
     func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
-        scaleCellAnimation()
         zoomToLocation(objIndex: nil)
     }
     
@@ -544,8 +564,14 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
     }
     
     //MARK:- cell animation code
+
+    func scaleCurrentCell() {
+
+        guard let cell = retrieveCurrentCell() else { return }
+        cell.transform = CGAffineTransform(scaleX: 1.15, y: 1.15)
+    }
     
-    func scaleCellAnimation() {
+    /*func scaleCellAnimation() {
         guard collectionView.numberOfItems(inSection: 0) > 0 else {
             return
         }
@@ -571,7 +597,7 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
                 cell.transform = CGAffineTransform(scaleX: value, y: value)
             }
         })
-    }
+    } */
     
     private func growCellAnimationSetup(cell: UICollectionViewCell) -> Bool {
         
@@ -887,12 +913,15 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
                 
                 self.panDetailAnimator?.addCompletion({ final in
                     recognizer.isEnabled = true
-
-                    removeSnapShots()
-                    removeDetailView()
                     
                     //reload the collection view cells
                     self.collectionView.reloadData()
+                    self.collectionView.performBatchUpdates({}, completion: { (finished) in
+                        self.scaleCurrentCell()
+                        removeSnapShots()
+                        removeDetailView()
+                    })
+
                 })
                 
                 // else reverse animation
