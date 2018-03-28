@@ -231,7 +231,7 @@ class SummaryViewController: UIViewController, UICollectionViewDelegate, UIColle
                 cell.responseTextLabel.isHidden = true
                 
                 if let path =  userData?.imageResponseURL?.path {
-                    cell.responseImageView.image = UIImage(contentsOfFile: path)?.resized(withBounds: CGSize(width: 200, height: 200))
+                    cell.responseImageView.image = UIImage(contentsOfFile: path)
                 } else {
                     cell.responseImageView.image = #imageLiteral(resourceName: "nothing")
                     cell.responseImageView.tintColor = AppColors.cellColor
