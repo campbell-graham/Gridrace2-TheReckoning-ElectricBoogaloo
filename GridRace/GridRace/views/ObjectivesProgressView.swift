@@ -18,7 +18,7 @@ class ObjectivesProgressView: UIView {
         self.frame = frame
 
         progressLabel.textColor = AppColors.orangeHighlightColor
-        progressLabel.text = "10/100"
+        progressLabel.text = ""
 
 
         //view styling
