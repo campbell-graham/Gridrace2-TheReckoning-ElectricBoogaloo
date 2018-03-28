@@ -537,6 +537,11 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
                 // convert distance percentage to a scale between 1.0 & 1.15
                 let scale = 1.0 + ((distancePercentage * 0.001) * 1.5)
                 cell.transform = CGAffineTransform(scaleX: scale, y: scale)
+
+            //else ensure it is default size
+            } else {
+
+                cell.transform = CGAffineTransform(scaleX: 1.15, y: 1.15)
             }
         }
     }
