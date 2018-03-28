@@ -7,7 +7,7 @@
 //
 
 import UIKit
-import RSKImageCropper
+import Firebase
 
 //MARK:- Protocols
 
@@ -31,7 +31,9 @@ class DetailViewController: UIViewController, PasswordResponseViewDelegate {
     private let responseTitleLabel = UILabel()
     private let answerView: UIView
 
-    //Delete: rethink storing this value here, can we put it in firebase?
+    //reference to firebase image storgae
+    let storage = Storage.storage()
+
     private let hintPointDeductionValue = 2
     private let passcode: String = {
         return "1234"
