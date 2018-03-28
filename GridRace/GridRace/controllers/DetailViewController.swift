@@ -15,8 +15,8 @@ protocol DetailViewControllerDelegate: class {
     func initiateSave()
 }
 
-class DetailViewController: UIViewController {
-
+class DetailViewController: UIViewController, PasswordResponseViewDelegate {
+    
     var objective: Objective
     var data: ObjectiveUserData
 
@@ -28,13 +28,14 @@ class DetailViewController: UIViewController {
     private let completeImageView = UIImageView()
     private let pointLabel = UILabel()
     private let descTextView = UITextView()
-    private let responseTextLabel = UILabel()
+    private let responseTitleLabel = UILabel()
     private let answerView: UIView
 
     //Delete: rethink storing this value here, can we put it in firebase?
     private let hintPointDeductionValue = 2
-
-    private var passwordViewController: PasswordViewController?
+    private let passcode: String = {
+        return "1234"
+    }()
 
     var delegate: DetailViewControllerDelegate?
 
@@ -46,28 +47,14 @@ class DetailViewController: UIViewController {
         switch  objective.answerType {
         case .photo: // imageview
             answerView = ImageResponseView()
-        case .text: // textField
-            self.answerView = TextResponseView()
-        case .password: // pin view
-
-            passwordViewController = PasswordViewController()
-            answerView = passwordViewController!.view
+        case .text: // textView
+            answerView = TextResponseView()
+        case .password: // textField
+            answerView = PasswordResponseView()
         }
 
         super.init(nibName: nil, bundle: nil)
 
-        defer {
-            if passwordViewController != nil {
-                addChildViewController(passwordViewController!)
-                passwordViewController!.didMove(toParentViewController: self)
-                passwordViewController?.buttonCompletion = self.updateLabel
-            }
-        }
-    }
-
-    //Delete: rethink password implimentstion
-    func updateLabel(attempt: String) {
-        self.descTextView.text = "\(objective.desc) \n attempt: \(attempt) "
     }
 
     deinit {
@@ -109,11 +96,6 @@ class DetailViewController: UIViewController {
         //set textView to be scrolled to top
         descTextView.setContentOffset(CGPoint.zero, animated: false)
 
-        //Delete: this seems dodgy (make password view controller seperate and only call at end? dont tie it to objectives?)
-        if let VC = childViewControllers.last as? PasswordViewController {
-
-            VC.activateButtonConstraints()
-        }
     }
 
     private func initialiseViews() {
@@ -126,13 +108,13 @@ class DetailViewController: UIViewController {
         pointLabel.textColor = AppColors.orangeHighlightColor
         descTextView.textColor = AppColors.textPrimaryColor
         descTextView.backgroundColor = AppColors.backgroundColor
-        responseTextLabel.textColor = AppColors.textPrimaryColor
+        responseTitleLabel.textColor = AppColors.textPrimaryColor
 
         //fonts
         titleLabel.font = UIFont.boldSystemFont(ofSize: 20)
         pointLabel.font = UIFont.boldSystemFont(ofSize: 16)
         descTextView.font = UIFont.systemFont(ofSize: 14)
-        responseTextLabel.font = UIFont.boldSystemFont(ofSize: 20)
+        responseTitleLabel.font = UIFont.boldSystemFont(ofSize: 20)
 
         // misc stuff
         panView.layer.cornerRadius = 2
@@ -147,14 +129,10 @@ class DetailViewController: UIViewController {
         titleLabel.text = objective.name
         hintImageView.image = #imageLiteral(resourceName: "hint")
         completeImageView.image = data.completed ? #imageLiteral(resourceName: "correct_selected") : #imageLiteral(resourceName: "correct_unselected")
-        if objective.answerType == .password {
-            descTextView.text = "\(objective.desc) \n attempt: "
-        } else {
-            descTextView.text = objective.desc
-        }
+        descTextView.text = objective.desc
         pointLabel.text = (data.adjustedPoints != nil ? "\(data.adjustedPoints!)" : "\(objective.points)") + " Points"
 
-        responseTextLabel.text = "Your Response"
+        responseTitleLabel.text = "Your Response"
 
         //gesture recognisers
         hintImageView.isUserInteractionEnabled = true
@@ -178,14 +156,25 @@ class DetailViewController: UIViewController {
             NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow), name: NSNotification.Name.UIKeyboardWillShow, object: nil)
 
             NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide), name: NSNotification.Name.UIKeyboardWillHide, object: nil)
+        case is PasswordResponseView:
+            guard let answerView = answerView as? PasswordResponseView else { return }
+            
+            answerView.delegate = self
+            answerView.textField.addTarget(self, action: #selector(checkPasscode), for: .editingChanged)
+            
+            // create keyboard state observers/ listeners (to reposition view when keyboard apperas/ disappears)
+            NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow), name: NSNotification.Name.UIKeyboardWillShow, object: nil)
+            NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide), name: NSNotification.Name.UIKeyboardWillHide, object: nil)
         default:
             break
         }
+       
+        
     }
 
     private func setUpLayout() {
 
-        for view in [panView, titleLabel, hintImageView, completeImageView, pointLabel, descTextView, responseTextLabel, answerView] {
+        for view in [panView, titleLabel, hintImageView, completeImageView, pointLabel, descTextView, responseTitleLabel, answerView] {
             view.translatesAutoresizingMaskIntoConstraints = false
             self.view.addSubview(view)
         }
@@ -224,29 +213,22 @@ class DetailViewController: UIViewController {
             descTextView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
             descTextView.heightAnchor.constraint(equalTo: view.heightAnchor, multiplier: 0.2),
 
-            responseTextLabel.topAnchor.constraint(equalTo: descTextView.bottomAnchor, constant: 8),
-            responseTextLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
-            responseTextLabel.trailingAnchor.constraint(lessThanOrEqualTo: view.trailingAnchor, constant: -16),
-            responseTextLabel.heightAnchor.constraint(equalToConstant: 20),
+            responseTitleLabel.topAnchor.constraint(equalTo: descTextView.bottomAnchor, constant: 8),
+            responseTitleLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
+            responseTitleLabel.trailingAnchor.constraint(lessThanOrEqualTo: view.trailingAnchor, constant: -16),
+            responseTitleLabel.heightAnchor.constraint(equalToConstant: 20),
             ])
 
         switch answerView {
         case is ImageResponseView:
             constraints += [
-                answerView.topAnchor.constraint(equalTo: responseTextLabel.bottomAnchor, constant: 16),
+                answerView.topAnchor.constraint(equalTo: responseTitleLabel.bottomAnchor, constant: 16),
                 answerView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
                 answerView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
                 answerView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -16)]
-        case is TextResponseView:
-            constraints += [
-                answerView.topAnchor.constraint(equalTo: responseTextLabel.bottomAnchor),
-                answerView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-                answerView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-                answerView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
-            ]
         default:
             constraints += [
-                answerView.topAnchor.constraint(equalTo: responseTextLabel.bottomAnchor),
+                answerView.topAnchor.constraint(equalTo: responseTitleLabel.bottomAnchor),
                 answerView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
                 answerView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
                 answerView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor)]
@@ -347,6 +329,10 @@ class DetailViewController: UIViewController {
         clueViewController.modalPresentationStyle = .overCurrentContext
         present(clueViewController, animated: true, completion: nil)
     }
+    
+    func presentSummaryScreen() {
+        present(UINavigationController(rootViewController: SummaryViewController()), animated: true, completion: nil)
+    }
 
 
     private func loadData() {
@@ -364,6 +350,25 @@ class DetailViewController: UIViewController {
             }
         default:
             break
+        }
+    }
+    
+    @objc func checkPasscode(_ sender: UITextField) {
+        
+        guard let answerView = answerView as? PasswordResponseView else { return }
+        let attempt = String(describing: sender.text!)
+        print(attempt)
+        if attempt.count == passcode.count {
+            if attempt == passcode {
+                answerView.textField.resignFirstResponder()
+                presentSummaryScreen()
+            } else {
+                answerView.transform = CGAffineTransform(translationX: 6, y: 0)
+                UIView.animate(withDuration: 0.6, delay: 0, usingSpringWithDamping: 0.2, initialSpringVelocity: 0.5, options: .curveEaseInOut, animations: {
+                    answerView.transform = CGAffineTransform.identity
+                }, completion: nil)
+                answerView.textField.text = ""
+            }
         }
     }
 

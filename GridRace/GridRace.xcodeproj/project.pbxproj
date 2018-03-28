@@ -25,7 +25,7 @@
 		AA1CD2C02044D29B0007A0C1 /* GradientView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA1CD2BF2044D29A0007A0C1 /* GradientView.swift */; };
 		AA1CD2C2204513820007A0C1 /* UIImageExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA1CD2C1204513820007A0C1 /* UIImageExtension.swift */; };
 		AA23AB21204E0A8300F6CCEF /* walking.gpx in Resources */ = {isa = PBXBuildFile; fileRef = AA23AB20204E0A8300F6CCEF /* walking.gpx */; };
-		AA23AB23204E11FE00F6CCEF /* PasswordViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA23AB22204E11FE00F6CCEF /* PasswordViewController.swift */; };
+		AA23AB23204E11FE00F6CCEF /* PasswordResponseView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA23AB22204E11FE00F6CCEF /* PasswordResponseView.swift */; };
 		AA25AD7020521DB200A983BD /* CustomFlowLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA25AD6F20521DB200A983BD /* CustomFlowLayout.swift */; };
 		AA29A12420438BC500DF3A1C /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA29A12320438BC500DF3A1C /* AppDelegate.swift */; };
 		AA29A12920438BC500DF3A1C /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = AA29A12720438BC500DF3A1C /* Main.storyboard */; };
@@ -61,7 +61,7 @@
 		AA1CD2BF2044D29A0007A0C1 /* GradientView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GradientView.swift; sourceTree = "<group>"; };
 		AA1CD2C1204513820007A0C1 /* UIImageExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIImageExtension.swift; sourceTree = "<group>"; };
 		AA23AB20204E0A8300F6CCEF /* walking.gpx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = walking.gpx; sourceTree = "<group>"; };
-		AA23AB22204E11FE00F6CCEF /* PasswordViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PasswordViewController.swift; sourceTree = "<group>"; };
+		AA23AB22204E11FE00F6CCEF /* PasswordResponseView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PasswordResponseView.swift; sourceTree = "<group>"; };
 		AA25AD6F20521DB200A983BD /* CustomFlowLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomFlowLayout.swift; sourceTree = "<group>"; };
 		AA29A12020438BC500DF3A1C /* GridRace.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = GridRace.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		AA29A12320438BC500DF3A1C /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -151,7 +151,6 @@
 				AA1CD2BD2044C6DA0007A0C1 /* ClueViewController.swift */,
 				3712BDE82044D9A300B4C9B3 /* MainViewController.swift */,
 				377EFC24204FADD900B0D723 /* StartScreenViewController.swift */,
-				AA23AB22204E11FE00F6CCEF /* PasswordViewController.swift */,
 				AAD4B5D9204FB5DA005FBB24 /* SummaryViewController.swift */,
 				37A6331E2064B47200E9FAA8 /* EnlargenedImageViewController.swift */,
 			);
@@ -167,6 +166,7 @@
 				370BBB01204E16D2005C4A56 /* TimerView.swift */,
 				AA3D6E782058DCF900D6632A /* ImageResponseView.swift */,
 				AA090A9C2050BFC60086C3CD /* ObjectiveSummaryCollectionViewCell.swift */,
+				AA23AB22204E11FE00F6CCEF /* PasswordResponseView.swift */,
 				AA25AD6F20521DB200A983BD /* CustomFlowLayout.swift */,
 				37A8B93A20588E65000BC310 /* ObjectiveInformationCollectionViewCell.swift */,
 				AAE63FA2206890DD0029DFE3 /* MapButtonsView.swift */,
@@ -327,7 +327,7 @@
 			files = (
 				AA090A9D2050BFC60086C3CD /* ObjectiveSummaryCollectionViewCell.swift in Sources */,
 				AAE63FA5206897DB0029DFE3 /* DataManager.swift in Sources */,
-				AA23AB23204E11FE00F6CCEF /* PasswordViewController.swift in Sources */,
+				AA23AB23204E11FE00F6CCEF /* PasswordResponseView.swift in Sources */,
 				370BBB02204E16D2005C4A56 /* TimerView.swift in Sources */,
 				AA13276320685DFE0008D51A /* CLLocationCoordinate2D_extension.swift in Sources */,
 				AA1CD2BE2044C6DA0007A0C1 /* ClueViewController.swift in Sources */,

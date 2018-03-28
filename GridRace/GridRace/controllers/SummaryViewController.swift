@@ -236,7 +236,6 @@ class SummaryViewController: UIViewController, UICollectionViewDelegate, UIColle
                     cell.responseImageView.image = #imageLiteral(resourceName: "nothing")
                     cell.responseImageView.tintColor = AppColors.cellColor
                 }
-                cell.responseImageView.contentMode = .scaleAspectFit
             } else if objective.answerType == .text {
                 
                 cell.responseTextLabel.isHidden = false
