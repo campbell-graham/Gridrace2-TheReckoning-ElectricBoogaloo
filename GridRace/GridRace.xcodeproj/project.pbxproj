@@ -27,6 +27,7 @@
 		AA23AB21204E0A8300F6CCEF /* walking.gpx in Resources */ = {isa = PBXBuildFile; fileRef = AA23AB20204E0A8300F6CCEF /* walking.gpx */; };
 		AA23AB23204E11FE00F6CCEF /* PasswordViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA23AB22204E11FE00F6CCEF /* PasswordViewController.swift */; };
 		AA25AD7020521DB200A983BD /* CustomFlowLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA25AD6F20521DB200A983BD /* CustomFlowLayout.swift */; };
+		AA2683DE206B4FEE009B1C3F /* ObjectivesProgressView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA2683DD206B4FEE009B1C3F /* ObjectivesProgressView.swift */; };
 		AA29A12420438BC500DF3A1C /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA29A12320438BC500DF3A1C /* AppDelegate.swift */; };
 		AA29A12920438BC500DF3A1C /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = AA29A12720438BC500DF3A1C /* Main.storyboard */; };
 		AA29A12B20438BC500DF3A1C /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = AA29A12A20438BC500DF3A1C /* Assets.xcassets */; };
@@ -63,6 +64,7 @@
 		AA23AB20204E0A8300F6CCEF /* walking.gpx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = walking.gpx; sourceTree = "<group>"; };
 		AA23AB22204E11FE00F6CCEF /* PasswordViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PasswordViewController.swift; sourceTree = "<group>"; };
 		AA25AD6F20521DB200A983BD /* CustomFlowLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomFlowLayout.swift; sourceTree = "<group>"; };
+		AA2683DD206B4FEE009B1C3F /* ObjectivesProgressView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ObjectivesProgressView.swift; sourceTree = "<group>"; };
 		AA29A12020438BC500DF3A1C /* GridRace.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = GridRace.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		AA29A12320438BC500DF3A1C /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		AA29A12820438BC500DF3A1C /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
@@ -171,6 +173,7 @@
 				37A8B93A20588E65000BC310 /* ObjectiveInformationCollectionViewCell.swift */,
 				AAE63FA2206890DD0029DFE3 /* MapButtonsView.swift */,
 				37A6331C206486D500E9FAA8 /* SummaryStatView.swift */,
+				AA2683DD206B4FEE009B1C3F /* ObjectivesProgressView.swift */,
 			);
 			path = views;
 			sourceTree = "<group>";
@@ -332,6 +335,7 @@
 				AA13276320685DFE0008D51A /* CLLocationCoordinate2D_extension.swift in Sources */,
 				AA1CD2BE2044C6DA0007A0C1 /* ClueViewController.swift in Sources */,
 				37F2A7EE2043CD0A00BA283B /* AppResources.swift in Sources */,
+				AA2683DE206B4FEE009B1C3F /* ObjectivesProgressView.swift in Sources */,
 				3712BDE92044D9A300B4C9B3 /* MainViewController.swift in Sources */,
 				AA3D6E792058DCF900D6632A /* ImageResponseView.swift in Sources */,
 				37F2A7F22043DA7E00BA283B /* ObjectiveTableViewCell.swift in Sources */,

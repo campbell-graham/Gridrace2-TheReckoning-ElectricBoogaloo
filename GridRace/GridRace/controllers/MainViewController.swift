@@ -11,7 +11,7 @@ import MapKit
 import Firebase
 import FirebaseDatabase
 
-class MainViewController: UIViewController, UICollectionViewDelegate, UICollectionViewDataSource, CLLocationManagerDelegate, MKMapViewDelegate, DataManagerDelgate  {
+class MainViewController: UIViewController, UICollectionViewDelegate, UICollectionViewDataSource, CLLocationManagerDelegate, MKMapViewDelegate, DetailViewControllerDelegate, DataManagerDelgate  {
     
     let segmentItems = [ObjectiveType.main.rawValue.capitalized, ObjectiveType.bonus.rawValue.capitalized]
     let segmentedControl: UISegmentedControl
@@ -23,6 +23,7 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
     var buttonsView = MapButtonsView()
     
     var timerView = TimerView(frame: CGRect(x: 0, y: 0, width: 100, height: 44))
+    var objectivesProgressView = ObjectivesProgressView()
     
     //used for cell animation
     var detailViewController: DetailViewController?
@@ -70,6 +71,7 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
         super.viewDidLoad()
         
         navigationItem.leftBarButtonItem = UIBarButtonItem(customView: timerView)
+        navigationItem.rightBarButtonItem = UIBarButtonItem(customView: objectivesProgressView)
         
         //styling
         view.backgroundColor = AppColors.backgroundColor
@@ -211,6 +213,7 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
         //executes when the reload data is complete
         self.collectionView.performBatchUpdates({}, completion: { (finished) in
             self.collectionView.setContentOffset(CGPoint(x:0,y:0), animated: true)
+            self.updateProgressLabel()
             self.scaleCurrentCell()
             self.addMapCircles()
             self.zoomToLocation(objIndex: nil)
@@ -218,6 +221,19 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
         
         //set follow mode if bonus, eitherwise turn off
         mapView.userTrackingMode = objectiveTypeToFilter == .bonus ? .follow : .none
+    }
+
+    func updateProgressLabel() {
+
+        var completed = 0
+        for obj in objectivesToDisplay {
+            guard let data = AppResources.ObjectiveData.sharedObjectives.data.first(where: {$0.objectiveID == obj.id}) else { continue }
+            if data.completed == true {
+                completed += 1
+            }
+        }
+
+        objectivesProgressView.progressLabel.text = "\(completed)/\(objectivesToDisplay.count)"
     }
     
     //MARK:- Map methods
@@ -562,6 +578,13 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
         
         targetContentOffset.pointee = contentOffset
     }
+
+    //MARK:- data
+
+    func initiateSave() {
+        dataManager.saveLocalData()
+        updateProgressLabel()
+    }
     
     //MARK:- cell animation code
 
@@ -581,7 +604,7 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
         guard detailViewController == nil else { return false }
 
         self.detailViewController = DetailViewController(objective: objective, data: data)
-        detailViewController?.delegate = dataManager
+        detailViewController?.delegate = self
         addChildViewController(detailViewController!)
         detailViewController?.didMove(toParentViewController: self)
         
@@ -889,6 +912,7 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
                     //reload the collection view cells
                     self.collectionView.reloadData()
                     self.collectionView.performBatchUpdates({}, completion: { (finished) in
+                        self.updateProgressLabel()
                         self.scaleCurrentCell()
                         removeSnapShots()
                         removeDetailView()

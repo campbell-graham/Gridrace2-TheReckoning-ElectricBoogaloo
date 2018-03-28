@@ -13,7 +13,7 @@ protocol DataManagerDelgate {
     func didRetrieveData(alert: UIAlertController?)
 }
 
-class DataManager: NSObject, DetailViewControllerDelegate {
+class DataManager: NSObject {
 
     var delegate: DataManagerDelgate? = nil
 
@@ -41,11 +41,6 @@ class DataManager: NSObject, DetailViewControllerDelegate {
         }
 
     }
-
-    func initiateSave() {
-        saveLocalData()
-    }
-
 
     func loadLocalData() {
 
