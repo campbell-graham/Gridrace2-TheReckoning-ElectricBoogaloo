@@ -43,7 +43,7 @@ class ObjectiveSummaryCollectionViewCell: UICollectionViewCell {
         nameLabel.setContentHuggingPriority(.required, for: .vertical)
 
         //response image view
-        responseImageView.contentMode = .scaleAspectFit
+        responseImageView.contentMode = .scaleAspectFill
         responseImageView.layer.masksToBounds = true
         responseImageView.layer.cornerRadius = contentView.layer.cornerRadius
         responseImageView.layer.maskedCorners = [.layerMaxXMaxYCorner, .layerMinXMaxYCorner]

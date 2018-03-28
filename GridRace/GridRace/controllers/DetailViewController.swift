@@ -33,6 +33,9 @@ class DetailViewController: UIViewController, PasswordResponseViewDelegate {
 
     //Delete: rethink storing this value here, can we put it in firebase?
     private let hintPointDeductionValue = 2
+    private let passcode: String = {
+        return "1234"
+    }()
 
     var delegate: DetailViewControllerDelegate?
 
@@ -154,10 +157,14 @@ class DetailViewController: UIViewController, PasswordResponseViewDelegate {
 
             NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide), name: NSNotification.Name.UIKeyboardWillHide, object: nil)
         case is PasswordResponseView:
+            guard let answerView = answerView as? PasswordResponseView else { return }
+            
+            answerView.delegate = self
+            answerView.textField.addTarget(self, action: #selector(checkPasscode), for: .editingChanged)
+            
             // create keyboard state observers/ listeners (to reposition view when keyboard apperas/ disappears)
             NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow), name: NSNotification.Name.UIKeyboardWillShow, object: nil)
             NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide), name: NSNotification.Name.UIKeyboardWillHide, object: nil)
-            (answerView as! PasswordResponseView).delegate = self
         default:
             break
         }
@@ -343,6 +350,25 @@ class DetailViewController: UIViewController, PasswordResponseViewDelegate {
             }
         default:
             break
+        }
+    }
+    
+    @objc func checkPasscode(_ sender: UITextField) {
+        
+        guard let answerView = answerView as? PasswordResponseView else { return }
+        let attempt = String(describing: sender.text!)
+        print(attempt)
+        if attempt.count == passcode.count {
+            if attempt == passcode {
+                answerView.textField.resignFirstResponder()
+                presentSummaryScreen()
+            } else {
+                answerView.transform = CGAffineTransform(translationX: 6, y: 0)
+                UIView.animate(withDuration: 0.6, delay: 0, usingSpringWithDamping: 0.2, initialSpringVelocity: 0.5, options: .curveEaseInOut, animations: {
+                    answerView.transform = CGAffineTransform.identity
+                }, completion: nil)
+                answerView.textField.text = ""
+            }
         }
     }
 
