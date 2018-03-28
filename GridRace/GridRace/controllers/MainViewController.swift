@@ -541,7 +541,7 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
             //else ensure it is default size
             } else {
 
-                cell.transform = CGAffineTransform(scaleX: 1.15, y: 1.15)
+                cell.transform = CGAffineTransform(scaleX: 1.0, y: 1.0)
             }
         }
     }
