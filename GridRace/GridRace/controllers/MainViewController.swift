@@ -11,7 +11,7 @@ import MapKit
 import Firebase
 import FirebaseDatabase
 
-class MainViewController: UIViewController, UICollectionViewDelegate, UICollectionViewDataSource, CLLocationManagerDelegate, MKMapViewDelegate, DataManagerDelgate  {
+class MainViewController: UIViewController, UICollectionViewDelegate, UICollectionViewDataSource, CLLocationManagerDelegate, MKMapViewDelegate, DetailViewControllerDelegate, DataManagerDelgate  {
     
     let segmentItems = [ObjectiveType.main.rawValue.capitalized, ObjectiveType.bonus.rawValue.capitalized]
     let segmentedControl: UISegmentedControl
@@ -23,6 +23,7 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
     var buttonsView = MapButtonsView()
     
     var timerView = TimerView(frame: CGRect(x: 0, y: 0, width: 100, height: 44))
+    var objectivesProgressView = ObjectivesProgressView()
     
     //used for cell animation
     var detailViewController: DetailViewController?
@@ -70,6 +71,7 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
         super.viewDidLoad()
         
         navigationItem.leftBarButtonItem = UIBarButtonItem(customView: timerView)
+        navigationItem.rightBarButtonItem = UIBarButtonItem(customView: objectivesProgressView)
         
         //styling
         view.backgroundColor = AppColors.backgroundColor
@@ -152,7 +154,6 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
                 layout.minimumInteritemSpacing = cellSpacing
                 layout.minimumLineSpacing = cellSpacing
                 layout.itemSize = CGSize(width: collectionViewWidth * itemSizePercent, height: collectionViewHeigth * 0.8)
-                
             }
             
             mapView.layoutMargins = UIEdgeInsets(top: 16, left: 16, bottom: collectionView.frame.height, right: 16)
@@ -180,11 +181,6 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
             showLocationServicesDeniedAlert()
             return
         }
-        
-        collectionView.reloadData()
-        collectionView.performBatchUpdates({}, completion: { (finished) in
-            self.scaleCellAnimation()
-        })
     }
     
     //MARK:- Segment Control
@@ -217,12 +213,27 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
         //executes when the reload data is complete
         self.collectionView.performBatchUpdates({}, completion: { (finished) in
             self.collectionView.setContentOffset(CGPoint(x:0,y:0), animated: true)
+            self.updateProgressLabel()
+            self.scaleCurrentCell()
             self.addMapCircles()
             self.zoomToLocation(objIndex: nil)
         })
         
         //set follow mode if bonus, eitherwise turn off
         mapView.userTrackingMode = objectiveTypeToFilter == .bonus ? .follow : .none
+    }
+
+    func updateProgressLabel() {
+
+        var completed = 0
+        for obj in objectivesToDisplay {
+            guard let data = AppResources.ObjectiveData.sharedObjectives.data.first(where: {$0.objectiveID == obj.id}) else { continue }
+            if data.completed == true {
+                completed += 1
+            }
+        }
+
+        objectivesProgressView.progressLabel.text = "\(completed)/\(objectivesToDisplay.count)"
     }
     
     //MARK:- Map methods
@@ -444,7 +455,7 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
                     collectionView.scrollToItem(at: indexPath, at: .centeredHorizontally, animated: false)},
                                completion: {_ in
                                 self.playGrowCellAnimation(cell: (collectionView.cellForItem(at: indexPath))!)
-                                self.scaleCellAnimation()
+                                self.scaleCurrentCell()
                 })
                 
             }
@@ -487,7 +498,10 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
         let panGestureRecogniser = UIPanGestureRecognizer(target: self, action: #selector(panAnimationHandler))
         panGestureRecogniser.delegate = self
         cell.addGestureRecognizer(panGestureRecogniser)
-        
+
+        if cell == retrieveCurrentCell() {
+            cell.transform = CGAffineTransform(scaleX: 1.5, y: 1.5)
+        }
         return cell
     }
     
@@ -503,22 +517,39 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
     }
     
     //MARK:- scroll view delegate methods
-    
-    func scrollViewDidEndScrollingAnimation(_ scrollView: UIScrollView) {
-        scaleCellAnimation()
+
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+
+        guard let layout = collectionView.collectionViewLayout as? UICollectionViewFlowLayout else { return }
+        let centerpPoint:CGPoint = view.convert(collectionView.center, to: collectionView)
+        let distanceToStartScaling = (layout.itemSize.width / 2 ) + layout.minimumLineSpacing
+
+        for cell in collectionView.visibleCells {
+
+            //calculate cells distance from center of screen
+            let distance = abs(centerpPoint.x - cell.center.x)
+
+            //check if the cells distance is close enough to start scaling
+            if (distance <= distanceToStartScaling) {
+
+                let distancePercentage: CGFloat = (100 - (distance / distanceToStartScaling) * 100)
+
+                // convert distance percentage to a scale between 1.0 & 1.15
+                let scale = 1.0 + ((distancePercentage * 0.001) * 1.5)
+                cell.transform = CGAffineTransform(scaleX: scale, y: scale)
+            }
+        }
     }
     
     func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
         guard decelerate else {
             return
         }
-        scaleCellAnimation()
         zoomToLocation(objIndex: nil)
     }
     
     
     func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
-        scaleCellAnimation()
         zoomToLocation(objIndex: nil)
     }
     
@@ -542,50 +573,37 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
         
         targetContentOffset.pointee = contentOffset
     }
-    
-    //MARK:- cell animation code
-    
-    func scaleCellAnimation() {
-        guard collectionView.numberOfItems(inSection: 0) > 0 else {
-            return
-        }
-        
-        guard let layout = collectionView.collectionViewLayout as? UICollectionViewFlowLayout else { return }
-        
-        let pageWidth = layout.minimumLineSpacing + layout.itemSize.width
-        //get index of the current cell using the page width (which is the difference the leading side of each cell)
-        let index: Int = Int(round(collectionView.contentOffset.x / pageWidth))
-        
-        if index < 0 || index > objectivesToDisplay.count - 1 {
-            return
-        }
-        
-        let indexForVisibleCell = IndexPath(item: index, section: 0)
-        //save the middle cell
-        let cellToZoom = collectionView.cellForItem(at: indexForVisibleCell) as! ObjectiveInformationCollectionViewCell
-        
-        //animate cells, making the middle one larger and all the other ones their original size in case they have changed
-        UIView.animate(withDuration: 0.05, animations: {
-            for (cell) in (self.collectionView.visibleCells as! [ObjectiveInformationCollectionViewCell]) {
-                let value: CGFloat = (cell == cellToZoom) ? 1.1 : 1.0
-                cell.transform = CGAffineTransform(scaleX: value, y: value)
-            }
-        })
+
+    //MARK:- data
+
+    func initiateSave() {
+        dataManager.saveLocalData()
+        updateProgressLabel()
     }
     
-    private func growCellAnimationSetup(cell: UICollectionViewCell) {
+    //MARK:- cell animation code
+
+    func scaleCurrentCell() {
+
+        guard let cell = retrieveCurrentCell() else { return }
+        cell.transform = CGAffineTransform(scaleX: 1.15, y: 1.15)
+    }
+    
+    private func growCellAnimationSetup(cell: UICollectionViewCell) -> Bool {
         
         let indexPath = collectionView.indexPath(for: cell)
         
         let objective = objectivesToDisplay[indexPath!.row]
-        guard let data = AppResources.ObjectiveData.sharedObjectives.data.first(where: {$0.objectiveID == objective.id}) else { return }
-        
+        guard let data = AppResources.ObjectiveData.sharedObjectives.data.first(where: {$0.objectiveID == objective.id}) else { return false }
+
+        guard detailViewController == nil else { return false }
+
         self.detailViewController = DetailViewController(objective: objective, data: data)
-        detailViewController?.delegate = dataManager
+        detailViewController?.delegate = self
         addChildViewController(detailViewController!)
-        detailViewController!.didMove(toParentViewController: self)
+        detailViewController?.didMove(toParentViewController: self)
         
-        guard let detailView = detailViewController?.view else { return }
+        guard let detailView = detailViewController?.view else { return false }
         
         //set up detailView animation panGestureRecognizer
         let panGestureRecogniser = UIPanGestureRecognizer(target: self, action: #selector(panAnimationHandler))
@@ -619,6 +637,8 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
         // ensure both snapshots are opaque
         self.cellSnapShotImageView.alpha = 1
         self.detailViewSnapShotImageView.alpha = 1
+
+        return true
     }
     
     private  func shrinkCellAnimationSetUp() {
@@ -642,7 +662,7 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
     
     func playGrowCellAnimation(cell: UICollectionViewCell) {
         
-        growCellAnimationSetup(cell: cell)
+        guard growCellAnimationSetup(cell: cell) == true else { return }
         
         guard let detailView = detailViewController?.view else { return }
         
@@ -692,8 +712,9 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
             self.mapView.layoutMargins = UIEdgeInsets(top: 16, left: 16, bottom: self.collectionView.frame.height + 16, right: 16)
             self.zoomToLocation(objIndex: nil)
         }, completion: { _ in
-            
-            self.detailViewController!.removeFromParentViewController()
+
+            detailView.removeFromSuperview()
+            self.detailViewController?.removeFromParentViewController()
             self.detailViewController = nil
             self.detailViewSnapShotImageView.removeFromSuperview()
             self.cellSnapShotImageView.removeFromSuperview()
@@ -765,7 +786,7 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
                 self.zoomToLocation(objIndex: nil)
             })
             
-            // else if user is panning from detailView back down to a cell
+        // else if user is panning from detailView back down to a cell
         } else {
             
             guard let cell = retrieveCurrentCell() else { return }
@@ -828,9 +849,13 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
         guard let detailView = detailViewController?.view else { return }
         
         func removeDetailView() {
-            self.detailViewController!.removeFromParentViewController()
+
+            guard detailViewController != nil else { return }
+
+            self.detailViewController?.removeFromParentViewController()
+            detailView.removeFromSuperview()
             self.detailViewController = nil
-            removeSnapShots()
+
         }
         
         func removeSnapShots() {
@@ -850,7 +875,7 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
             // if animation progress is over 50% complete finish animation or swiped with high velocity
             if ( translation.y <= -totalYMovement / 2 || velocity.y <= -100) {
                 
-                self.panDetailAnimator!.addCompletion({ final in
+                self.panDetailAnimator?.addCompletion({ final in
                     recognizer.isEnabled = true
                     
                     removeSnapShots()
@@ -860,11 +885,12 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
                 // else reverse animation
             } else {
                 
-                self.panDetailAnimator!.isReversed = true
+                self.panDetailAnimator?.isReversed = true
                 
-                self.panDetailAnimator!.addCompletion({ final in
+                self.panDetailAnimator?.addCompletion({ final in
                     recognizer.isEnabled = true
-                    
+
+                    removeSnapShots()
                     removeDetailView()
                     adjustMapTo(self.collectionView)
                 })
@@ -875,24 +901,26 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
             // if animation progress is over 50% complete finish animation or swiped with high velocity
             if (translation.y >= totalYMovement / 2 || velocity.y >= 100) {
                 
-                self.panDetailAnimator!.addCompletion({ final in
+                self.panDetailAnimator?.addCompletion({ final in
                     recognizer.isEnabled = true
-                    
-                    removeDetailView()
                     
                     //reload the collection view cells
                     self.collectionView.reloadData()
                     self.collectionView.performBatchUpdates({}, completion: { (finished) in
-                        self.scaleCellAnimation()
+                        self.updateProgressLabel()
+                        self.scaleCurrentCell()
+                        removeSnapShots()
+                        removeDetailView()
                     })
+
                 })
                 
                 // else reverse animation
             } else {
                 
-                self.panDetailAnimator!.isReversed = true
+                self.panDetailAnimator?.isReversed = true
                 
-                self.panDetailAnimator!.addCompletion({ final in
+                self.panDetailAnimator?.addCompletion({ final in
                     recognizer.isEnabled = true
                     //reveal the detailView
                     detailView.isHidden = false
