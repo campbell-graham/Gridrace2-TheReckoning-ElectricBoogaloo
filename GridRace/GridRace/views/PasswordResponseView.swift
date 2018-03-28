@@ -13,6 +13,7 @@ class PasswordResponseView: UIView {
     private let passcode = "1234"
     private var attempt = ""
     var textField = UITextField()
+    weak var delegate: PasswordResponseViewDelegate?
 
     private var buttons = [UIButton]()
 
@@ -23,10 +24,11 @@ class PasswordResponseView: UIView {
         textField.keyboardType = .numberPad
         textField.backgroundColor = AppColors.textPrimaryColor
         textField.isSecureTextEntry = true
-        textField.placeholder = "Enter password..."
+        textField.placeholder = "Enter Passcode"
         textField.textColor = UIColor.black
         textField.layer.cornerRadius = 10
         textField.textAlignment = .center
+        textField.addTarget(self, action: #selector(thing), for: .editingChanged)
         
         //add items to view
         addSubview(textField)
@@ -42,7 +44,28 @@ class PasswordResponseView: UIView {
             ])
     }
     
+    @objc func thing(_ sender: UITextField) {
+        
+        let attempt = String(describing: sender.text!)
+        print(attempt)
+        if attempt.count == passcode.count {
+            if attempt == passcode {
+                delegate?.presentSummaryScreen()
+            } else {
+                transform = CGAffineTransform(translationX: 6, y: 0)
+                UIView.animate(withDuration: 0.6, delay: 0, usingSpringWithDamping: 0.2, initialSpringVelocity: 0.5, options: .curveEaseInOut, animations: {
+                    self.transform = CGAffineTransform.identity
+                }, completion: nil)
+                textField.text = ""
+            }
+        }
+    }
+    
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+}
+
+protocol PasswordResponseViewDelegate : class {
+   func presentSummaryScreen()
 }

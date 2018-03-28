@@ -15,8 +15,8 @@ protocol DetailViewControllerDelegate: class {
     func initiateSave()
 }
 
-class DetailViewController: UIViewController {
-
+class DetailViewController: UIViewController, PasswordResponseViewDelegate {
+    
     var objective: Objective
     var data: ObjectiveUserData
 
@@ -156,8 +156,8 @@ class DetailViewController: UIViewController {
         case is PasswordResponseView:
             // create keyboard state observers/ listeners (to reposition view when keyboard apperas/ disappears)
             NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow), name: NSNotification.Name.UIKeyboardWillShow, object: nil)
-            
             NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide), name: NSNotification.Name.UIKeyboardWillHide, object: nil)
+            (answerView as! PasswordResponseView).delegate = self
         default:
             break
         }
@@ -321,6 +321,10 @@ class DetailViewController: UIViewController {
         clueViewController.modalTransitionStyle = .crossDissolve
         clueViewController.modalPresentationStyle = .overCurrentContext
         present(clueViewController, animated: true, completion: nil)
+    }
+    
+    func presentSummaryScreen() {
+        present(UINavigationController(rootViewController: SummaryViewController()), animated: true, completion: nil)
     }
 
 
