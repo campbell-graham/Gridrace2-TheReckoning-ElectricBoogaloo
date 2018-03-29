@@ -25,6 +25,10 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
     var timerView = TimerView(frame: CGRect(x: 0, y: 0, width: 100, height: 44))
     var objectivesProgressView = ObjectivesProgressView()
     
+    //variables for filtering between main and bonus
+    var selectedObjectiveTypeAsString: String!
+    var objectiveTypeToFilter: ObjectiveType!
+    
     //used for cell animation
     var detailViewController: DetailViewController?
     let detailViewSnapShotImageView = UIImageView()
@@ -202,12 +206,15 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
         if let alert = alert {
             present(alert, animated: false, completion: nil)
         }
+        //populates the main screen with the objectives and other relevent data
         updateSelectedObjectiveType()
+        //add region circles to the map
+        addMapCircles()
     }
     
     @objc func updateSelectedObjectiveType() {
-        let selectedObjectiveTypeAsString = segmentedControl.titleForSegment(at: segmentedControl.selectedSegmentIndex)?.lowercased()
-        let objectiveTypeToFilter = ObjectiveType(rawValue: selectedObjectiveTypeAsString!)
+        selectedObjectiveTypeAsString = segmentedControl.titleForSegment(at: segmentedControl.selectedSegmentIndex)?.lowercased()
+        objectiveTypeToFilter = ObjectiveType(rawValue: selectedObjectiveTypeAsString!)
         //set follow mode if bonus, eitherwise turn off
         mapView.userTrackingMode = objectiveTypeToFilter == .bonus ? .follow : .none
         objectivesToDisplay = AppResources.ObjectiveData.sharedObjectives.objectives.filter({$0.objectiveType == objectiveTypeToFilter})
@@ -217,7 +224,7 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
             self.collectionView.setContentOffset(CGPoint(x:0,y:0), animated: true)
             self.updateProgressLabel()
             self.scaleCurrentCell()
-            self.addMapCircles()
+           
             self.zoomToLocation(objIndex: nil)
         })
         
@@ -245,7 +252,8 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
     
     func zoomToLocation(objIndex: Int?) {
         
-        guard mapView.userTrackingMode == .none else {
+        //we do not want to jump to a location if the user is looking at bonus
+        guard objectiveTypeToFilter != .bonus else {
             return
         }
         
@@ -266,11 +274,6 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
             guard index >= 0 && index < objectivesToDisplay.count else {
                 return
             }
-            
-            //            //check that the objective is a main, as we do not want to trigger a zoom for bonus objectives
-            //            guard objectivesToDisplay[index].objectiveType == .main else {
-            //                return
-            //            }
             
             //zoom to location on map
             if let coordinate = currentAnnotations[objectivesToDisplay[index].id]?.coordinate {
@@ -301,7 +304,7 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
     }
     
     @objc func showUserLocation() {
-        mapView.setRegion(region(for: [MKAnnotation]()), animated: true)
+        mapView.userTrackingMode = .follow
     }
     
     func addMapCircles() {
