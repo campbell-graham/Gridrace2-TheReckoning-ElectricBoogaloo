@@ -18,7 +18,6 @@ class DetailViewController: UIViewController, PasswordResponseViewDelegate {
     
     var objective: Objective
     var data: ObjectiveUserData
-    private var fbDownloader: FireBaseDownloader
 
     var keyboardVisibile = false
 
@@ -38,11 +37,10 @@ class DetailViewController: UIViewController, PasswordResponseViewDelegate {
 
     var delegate: DetailViewControllerDelegate?
 
-    init(objective: Objective, data: ObjectiveUserData, fbDownloader :FireBaseDownloader) {
+    init(objective: Objective, data: ObjectiveUserData) {
 
         self.objective = objective
         self.data = data
-        self.fbDownloader = fbDownloader
 
         switch  objective.answerType {
         case .photo: // imageview
@@ -322,8 +320,7 @@ class DetailViewController: UIViewController, PasswordResponseViewDelegate {
     }
 
     private func presentClueViewController() {
-        let clueViewController = ClueViewController(hintText: objective.hintText, objectID: objective.id)
-        clueViewController.delegate = fbDownloader
+        let clueViewController = ClueViewController(hintText: objective.hintText, hintImageURL: objective.hintImageUrl)
         clueViewController.modalTransitionStyle = .crossDissolve
         clueViewController.modalPresentationStyle = .overCurrentContext
         present(clueViewController, animated: true, completion: nil)

@@ -8,8 +8,6 @@
 
 import UIKit
 import MapKit
-import Firebase
-import FirebaseDatabase
 
 class MainViewController: UIViewController, UICollectionViewDelegate, UICollectionViewDataSource, CLLocationManagerDelegate, MKMapViewDelegate, DetailViewControllerDelegate, DataManagerDelgate  {
     
@@ -30,8 +28,6 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
     let detailViewSnapShotImageView = UIImageView()
     let cellSnapShotImageView = UIImageView()
     private var panDetailAnimator: UIViewPropertyAnimator?
-
-    let firebaseDownloader = FireBaseDownloader()
     
     lazy var collectionView: UICollectionView = {
         
@@ -603,7 +599,7 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
 
         guard detailViewController == nil else { return false }
 
-        self.detailViewController = DetailViewController(objective: objective, data: data, fbDownloader :firebaseDownloader)
+        self.detailViewController = DetailViewController(objective: objective, data: data)
         detailViewController?.delegate = self
         addChildViewController(detailViewController!)
         detailViewController?.didMove(toParentViewController: self)

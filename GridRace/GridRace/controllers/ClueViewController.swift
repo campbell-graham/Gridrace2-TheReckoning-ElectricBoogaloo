@@ -7,12 +7,6 @@
 //
 
 import UIKit
-import Firebase
-
-protocol ClueViewControllerDelegate {
-
-    func downloadImage(objectID: String, completion: @escaping  (UIImage)->())
-}
 
 class ClueViewController: UIViewController {
 
@@ -20,19 +14,17 @@ class ClueViewController: UIViewController {
     let clueBackgroundView = UIView()
     let clueImageView = UIImageView()
     let clueLabel = UILabel()
-    var objectID: String
 
-    var delegate: ClueViewControllerDelegate? {
+    init(hintText: String, hintImageURL: URL? ) {
 
-        didSet {
-            delegate?.downloadImage(objectID: objectID ,completion: setImage)
-        }
-    }
-
-    init(hintText: String, objectID: String ) {
-
-        self.objectID = objectID
         clueLabel.text = hintText
+
+        clueImageView.contentMode = .scaleAspectFill
+        if hintImageURL != nil, let image = UIImage(contentsOfFile: hintImageURL!.path) {
+            clueImageView.image = image
+        } else {
+            clueImageView.image = #imageLiteral(resourceName: "placeHolder")
+        }
         super.init(nibName: nil, bundle: nil)
 
     }
@@ -57,8 +49,6 @@ class ClueViewController: UIViewController {
         clueLabel.textColor = AppColors.textPrimaryColor
         clueLabel.numberOfLines = 0
 
-        clueImageView.contentMode = .scaleAspectFill
-        clueImageView.image = #imageLiteral(resourceName: "eye")
         clueImageView.layer.cornerRadius = 15
         clueImageView.layer.masksToBounds = true
 
@@ -87,8 +77,9 @@ class ClueViewController: UIViewController {
             clueImageView.topAnchor.constraint(equalTo: clueBackgroundView.topAnchor, constant: 16),
             clueImageView.leadingAnchor.constraint(equalTo: clueBackgroundView.leadingAnchor, constant: 16),
             clueImageView.trailingAnchor.constraint(equalTo: clueBackgroundView.trailingAnchor, constant: -16),
+            clueImageView.bottomAnchor.constraint(equalTo: clueLabel.topAnchor, constant: -16),
 
-            clueLabel.topAnchor.constraint(equalTo: clueImageView.bottomAnchor, constant: 20),
+            clueLabel.topAnchor.constraint(equalTo: clueLabel.bottomAnchor, constant: -120),
             clueLabel.leadingAnchor.constraint(equalTo: clueBackgroundView.leadingAnchor, constant: 10),
             clueLabel.trailingAnchor.constraint(equalTo: clueBackgroundView.trailingAnchor, constant: -10),
             clueLabel.bottomAnchor.constraint(equalTo: clueBackgroundView.bottomAnchor, constant: -20)
@@ -98,11 +89,6 @@ class ClueViewController: UIViewController {
     @objc func dismiss(_ sender: UITapGestureRecognizer) {
 
         dismiss(animated: true, completion: nil)
-    }
-
-    func setImage (image: UIImage) {
-        clueImageView.image = image
-        clueImageView.contentMode = .scaleAspectFill
     }
 
 
