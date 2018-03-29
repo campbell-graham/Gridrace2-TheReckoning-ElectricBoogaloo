@@ -213,8 +213,12 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
         objectiveTypeToFilter = ObjectiveType(rawValue: selectedObjectiveTypeAsString!)
         //set follow mode if bonus, eitherwise turn off
         mapView.userTrackingMode = objectiveTypeToFilter == .bonus ? .follow : .none
-        //if selected type is main, filter by this AND last, otherwise if bonus, just filter by bonus
-        objectivesToDisplay = objectiveTypeToFilter == .main ? AppResources.ObjectiveData.sharedObjectives.objectives.filter({$0.objectiveType == objectiveTypeToFilter || $0.objectiveType == .last}) : AppResources.ObjectiveData.sharedObjectives.objectives.filter({$0.objectiveType == objectiveTypeToFilter})
+        objectivesToDisplay = AppResources.ObjectiveData.sharedObjectives.objectives.filter({$0.objectiveType == objectiveTypeToFilter})
+        if objectiveTypeToFilter == .main {
+            if let finalObjective = AppResources.ObjectiveData.sharedObjectives.objectives.first(where: {$0.objectiveType == .last}) {
+                objectivesToDisplay.append(finalObjective)
+            }
+        }
         collectionView.reloadData()
         //executes when the reload data is complete
         self.collectionView.performBatchUpdates({}, completion: { (finished) in
