@@ -19,12 +19,13 @@ class MapButtonsView: UIView {
         //buttons view set up
         showUserLocationButton.setImage(#imageLiteral(resourceName: "directional_arrow").withRenderingMode(.alwaysTemplate), for: .normal)
         showUserLocationButton.imageView?.tintColor = UIColor.blue
+        resetMapButton.setImage(#imageLiteral(resourceName: "target").withRenderingMode(.alwaysTemplate), for: .normal)
         resetMapButton.imageView?.tintColor = UIColor.blue
         
         //layer changes/styling
         layer.cornerRadius = 16
         layer.shadowColor = UIColor.black.cgColor
-        layer.shadowOpacity = 1
+        layer.shadowOpacity = 0.64
         layer.shadowOffset = CGSize.zero
         layer.shadowRadius = 4
 

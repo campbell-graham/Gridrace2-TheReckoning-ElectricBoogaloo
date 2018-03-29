@@ -158,7 +158,8 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
             
             mapView.layoutMargins = UIEdgeInsets(top: 16, left: 16, bottom: collectionView.frame.height, right: 16)
             
-            let blurEffect = UIBlurEffect(style: UIBlurEffectStyle.light)
+            //add blur effect
+            let blurEffect = UIBlurEffect(style: UIBlurEffectStyle.regular)
             let blurEffectView = UIVisualEffectView(effect: blurEffect)
             blurEffectView.frame = buttonsView.bounds
             blurEffectView.layer.cornerRadius = buttonsView.layer.cornerRadius
