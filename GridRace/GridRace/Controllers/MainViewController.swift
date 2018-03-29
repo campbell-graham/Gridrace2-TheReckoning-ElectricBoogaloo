@@ -211,13 +211,15 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
     @objc func updateSelectedObjectiveType() {
         selectedObjectiveTypeAsString = segmentedControl.titleForSegment(at: segmentedControl.selectedSegmentIndex)?.lowercased()
         objectiveTypeToFilter = ObjectiveType(rawValue: selectedObjectiveTypeAsString!)
-        //set follow mode if bonus, eitherwise turn off
-        mapView.userTrackingMode = objectiveTypeToFilter == .bonus ? .follow : .none
         objectivesToDisplay = AppResources.ObjectiveData.sharedObjectives.objectives.filter({$0.objectiveType == objectiveTypeToFilter})
         if objectiveTypeToFilter == .main {
+            buttonsView.resetMapButton.setImage(#imageLiteral(resourceName: "target").withRenderingMode(.alwaysTemplate), for: .normal)
+            //add the final objective
             if let finalObjective = AppResources.ObjectiveData.sharedObjectives.objectives.first(where: {$0.objectiveType == .last}) {
                 objectivesToDisplay.append(finalObjective)
             }
+        } else if objectiveTypeToFilter == .bonus {
+            buttonsView.resetMapButton.setImage(#imageLiteral(resourceName: "map").withRenderingMode(.alwaysTemplate), for: .normal)
         }
         collectionView.reloadData()
         //executes when the reload data is complete
@@ -225,15 +227,14 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
             self.collectionView.setContentOffset(CGPoint(x:0,y:0), animated: true)
             self.updateProgressLabel()
             self.scaleCurrentCell()
-           
             self.zoomToLocation(objIndex: nil)
         })
         
-     
+        
     }
-
+    
     func updateProgressLabel() {
-
+        
         var completed = 0
         for obj in objectivesToDisplay {
             guard let data = AppResources.ObjectiveData.sharedObjectives.data.first(where: {$0.objectiveID == obj.id}) else { continue }
@@ -241,7 +242,7 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
                 completed += 1
             }
         }
-
+        
         objectivesProgressView.progressLabel.text = "\(completed)/\(objectivesToDisplay.count)"
     }
     
@@ -252,12 +253,7 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
     }
     
     func zoomToLocation(objIndex: Int?) {
-        
-        //we do not want to jump to a location if the user is looking at bonus
-        guard objectiveTypeToFilter != .bonus else {
-            return
-        }
-        
+    
         
         if let layout = collectionView.collectionViewLayout as? UICollectionViewFlowLayout {
             let pageWidth = layout.minimumLineSpacing + layout.itemSize.width
@@ -508,7 +504,7 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
         let panGestureRecogniser = UIPanGestureRecognizer(target: self, action: #selector(panAnimationHandler))
         panGestureRecogniser.delegate = self
         cell.addGestureRecognizer(panGestureRecogniser)
-
+        
         if cell == retrieveCurrentCell() {
             cell.transform = CGAffineTransform(scaleX: 1.5, y: 1.5)
         }
@@ -527,30 +523,30 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
     }
     
     //MARK:- scroll view delegate methods
-
+    
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
-
+        
         guard let layout = collectionView.collectionViewLayout as? UICollectionViewFlowLayout else { return }
         let centerpPoint:CGPoint = view.convert(collectionView.center, to: collectionView)
         let distanceToStartScaling = (layout.itemSize.width / 2 ) + layout.minimumLineSpacing
-
+        
         for cell in collectionView.visibleCells {
-
+            
             //calculate cells distance from center of screen
             let distance = abs(centerpPoint.x - cell.center.x)
-
+            
             //check if the cells distance is close enough to start scaling
             if (distance <= distanceToStartScaling) {
-
+                
                 let distancePercentage: CGFloat = (100 - (distance / distanceToStartScaling) * 100)
-
+                
                 // convert distance percentage to a scale between 1.0 & 1.15
                 let scale = 1.0 + ((distancePercentage * 0.001) * 1.5)
                 cell.transform = CGAffineTransform(scaleX: scale, y: scale)
-
-            //else ensure it is default size
+                
+                //else ensure it is default size
             } else {
-
+                
                 cell.transform = CGAffineTransform(scaleX: 1.0, y: 1.0)
             }
         }
@@ -560,12 +556,16 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
         guard decelerate else {
             return
         }
-        zoomToLocation(objIndex: nil)
+        if objectiveTypeToFilter != .bonus {
+            zoomToLocation(objIndex: nil)
+        }
     }
     
     
     func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
-        zoomToLocation(objIndex: nil)
+        if objectiveTypeToFilter != .bonus {
+            zoomToLocation(objIndex: nil)
+        }
     }
     
     func scrollViewWillEndDragging(_ scrollView: UIScrollView, withVelocity velocity: CGPoint, targetContentOffset: UnsafeMutablePointer<CGPoint>) {
@@ -588,18 +588,18 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
         
         targetContentOffset.pointee = contentOffset
     }
-
+    
     //MARK:- data
-
+    
     func initiateSave() {
         dataManager.saveLocalData()
         updateProgressLabel()
     }
     
     //MARK:- cell animation code
-
+    
     func scaleCurrentCell() {
-
+        
         guard let cell = retrieveCurrentCell() else { return }
         cell.transform = CGAffineTransform(scaleX: 1.15, y: 1.15)
     }
@@ -610,9 +610,9 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
         
         let objective = objectivesToDisplay[indexPath!.row]
         guard let data = AppResources.ObjectiveData.sharedObjectives.data.first(where: {$0.objectiveID == objective.id}) else { return false }
-
+        
         guard detailViewController == nil else { return false }
-
+        
         self.detailViewController = DetailViewController(objective: objective, data: data)
         detailViewController?.delegate = self
         addChildViewController(detailViewController!)
@@ -652,7 +652,7 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
         // ensure both snapshots are opaque
         self.cellSnapShotImageView.alpha = 1
         self.detailViewSnapShotImageView.alpha = 1
-
+        
         return true
     }
     
@@ -727,7 +727,7 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
             self.mapView.layoutMargins = UIEdgeInsets(top: 16, left: 16, bottom: self.collectionView.frame.height + 16, right: 16)
             self.zoomToLocation(objIndex: nil)
         }, completion: { _ in
-
+            
             detailView.removeFromSuperview()
             self.detailViewController?.removeFromParentViewController()
             self.detailViewController = nil
@@ -801,7 +801,7 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
                 self.zoomToLocation(objIndex: nil)
             })
             
-        // else if user is panning from detailView back down to a cell
+            // else if user is panning from detailView back down to a cell
         } else {
             
             guard let cell = retrieveCurrentCell() else { return }
@@ -864,13 +864,13 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
         guard let detailView = detailViewController?.view else { return }
         
         func removeDetailView() {
-
+            
             guard detailViewController != nil else { return }
-
+            
             self.detailViewController?.removeFromParentViewController()
             detailView.removeFromSuperview()
             self.detailViewController = nil
-
+            
         }
         
         func removeSnapShots() {
@@ -904,7 +904,7 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
                 
                 self.panDetailAnimator?.addCompletion({ final in
                     recognizer.isEnabled = true
-
+                    
                     removeSnapShots()
                     removeDetailView()
                     adjustMapTo(self.collectionView)
@@ -927,7 +927,7 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
                         removeSnapShots()
                         removeDetailView()
                     })
-
+                    
                 })
                 
                 // else reverse animation
