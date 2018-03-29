@@ -112,6 +112,16 @@
 			name = Pods;
 			sourceTree = "<group>";
 		};
+		37241ABE206CB30500B2AF62 /* Extensions */ = {
+			isa = PBXGroup;
+			children = (
+				AA1CD2C1204513820007A0C1 /* UIImageExtension.swift */,
+				AA2D3F4B206084D4008D07B0 /* UIViewExtension.swift */,
+				AA13276220685DFE0008D51A /* CLLocationCoordinate2D_extension.swift */,
+			);
+			path = Extensions;
+			sourceTree = "<group>";
+		};
 		AA29A11720438BC500DF3A1C = {
 			isa = PBXGroup;
 			children = (
@@ -135,6 +145,7 @@
 			children = (
 				37F2A7ED2043CD0A00BA283B /* AppResources.swift */,
 				AA29A12320438BC500DF3A1C /* AppDelegate.swift */,
+				37241ABE206CB30500B2AF62 /* Extensions */,
 				AA29C9402047B17C00BE0BAE /* Data Models */,
 				AA29C93F2047B10C00BE0BAE /* Views */,
 				AA29C93E2047B0EB00BE0BAE /* Controllers */,
@@ -183,11 +194,8 @@
 		AA29C9402047B17C00BE0BAE /* Data Models */ = {
 			isa = PBXGroup;
 			children = (
-				AA1CD2C1204513820007A0C1 /* UIImageExtension.swift */,
 				3712BDEE2045174100B4C9B3 /* Objective.swift */,
 				379AD943204CCD5D00250582 /* ObjectiveUserData.swift */,
-				AA2D3F4B206084D4008D07B0 /* UIViewExtension.swift */,
-				AA13276220685DFE0008D51A /* CLLocationCoordinate2D_extension.swift */,
 				AAE63FA4206897DB0029DFE3 /* DataManager.swift */,
 				AA1FAC70206C50FE005D25E9 /* FireBaseDownloader.swift */,
 			);
