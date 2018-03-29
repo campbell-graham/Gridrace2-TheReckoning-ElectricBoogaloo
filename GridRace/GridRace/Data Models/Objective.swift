@@ -39,6 +39,9 @@ class Objective: Codable, Equatable {
         if lhs.answerType != rhs.answerType {
             return false
         }
+        if lhs.objectiveType != rhs.objectiveType {
+            return false
+        }
         
         return true
     }
@@ -79,4 +82,5 @@ enum AnswerType: String, Codable {
 enum ObjectiveType: String, Codable {
     case main
     case bonus
+    case last
 }

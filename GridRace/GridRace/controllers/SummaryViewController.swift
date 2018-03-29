@@ -29,7 +29,7 @@ class SummaryViewController: UIViewController, UICollectionViewDelegate, UIColle
     }()
 
     // all places and bonus objectives minus 'last'/ 'password' objective
-    var allObjectives: [Objective] = Array(AppResources.ObjectiveData.sharedObjectives.objectives.dropLast())
+    var allObjectives: [Objective] = Array(AppResources.ObjectiveData.sharedObjectives.objectives.filter({$0.objectiveType != .last}))
     
     var allData = AppResources.ObjectiveData.sharedObjectives.data
     
