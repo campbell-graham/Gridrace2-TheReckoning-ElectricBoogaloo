@@ -136,8 +136,8 @@
 				37F2A7ED2043CD0A00BA283B /* AppResources.swift */,
 				AA29A12320438BC500DF3A1C /* AppDelegate.swift */,
 				AA29C9402047B17C00BE0BAE /* Data Models */,
-				AA29C93F2047B10C00BE0BAE /* views */,
-				AA29C93E2047B0EB00BE0BAE /* controllers */,
+				AA29C93F2047B10C00BE0BAE /* Views */,
+				AA29C93E2047B0EB00BE0BAE /* Controllers */,
 				AA29A12720438BC500DF3A1C /* Main.storyboard */,
 				AA29A12A20438BC500DF3A1C /* Assets.xcassets */,
 				AA29A12C20438BC500DF3A1C /* LaunchScreen.storyboard */,
@@ -148,7 +148,7 @@
 			path = GridRace;
 			sourceTree = "<group>";
 		};
-		AA29C93E2047B0EB00BE0BAE /* controllers */ = {
+		AA29C93E2047B0EB00BE0BAE /* Controllers */ = {
 			isa = PBXGroup;
 			children = (
 				AA29A1372043D0CF00DF3A1C /* DetailViewController.swift */,
@@ -158,10 +158,10 @@
 				AAD4B5D9204FB5DA005FBB24 /* SummaryViewController.swift */,
 				37A6331E2064B47200E9FAA8 /* EnlargenedImageViewController.swift */,
 			);
-			path = controllers;
+			path = Controllers;
 			sourceTree = "<group>";
 		};
-		AA29C93F2047B10C00BE0BAE /* views */ = {
+		AA29C93F2047B10C00BE0BAE /* Views */ = {
 			isa = PBXGroup;
 			children = (
 				37F2A7F12043DA7E00BA283B /* ObjectiveTableViewCell.swift */,
@@ -177,7 +177,7 @@
 				37A6331C206486D500E9FAA8 /* SummaryStatView.swift */,
 				AA2683DD206B4FEE009B1C3F /* ObjectivesProgressView.swift */,
 			);
-			path = views;
+			path = Views;
 			sourceTree = "<group>";
 		};
 		AA29C9402047B17C00BE0BAE /* Data Models */ = {
