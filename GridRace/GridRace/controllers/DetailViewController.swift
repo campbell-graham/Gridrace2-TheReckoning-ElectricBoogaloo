@@ -7,7 +7,6 @@
 //
 
 import UIKit
-import RSKImageCropper
 
 //MARK:- Protocols
 
@@ -31,7 +30,6 @@ class DetailViewController: UIViewController, PasswordResponseViewDelegate {
     private let responseTitleLabel = UILabel()
     private let answerView: UIView
 
-    //Delete: rethink storing this value here, can we put it in firebase?
     private let hintPointDeductionValue = 2
     private let passcode: String = {
         return "1234"
@@ -57,9 +55,7 @@ class DetailViewController: UIViewController, PasswordResponseViewDelegate {
 
     }
 
-    deinit {
-
-        // remove keyboard will show & will hide observers
+    override func viewWillDisappear(_ animated: Bool) {
         if answerView is TextResponseView {
             NotificationCenter.default.removeObserver(self)
             NotificationCenter.default.removeObserver(self)
@@ -324,7 +320,7 @@ class DetailViewController: UIViewController, PasswordResponseViewDelegate {
     }
 
     private func presentClueViewController() {
-        let clueViewController = ClueViewController(objective: objective)
+        let clueViewController = ClueViewController(hintText: objective.hintText, hintImageURL: objective.hintImageUrl)
         clueViewController.modalTransitionStyle = .crossDissolve
         clueViewController.modalPresentationStyle = .overCurrentContext
         present(clueViewController, animated: true, completion: nil)

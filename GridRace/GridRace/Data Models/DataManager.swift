@@ -16,6 +16,7 @@ protocol DataManagerDelgate {
 class DataManager: NSObject {
 
     var delegate: DataManagerDelgate? = nil
+    let fireBaseDownloader = FireBaseDownloader()
 
     func objectivesFilePath() -> URL {
         return AppResources.documentsDirectory().appendingPathComponent("Objectives.plist")
@@ -52,6 +53,7 @@ class DataManager: NSObject {
             do {
                 let objectives = try decoder.decode([Objective].self, from: objectivesDataToRead)
                 for (objective) in objectives {
+                    fireBaseDownloader.downloadImage(objectiveID: objective.id)
                     AppResources.ObjectiveData.sharedObjectives.objectives.append(objective)
                 }
                 let data = try decoder.decode([ObjectiveUserData].self, from: userDataToRead)

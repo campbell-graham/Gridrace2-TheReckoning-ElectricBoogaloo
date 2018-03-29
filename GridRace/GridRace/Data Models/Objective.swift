@@ -21,7 +21,7 @@ class Objective: Codable, Equatable {
         if lhs.desc != rhs.desc {
             return false
         }
-        if lhs.imageURL != rhs.imageURL {
+        if lhs.hintImageUrl != rhs.hintImageUrl {
             return false
         }
         if lhs.hintText != rhs.hintText {
@@ -47,7 +47,7 @@ class Objective: Codable, Equatable {
     let id: String
     let name: String
     let desc: String
-    var imageURL: URL?
+    var hintImageUrl: URL?
     let hintText: String
     var points: Int
     let latitude: Double?

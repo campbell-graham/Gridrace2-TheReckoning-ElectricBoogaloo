@@ -8,8 +8,6 @@
 
 import UIKit
 import MapKit
-import Firebase
-import FirebaseDatabase
 
 class MainViewController: UIViewController, UICollectionViewDelegate, UICollectionViewDataSource, CLLocationManagerDelegate, MKMapViewDelegate, DetailViewControllerDelegate, DataManagerDelgate  {
     
@@ -33,8 +31,6 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
     var detailViewController: DetailViewController?
     let detailViewSnapShotImageView = UIImageView()
     let cellSnapShotImageView = UIImageView()
-    
-    //used for pan animation
     private var panDetailAnimator: UIViewPropertyAnimator?
     
     lazy var collectionView: UICollectionView = {

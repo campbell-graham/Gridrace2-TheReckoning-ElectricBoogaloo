@@ -15,11 +15,18 @@ class ClueViewController: UIViewController {
     let clueImageView = UIImageView()
     let clueLabel = UILabel()
 
-    init(objective: Objective) {
+    init(hintText: String, hintImageURL: URL? ) {
 
-        clueImageView.image = objective.imageURL != nil ? #imageLiteral(resourceName: "eye") : #imageLiteral(resourceName: "eye") 
-        clueLabel.text = objective.hintText
+        clueLabel.text = hintText
+
+        clueImageView.contentMode = .scaleAspectFill
+        if hintImageURL != nil, let image = UIImage(contentsOfFile: hintImageURL!.path) {
+            clueImageView.image = image
+        } else {
+            clueImageView.image = #imageLiteral(resourceName: "placeHolder")
+        }
         super.init(nibName: nil, bundle: nil)
+
     }
 
     required init?(coder aDecoder: NSCoder) {
@@ -42,7 +49,8 @@ class ClueViewController: UIViewController {
         clueLabel.textColor = AppColors.textPrimaryColor
         clueLabel.numberOfLines = 0
 
-        clueImageView.contentMode = .scaleAspectFit
+        clueImageView.layer.cornerRadius = 15
+        clueImageView.layer.masksToBounds = true
 
         for v in [transparentBackgroundView, clueBackgroundView] {
             v.translatesAutoresizingMaskIntoConstraints = false
@@ -61,17 +69,17 @@ class ClueViewController: UIViewController {
             transparentBackgroundView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             transparentBackgroundView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
 
-            clueBackgroundView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            clueBackgroundView.centerYAnchor.constraint(equalTo: view.centerYAnchor),            
-            clueBackgroundView.widthAnchor.constraint(equalToConstant: (view.frame.size.width/4 * 3) ),
-            clueBackgroundView.heightAnchor.constraint(greaterThanOrEqualToConstant: view.frame.size.height/2),
+            clueBackgroundView.topAnchor.constraint(equalTo: view.topAnchor, constant: (view.frame.height) * 0.2),
+            clueBackgroundView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 32),
+            clueBackgroundView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -32),
+            clueBackgroundView.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: (-view.frame.height) * 0.2),
 
-            clueImageView.topAnchor.constraint(equalTo: clueBackgroundView.topAnchor, constant: 20),
-            clueImageView.centerXAnchor.constraint(equalTo: clueBackgroundView.centerXAnchor),
-            clueImageView.heightAnchor.constraint(equalToConstant: 200),
-            clueImageView.widthAnchor.constraint(equalToConstant: 200),
+            clueImageView.topAnchor.constraint(equalTo: clueBackgroundView.topAnchor, constant: 16),
+            clueImageView.leadingAnchor.constraint(equalTo: clueBackgroundView.leadingAnchor, constant: 16),
+            clueImageView.trailingAnchor.constraint(equalTo: clueBackgroundView.trailingAnchor, constant: -16),
+            clueImageView.bottomAnchor.constraint(equalTo: clueLabel.topAnchor, constant: -16),
 
-            clueLabel.topAnchor.constraint(equalTo: clueImageView.bottomAnchor, constant: 20),
+            clueLabel.topAnchor.constraint(equalTo: clueLabel.bottomAnchor, constant: -120),
             clueLabel.leadingAnchor.constraint(equalTo: clueBackgroundView.leadingAnchor, constant: 10),
             clueLabel.trailingAnchor.constraint(equalTo: clueBackgroundView.trailingAnchor, constant: -10),
             clueLabel.bottomAnchor.constraint(equalTo: clueBackgroundView.bottomAnchor, constant: -20)
