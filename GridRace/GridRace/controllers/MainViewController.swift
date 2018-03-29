@@ -29,9 +29,9 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
     var detailViewController: DetailViewController?
     let detailViewSnapShotImageView = UIImageView()
     let cellSnapShotImageView = UIImageView()
-    
-    //used for pan animation
     private var panDetailAnimator: UIViewPropertyAnimator?
+
+    let firebaseDownloader = FireBaseDownloader()
     
     lazy var collectionView: UICollectionView = {
         
@@ -603,7 +603,7 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
 
         guard detailViewController == nil else { return false }
 
-        self.detailViewController = DetailViewController(objective: objective, data: data)
+        self.detailViewController = DetailViewController(objective: objective, data: data, fbDownloader :firebaseDownloader)
         detailViewController?.delegate = self
         addChildViewController(detailViewController!)
         detailViewController?.didMove(toParentViewController: self)

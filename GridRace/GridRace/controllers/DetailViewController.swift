@@ -7,7 +7,6 @@
 //
 
 import UIKit
-import Firebase
 
 //MARK:- Protocols
 
@@ -19,6 +18,7 @@ class DetailViewController: UIViewController, PasswordResponseViewDelegate {
     
     var objective: Objective
     var data: ObjectiveUserData
+    private var fbDownloader: FireBaseDownloader
 
     var keyboardVisibile = false
 
@@ -31,9 +31,6 @@ class DetailViewController: UIViewController, PasswordResponseViewDelegate {
     private let responseTitleLabel = UILabel()
     private let answerView: UIView
 
-    //reference to firebase image storgae
-    let storage = Storage.storage()
-
     private let hintPointDeductionValue = 2
     private let passcode: String = {
         return "1234"
@@ -41,10 +38,11 @@ class DetailViewController: UIViewController, PasswordResponseViewDelegate {
 
     var delegate: DetailViewControllerDelegate?
 
-    init(objective: Objective, data: ObjectiveUserData) {
+    init(objective: Objective, data: ObjectiveUserData, fbDownloader :FireBaseDownloader) {
 
         self.objective = objective
         self.data = data
+        self.fbDownloader = fbDownloader
 
         switch  objective.answerType {
         case .photo: // imageview
@@ -59,9 +57,7 @@ class DetailViewController: UIViewController, PasswordResponseViewDelegate {
 
     }
 
-    deinit {
-
-        // remove keyboard will show & will hide observers
+    override func viewWillDisappear(_ animated: Bool) {
         if answerView is TextResponseView {
             NotificationCenter.default.removeObserver(self)
             NotificationCenter.default.removeObserver(self)
@@ -326,7 +322,8 @@ class DetailViewController: UIViewController, PasswordResponseViewDelegate {
     }
 
     private func presentClueViewController() {
-        let clueViewController = ClueViewController(objective: objective)
+        let clueViewController = ClueViewController(hintText: objective.hintText, objectID: objective.id)
+        clueViewController.delegate = fbDownloader
         clueViewController.modalTransitionStyle = .crossDissolve
         clueViewController.modalPresentationStyle = .overCurrentContext
         present(clueViewController, animated: true, completion: nil)

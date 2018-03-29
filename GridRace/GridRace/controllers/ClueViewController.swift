@@ -7,6 +7,12 @@
 //
 
 import UIKit
+import Firebase
+
+protocol ClueViewControllerDelegate {
+
+    func downloadImage(objectID: String, completion: @escaping  (UIImage)->())
+}
 
 class ClueViewController: UIViewController {
 
@@ -14,12 +20,21 @@ class ClueViewController: UIViewController {
     let clueBackgroundView = UIView()
     let clueImageView = UIImageView()
     let clueLabel = UILabel()
+    var objectID: String
 
-    init(objective: Objective) {
+    var delegate: ClueViewControllerDelegate? {
 
-        clueImageView.image = objective.imageURL != nil ? #imageLiteral(resourceName: "eye") : #imageLiteral(resourceName: "eye") 
-        clueLabel.text = objective.hintText
+        didSet {
+            delegate?.downloadImage(objectID: objectID ,completion: setImage)
+        }
+    }
+
+    init(hintText: String, objectID: String ) {
+
+        self.objectID = objectID
+        clueLabel.text = hintText
         super.init(nibName: nil, bundle: nil)
+
     }
 
     required init?(coder aDecoder: NSCoder) {
@@ -42,7 +57,10 @@ class ClueViewController: UIViewController {
         clueLabel.textColor = AppColors.textPrimaryColor
         clueLabel.numberOfLines = 0
 
-        clueImageView.contentMode = .scaleAspectFit
+        clueImageView.contentMode = .scaleAspectFill
+        clueImageView.image = #imageLiteral(resourceName: "eye")
+        clueImageView.layer.cornerRadius = 15
+        clueImageView.layer.masksToBounds = true
 
         for v in [transparentBackgroundView, clueBackgroundView] {
             v.translatesAutoresizingMaskIntoConstraints = false
@@ -61,15 +79,14 @@ class ClueViewController: UIViewController {
             transparentBackgroundView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             transparentBackgroundView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
 
-            clueBackgroundView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            clueBackgroundView.centerYAnchor.constraint(equalTo: view.centerYAnchor),            
-            clueBackgroundView.widthAnchor.constraint(equalToConstant: (view.frame.size.width/4 * 3) ),
-            clueBackgroundView.heightAnchor.constraint(greaterThanOrEqualToConstant: view.frame.size.height/2),
+            clueBackgroundView.topAnchor.constraint(equalTo: view.topAnchor, constant: (view.frame.height) * 0.2),
+            clueBackgroundView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 32),
+            clueBackgroundView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -32),
+            clueBackgroundView.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: (-view.frame.height) * 0.2),
 
-            clueImageView.topAnchor.constraint(equalTo: clueBackgroundView.topAnchor, constant: 20),
-            clueImageView.centerXAnchor.constraint(equalTo: clueBackgroundView.centerXAnchor),
-            clueImageView.heightAnchor.constraint(equalToConstant: 200),
-            clueImageView.widthAnchor.constraint(equalToConstant: 200),
+            clueImageView.topAnchor.constraint(equalTo: clueBackgroundView.topAnchor, constant: 16),
+            clueImageView.leadingAnchor.constraint(equalTo: clueBackgroundView.leadingAnchor, constant: 16),
+            clueImageView.trailingAnchor.constraint(equalTo: clueBackgroundView.trailingAnchor, constant: -16),
 
             clueLabel.topAnchor.constraint(equalTo: clueImageView.bottomAnchor, constant: 20),
             clueLabel.leadingAnchor.constraint(equalTo: clueBackgroundView.leadingAnchor, constant: 10),
@@ -81,6 +98,11 @@ class ClueViewController: UIViewController {
     @objc func dismiss(_ sender: UITapGestureRecognizer) {
 
         dismiss(animated: true, completion: nil)
+    }
+
+    func setImage (image: UIImage) {
+        clueImageView.image = image
+        clueImageView.contentMode = .scaleAspectFill
     }
 
 
