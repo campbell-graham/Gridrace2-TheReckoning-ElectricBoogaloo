@@ -79,4 +79,5 @@ enum AnswerType: String, Codable {
 enum ObjectiveType: String, Codable {
     case main
     case bonus
+    case last
 }
