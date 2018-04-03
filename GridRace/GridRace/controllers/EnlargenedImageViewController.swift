@@ -9,7 +9,8 @@
 import UIKit
 
 class EnlargenedImageViewController: UIViewController, UIScrollViewDelegate {
-    
+
+    let imageTextView = UITextView()
     let imageView = UIImageView()
     let scrollView = UIScrollView()
     let closeButton = UIButton()
@@ -21,7 +22,21 @@ class EnlargenedImageViewController: UIViewController, UIScrollViewDelegate {
     
     init(image: UIImage) {
         super.init(nibName: nil, bundle: nil)
+        imageTextView.text = ""
         imageView.image = image
+    }
+
+    init(hintText: String, hintImageURL: URL? ) {
+
+        imageTextView.text = hintText
+
+        imageView.contentMode = .scaleAspectFill
+        if hintImageURL != nil, let image = UIImage(contentsOfFile: hintImageURL!.path) {
+            imageView.image = image
+        } else {
+            imageView.image = #imageLiteral(resourceName: "placeHolder")
+        }
+        super.init(nibName: nil, bundle: nil)
     }
     
     required init?(coder aDecoder: NSCoder) {

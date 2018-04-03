@@ -53,7 +53,6 @@ class DataManager: NSObject {
             do {
                 let objectives = try decoder.decode([Objective].self, from: objectivesDataToRead)
                 for (objective) in objectives {
-                    fireBaseDownloader.downloadImage(objectiveID: objective.id)
                     AppResources.ObjectiveData.sharedObjectives.objectives.append(objective)
                 }
                 let data = try decoder.decode([ObjectiveUserData].self, from: userDataToRead)
@@ -72,6 +71,9 @@ class DataManager: NSObject {
 
         //a download is always called at the end so that comparisons can be made, and local data overwritten if it is no longer valid. Wait until download is complete and then run comparisons with local data
         AppResources.returnDownloadedObjectives() {tempObjectives in
+            for objective in tempObjectives {
+                self.fireBaseDownloader.downloadImage(objectiveID: objective.id)
+            }
             if tempObjectives.isEmpty {
                 let alert = UIAlertController(title: "Failed to download!", message: "Using locally saved data fow now, however we recommend restarting with app whilst having an internet connection", preferredStyle: .alert)
                 alert.addAction(UIAlertAction(title: "Okay", style: .cancel, handler: nil))
