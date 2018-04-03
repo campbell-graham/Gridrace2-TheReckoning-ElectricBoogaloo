@@ -321,7 +321,7 @@ class DetailViewController: UIViewController, PasswordResponseViewDelegate {
 
     private func presentClueViewController() {
 
-        let clueViewController = EnlargenedImageViewController(hintText: objective.hintText, hintImageURL: objective.hintImageUrl)
+        let clueViewController = UINavigationController(rootViewController: EnlargenedImageViewController(hintText: objective.hintText, hintImageURL: objective.hintImageUrl))
         present(clueViewController, animated: true, completion: nil)
     }
     
