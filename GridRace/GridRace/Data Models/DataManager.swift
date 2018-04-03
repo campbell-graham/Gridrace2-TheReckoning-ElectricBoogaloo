@@ -8,14 +8,9 @@
 
 import UIKit
 
-protocol DataManagerDelgate {
-
-    func didRetrieveData(alert: UIAlertController?)
-}
-
 class DataManager: NSObject {
 
-    var delegate: DataManagerDelgate? = nil
+    var delegate: DataManagerDelgate?
     let fireBaseDownloader = FireBaseDownloader()
 
     func objectivesFilePath() -> URL {
@@ -63,11 +58,11 @@ class DataManager: NSObject {
             } catch {
                 print("Error decoding the local array, will re-download")
                 //delete local files if there are issues assiging to local variables
-                resetLocalData()
+                resetLocalData(objectivesToResetWith: [Objective]())
             }
         } else {
             //files don't exist or have issues so reset
-            resetLocalData()
+            resetLocalData(objectivesToResetWith: [Objective]())
         }
 
         //a download is always called at the end so that comparisons can be made, and local data overwritten if it is no longer valid. Wait until download is complete and then run comparisons with local data
@@ -77,6 +72,8 @@ class DataManager: NSObject {
                 alert.addAction(UIAlertAction(title: "Okay", style: .cancel, handler: nil))
                 returnAlert = alert
                 self.delegate?.didRetrieveData(alert: returnAlert)
+                //return as we do not want to run download comparisons
+                return
             }
 
             //bool to determine whether to show "data was reset" alert
@@ -85,12 +82,9 @@ class DataManager: NSObject {
             //check that they are the same length and have the same data, reset if not
             if tempObjectives.count == AppResources.ObjectiveData.sharedObjectives.objectives.count {
                 for (index, objective) in tempObjectives.enumerated() {
-                    if !(objective == AppResources.ObjectiveData.sharedObjectives.objectives[index]) {
-                        AppResources.ObjectiveData.sharedObjectives.objectives = tempObjectives
-                        self.resetLocalData()
+                    if objective != AppResources.ObjectiveData.sharedObjectives.objectives[index] && !dataReset {
+                        self.resetLocalData(objectivesToResetWith: tempObjectives)
                         dataReset = true
-                        UserDefaults.standard.set(Date(), forKey: "FirstLaunchDate")
-                        break
                     }
                 }
             } else {
@@ -98,8 +92,7 @@ class DataManager: NSObject {
                 if AppResources.ObjectiveData.sharedObjectives.objectives.count != 0 {
                     dataReset = true
                 }
-                AppResources.ObjectiveData.sharedObjectives.objectives = tempObjectives
-                self.resetLocalData()
+                self.resetLocalData(objectivesToResetWith: tempObjectives)
             }
 
             //alert the user if their data has been reset
@@ -110,7 +103,6 @@ class DataManager: NSObject {
             }
             self.saveLocalData()
             self.delegate?.didRetrieveData(alert: returnAlert)
-
         }
     }
 
@@ -128,16 +120,19 @@ class DataManager: NSObject {
         }
     }
 
-    func resetLocalData() {
+    func resetLocalData(objectivesToResetWith: [Objective]) {
         //delete everything from local documents
         deleteDocumentData()
+        
+        AppResources.ObjectiveData.sharedObjectives.objectives = objectivesToResetWith
 
         //re-populate user data
-        AppResources.ObjectiveData.sharedObjectives.data.removeAll()
         for (objective) in AppResources.ObjectiveData.sharedObjectives.objectives {
             AppResources.ObjectiveData.sharedObjectives.data.append(ObjectiveUserData(id: objective.id))
         }
 
+        //since the app is resetting data, we should reset the first launch date
+        UserDefaults.standard.set(Date(), forKey: "FirstLaunchDate")
 
         //save this information
         saveLocalData()
@@ -145,5 +140,10 @@ class DataManager: NSObject {
 
 
 }
+
+protocol DataManagerDelgate {
+    func didRetrieveData(alert: UIAlertController?)
+}
+
 
 
