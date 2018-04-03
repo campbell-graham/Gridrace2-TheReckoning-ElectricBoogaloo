@@ -469,7 +469,7 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
         }
         
         //if they've selected the last main objective (i.e. the final one with the PIN) then alert them to confirm they want to continue
-        if objectivesToDisplay[indexPath.row] == objectivesToDisplay.filter({$0.objectiveType == .main}).last {
+        if objectivesToDisplay[indexPath.row].objectiveType == .last {
             let refreshAlert = UIAlertController(title: "Continue?", message: "This is the end of the race, and once you finish you will be unable to get any more points. Are you sure you wish to continue?", preferredStyle: UIAlertControllerStyle.alert)
             
             refreshAlert.addAction(UIAlertAction(title: "Yes", style: .default, handler: { (action: UIAlertAction!) in
