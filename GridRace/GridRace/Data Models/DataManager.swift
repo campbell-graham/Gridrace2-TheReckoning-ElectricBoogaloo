@@ -71,21 +71,24 @@ class DataManager: NSObject {
         var returnAlert: UIAlertController?
         //wait until download is complete and then run comparisons with local data
         returnDownloadedObjectives() {tempObjectives in
+            
             for objective in tempObjectives {
                 self.fireBaseDownloader.downloadImage(objectiveID: objective.id)
             }
+            
             if tempObjectives.isEmpty {
                 let alert = UIAlertController(title: "Failed to download!", message: "Using locally saved data fow now, however we recommend restarting with app whilst having an internet connection", preferredStyle: .alert)
                 alert.addAction(UIAlertAction(title: "Okay", style: .cancel, handler: nil))
                 returnAlert = alert
-                self.delegate?.didRetrieveData(alert: returnAlert)
-                //return as we do not want to run download comparisons
-                return
             } else {
-                AppResources.ObjectiveData.sharedObjectives.objectives = tempObjectives
-                self.saveLocalData()
-                self.delegate?.didRetrieveData(alert: returnAlert)
+                for objective in tempObjectives {
+                    if !AppResources.ObjectiveData.sharedObjectives.objectives.contains(objective) {
+                        self.resetLocalData(objectivesToResetWith: tempObjectives)
+                        break
+                    }
+                }
             }
+            self.delegate?.didRetrieveData(alert: returnAlert)
         }
     }
     
@@ -150,6 +153,9 @@ class DataManager: NSObject {
         deleteDocumentData()
         
         AppResources.ObjectiveData.sharedObjectives.objectives = objectivesToResetWith
+        
+        //wipe data
+        AppResources.ObjectiveData.sharedObjectives.data.removeAll()
 
         //re-populate user data
         for (objective) in AppResources.ObjectiveData.sharedObjectives.objectives {

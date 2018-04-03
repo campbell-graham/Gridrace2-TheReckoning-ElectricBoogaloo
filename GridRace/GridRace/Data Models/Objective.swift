@@ -21,9 +21,6 @@ class Objective: Codable, Equatable {
         if lhs.desc != rhs.desc {
             return false
         }
-        if lhs.hintImageUrl != rhs.hintImageUrl {
-            return false
-        }
         if lhs.hintText != rhs.hintText {
             return false
         }
