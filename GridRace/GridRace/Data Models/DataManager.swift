@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import FirebaseDatabase
 
 class DataManager: NSObject {
 
@@ -39,9 +40,6 @@ class DataManager: NSObject {
     }
 
     func loadLocalData() {
-
-        var returnAlert: UIAlertController? = nil
-
         //load objectives, points and completed data
         if let objectivesDataToRead = try? Data(contentsOf: objectivesFilePath()), let userDataToRead = try? Data(contentsOf: userDataFilePath()) {
             let decoder = PropertyListDecoder()
@@ -64,9 +62,16 @@ class DataManager: NSObject {
             //files don't exist or have issues so reset
             resetLocalData(objectivesToResetWith: [Objective]())
         }
-
-        //a download is always called at the end so that comparisons can be made, and local data overwritten if it is no longer valid. Wait until download is complete and then run comparisons with local data
-        AppResources.returnDownloadedObjectives() {tempObjectives in
+        
+        //a download is always called at the end so that comparisons can be made, and local data overwritten if it is no longer valid
+        downloadAndCompare()
+       
+    }
+    
+    func downloadAndCompare() {
+        var returnAlert: UIAlertController? = nil
+        //wait until download is complete and then run comparisons with local data
+        returnDownloadedObjectives() {tempObjectives in
             if tempObjectives.isEmpty {
                 let alert = UIAlertController(title: "Failed to download!", message: "Using locally saved data fow now, however we recommend restarting with app whilst having an internet connection", preferredStyle: .alert)
                 alert.addAction(UIAlertAction(title: "Okay", style: .cancel, handler: nil))
@@ -75,10 +80,10 @@ class DataManager: NSObject {
                 //return as we do not want to run download comparisons
                 return
             }
-
+            
             //bool to determine whether to show "data was reset" alert
             var dataReset = false
-
+            
             //check that they are the same length and have the same data, reset if not
             if tempObjectives.count == AppResources.ObjectiveData.sharedObjectives.objectives.count {
                 for (index, objective) in tempObjectives.enumerated() {
@@ -94,7 +99,7 @@ class DataManager: NSObject {
                 }
                 self.resetLocalData(objectivesToResetWith: tempObjectives)
             }
-
+            
             //alert the user if their data has been reset
             if dataReset {
                 let alert = UIAlertController(title: "Data Reset!", message: "Application did not have up to date data, and so it has been reset", preferredStyle: UIAlertControllerStyle.alert)
@@ -104,6 +109,48 @@ class DataManager: NSObject {
             self.saveLocalData()
             self.delegate?.didRetrieveData(alert: returnAlert)
         }
+    }
+    
+    func returnDownloadedObjectives(completion: @escaping (([Objective]) -> ())) {
+        //download if doesn't exist already
+        
+        var hasConnection = false
+        
+        var downloadedObjectives = [Objective]()
+        
+        let connectedRef = Database.database().reference(withPath: ".info/connected")
+        connectedRef.observe(.value, with: { snapshot in
+            if let connected = snapshot.value as? Bool, connected {
+                hasConnection = true
+            } else {
+                hasConnection = false
+            }
+        })
+        
+        //if no connection after 10 seconds, return blank objectives so the main controller knows it cannot connect
+        DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(10)) {
+            if !hasConnection {
+                completion([Objective]())
+            }
+        }
+        
+        let ref = Database.database().reference()
+        
+        ref.observeSingleEvent(of: .value, with: { (snapshot) in
+            do {
+                if let dict = snapshot.value as? [String: Any] {
+                    let data = try JSONSerialization.data(withJSONObject: dict, options: JSONSerialization.WritingOptions.prettyPrinted)
+                    let jsonDecoder = JSONDecoder()
+                    downloadedObjectives = try jsonDecoder.decode(ObjectList.self, from: data).data
+                    completion(downloadedObjectives)
+                }
+            } catch {
+                print(error)
+            }
+        })
+        
+        
+        
     }
 
     func deleteDocumentData() {
