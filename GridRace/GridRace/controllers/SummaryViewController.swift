@@ -14,7 +14,7 @@ class SummaryViewController: UIViewController, UICollectionViewDelegate, UIColle
     let bonusStatView = SummaryStatView()
     let timeStatView = SummaryStatView()
     let pointsStatView = SummaryStatView()
-
+    var collectionViewSet = false
     let finishTime = AppResources.timeToDisplay
     let objectCount = 10
     var isCorrect = true
@@ -29,7 +29,7 @@ class SummaryViewController: UIViewController, UICollectionViewDelegate, UIColle
     }()
 
     // all places and bonus objectives minus 'last'/ 'password' objective
-    var allObjectives: [Objective] = Array(AppResources.ObjectiveData.sharedObjectives.objectives.dropLast())
+    var allObjectives: [Objective] = Array(AppResources.ObjectiveData.sharedObjectives.objectives.filter({$0.objectiveType != .last}))
     
     var allData = AppResources.ObjectiveData.sharedObjectives.data
     
@@ -125,6 +125,7 @@ class SummaryViewController: UIViewController, UICollectionViewDelegate, UIColle
         collectionView.dataSource = self
         collectionView.backgroundColor = AppColors.backgroundColor
         collectionView.register(ObjectiveSummaryCollectionViewCell.self, forCellWithReuseIdentifier: "objectiveCell")
+        collectionView.decelerationRate = UIScrollViewDecelerationRateFast
         
     }
 
@@ -182,9 +183,25 @@ class SummaryViewController: UIViewController, UICollectionViewDelegate, UIColle
     }
     
     override func viewDidLayoutSubviews() {
-        if !(collectionView.collectionViewLayout is CustomFlowLayout) {
-            collectionView.collectionViewLayout = CustomFlowLayout(collectionViewWidth: collectionView.frame.width, collectionViewHeigth: collectionView.frame.height, itemSizePoints: UIScreen.main.bounds.width * 0.8)
-        }
+        
+        guard let layout = collectionView.collectionViewLayout as? UICollectionViewFlowLayout, !collectionViewSet  else { return }
+            
+            let collectionViewWidth = collectionView.frame.width
+            let collectionViewHeigth = collectionView.frame.height
+            let itemSizePercent = 300 / collectionViewWidth
+            let cellSpacing = (collectionViewWidth * (1 - itemSizePercent)) / 4
+            
+            layout.sectionInset = UIEdgeInsets(top: 10, left: (cellSpacing * 2), bottom: 10, right: (cellSpacing  * 2))
+            layout.scrollDirection = .horizontal
+            layout.minimumInteritemSpacing = cellSpacing
+            layout.minimumLineSpacing = cellSpacing
+            layout.itemSize = CGSize(width: collectionViewWidth * itemSizePercent, height: collectionViewHeigth * 0.8)
+            
+            collectionViewSet = true
+    }
+    
+    func openLargeImage(image: UIImage) {
+        present(EnlargenedImageViewController(image: image), animated: true, completion: nil)
     }
 
     //MARK:- collectionView delegate methods
@@ -255,7 +272,21 @@ class SummaryViewController: UIViewController, UICollectionViewDelegate, UIColle
         return cell
     }
     
-    func openLargeImage(image: UIImage) {
-        present(UINavigationController(rootViewController: EnlargenedImageViewController(image: image)), animated: true, completion: nil)
+    func scrollViewWillEndDragging(_ scrollView: UIScrollView, withVelocity velocity: CGPoint, targetContentOffset: UnsafeMutablePointer<CGPoint>) {
+        
+        guard let layout = collectionView.collectionViewLayout as? UICollectionViewFlowLayout else { return }
+        
+        let itemSize = layout.itemSize
+        let cellSpacing = layout.minimumLineSpacing
+        var contentOffset = targetContentOffset.pointee
+        let origin = contentOffset.x
+        
+        let index = (origin / (itemSize.width + cellSpacing)).rounded(.toNearestOrAwayFromZero)
+        
+        contentOffset.x = (itemSize.width + cellSpacing) * index
+        
+        targetContentOffset.pointee = contentOffset
     }
+    
+   
 }
