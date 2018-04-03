@@ -571,16 +571,11 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
     
     func scrollViewWillEndDragging(_ scrollView: UIScrollView, withVelocity velocity: CGPoint, targetContentOffset: UnsafeMutablePointer<CGPoint>) {
         
-        let collectionViewWidth = collectionView.frame.width
-        let collectionViewHeigth = collectionView.frame.height
+        guard let layout = collectionView.collectionViewLayout as? UICollectionViewFlowLayout else { return }
         
-        let itemSizePercent = 200 / collectionViewWidth
-        let cellSpacing = (collectionViewWidth * (1 - itemSizePercent)) / 4
-        
-        let itemSize = CGSize(width: collectionViewWidth * itemSizePercent, height: collectionViewHeigth * 0.8)
-        
+        let itemSize = layout.itemSize
+        let cellSpacing = layout.minimumLineSpacing
         var contentOffset = targetContentOffset.pointee
-        
         let origin = contentOffset.x
         
         let index = (origin / (itemSize.width + cellSpacing)).rounded(.toNearestOrAwayFromZero)
