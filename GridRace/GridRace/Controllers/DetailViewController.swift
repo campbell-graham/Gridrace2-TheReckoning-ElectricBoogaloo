@@ -386,7 +386,7 @@ UIImagePickerControllerDelegate, UINavigationControllerDelegate {
         if let image = answerView.responseImageView.image {
             let alert = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
             let actionView = UIAlertAction(title: "View Photo", style: .default, handler: {_ in
-                self.present(EnlargenedImageViewController(image: image), animated: true, completion: nil)
+                self.present(UINavigationController(rootViewController: EnlargenedImageViewController(image: image)), animated: true, completion: nil)
             })
             let actionTakePhoto = UIAlertAction(title: "Take New Photo", style: .default, handler: {_ in
                 takeNewPhoto()
