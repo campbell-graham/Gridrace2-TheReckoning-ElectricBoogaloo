@@ -452,35 +452,33 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
     
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        
-        func openDetail() {
-            
-            if let currentCell = retrieveCurrentCell(), collectionView.indexPath(for: currentCell) == indexPath {
-                playGrowCellAnimation(cell: currentCell)
+
+        //inline function
+        func openDetail(cell: UICollectionViewCell) {
+
+            //if they've selected the last main objective (i.e. the final one with the PIN) then alert them to confirm they want to continue
+            if objectivesToDisplay[indexPath.row].objectiveType == .last {
+
+                let refreshAlert = UIAlertController(title: "Continue?", message: "This is the end of the race, and once you finish you will be unable to get any more points. Are you sure you wish to continue?", preferredStyle: UIAlertControllerStyle.alert)
+
+                refreshAlert.addAction(UIAlertAction(title: "Yes", style: .default, handler: { (action: UIAlertAction!) in
+                    self.playGrowCellAnimation(cell: cell)
+                }))
+                refreshAlert.addAction(UIAlertAction(title: "No", style: .cancel, handler: nil))
+                present(refreshAlert, animated: true, completion: nil)
             } else {
-                UIView.animate(withDuration: 0.3, animations: {
-                    collectionView.scrollToItem(at: indexPath, at: .centeredHorizontally, animated: false)},
-                               completion: {_ in
-                                self.playGrowCellAnimation(cell: (collectionView.cellForItem(at: indexPath))!)
-                                self.scaleCurrentCell()
-                })
-                
+                playGrowCellAnimation(cell: cell)
             }
         }
-        
-        //if they've selected the last main objective (i.e. the final one with the PIN) then alert them to confirm they want to continue
-        if objectivesToDisplay[indexPath.row].objectiveType == .last {
-            let refreshAlert = UIAlertController(title: "Continue?", message: "This is the end of the race, and once you finish you will be unable to get any more points. Are you sure you wish to continue?", preferredStyle: UIAlertControllerStyle.alert)
-            
-            refreshAlert.addAction(UIAlertAction(title: "Yes", style: .default, handler: { (action: UIAlertAction!) in
-                openDetail()
-            }))
-            refreshAlert.addAction(UIAlertAction(title: "No", style: .cancel, handler: nil))
-            
-            present(refreshAlert, animated: true, completion: nil)
-            
+
+        if let currentCell = retrieveCurrentCell(), collectionView.indexPath(for: currentCell) == indexPath {
+            openDetail(cell: currentCell)
         } else {
-            openDetail()
+            UIView.animate(withDuration: 0.3, animations: {
+                collectionView.scrollToItem(at: indexPath, at: .centeredHorizontally, animated: false)},
+                           completion: {_ in
+                            openDetail(cell: (collectionView.cellForItem(at: indexPath))!)
+            })
         }
     }
     

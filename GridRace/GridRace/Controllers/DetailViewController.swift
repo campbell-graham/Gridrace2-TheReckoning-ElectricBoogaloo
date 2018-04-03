@@ -320,9 +320,8 @@ class DetailViewController: UIViewController, PasswordResponseViewDelegate {
     }
 
     private func presentClueViewController() {
-        let clueViewController = ClueViewController(hintText: objective.hintText, hintImageURL: objective.hintImageUrl)
-        clueViewController.modalTransitionStyle = .crossDissolve
-        clueViewController.modalPresentationStyle = .overCurrentContext
+
+        let clueViewController = UINavigationController(rootViewController: EnlargenedImageViewController(hintText: objective.hintText, hintImageURL: objective.hintImageUrl))
         present(clueViewController, animated: true, completion: nil)
     }
     
