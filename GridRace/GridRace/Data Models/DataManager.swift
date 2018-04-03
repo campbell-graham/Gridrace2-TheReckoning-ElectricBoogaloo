@@ -63,12 +63,12 @@ class DataManager: NSObject {
         }
         
         //a download is always called at the end so that comparisons can be made, and local data overwritten if it is no longer valid
-        downloadAndCompare()
+        downloadObjectives()
        
     }
     
-    func downloadAndCompare() {
-        var returnAlert: UIAlertController? = nil
+    func downloadObjectives() {
+        var returnAlert: UIAlertController?
         //wait until download is complete and then run comparisons with local data
         returnDownloadedObjectives() {tempObjectives in
             for objective in tempObjectives {
@@ -81,35 +81,11 @@ class DataManager: NSObject {
                 self.delegate?.didRetrieveData(alert: returnAlert)
                 //return as we do not want to run download comparisons
                 return
-            }
-            
-            //bool to determine whether to show "data was reset" alert
-            var dataReset = false
-            
-            //check that they are the same length and have the same data, reset if not
-            if tempObjectives.count == AppResources.ObjectiveData.sharedObjectives.objectives.count {
-                for (index, objective) in tempObjectives.enumerated() {
-                    if objective != AppResources.ObjectiveData.sharedObjectives.objectives[index] && !dataReset {
-                        self.resetLocalData(objectivesToResetWith: tempObjectives)
-                        dataReset = true
-                    }
-                }
             } else {
-                //we don't want to set dataReset to be true if objectives.count is 0, which means they're setting up the app for the first time
-                if AppResources.ObjectiveData.sharedObjectives.objectives.count != 0 {
-                    dataReset = true
-                }
-                self.resetLocalData(objectivesToResetWith: tempObjectives)
+                AppResources.ObjectiveData.sharedObjectives.objectives = tempObjectives
+                self.saveLocalData()
+                self.delegate?.didRetrieveData(alert: returnAlert)
             }
-            
-            //alert the user if their data has been reset
-            if dataReset {
-                let alert = UIAlertController(title: "Data Reset!", message: "Application did not have up to date data, and so it has been reset", preferredStyle: UIAlertControllerStyle.alert)
-                alert.addAction(UIAlertAction(title: "Okay", style: UIAlertActionStyle.default, handler: nil))
-                returnAlert = alert
-            }
-            self.saveLocalData()
-            self.delegate?.didRetrieveData(alert: returnAlert)
         }
     }
     
