@@ -68,20 +68,3 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
  
 }
 
-
-enum ObjectiveCategory: String {
-    case places
-    case bonus
-    
-    init(rawValue: String) {
-        switch rawValue {
-        case "places":
-            self = .places
-        case "bonus":
-            self = .bonus
-        default:
-            self = .places
-        }
-    }
-}
-
