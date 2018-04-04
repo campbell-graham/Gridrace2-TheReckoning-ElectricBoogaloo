@@ -13,10 +13,6 @@ class EnlargenedImageViewController: UIViewController, UIScrollViewDelegate {
     let imageTextLabel = UILabel()
     let imageView = UIImageView()
     let scrollView = UIScrollView()
-    var imageViewTopConstraint: NSLayoutConstraint!
-    var imageViewBottomConstraint: NSLayoutConstraint!
-    var imageViewLeadingConstraint: NSLayoutConstraint!
-    var imageViewTrailingConstraint: NSLayoutConstraint!
 
     
     init(image: UIImage) {

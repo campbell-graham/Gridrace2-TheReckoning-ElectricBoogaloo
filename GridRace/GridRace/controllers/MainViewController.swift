@@ -24,8 +24,8 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
     var objectivesProgressView = ObjectivesProgressView()
     
     //variables for filtering between main and bonus
-    var selectedObjectiveTypeAsString: String!
-    var objectiveTypeToFilter: ObjectiveType!
+    var selectedObjectiveTypeAsString: String
+    var objectiveTypeToFilter: ObjectiveType
     
     //used for cell animation
     var detailViewController: DetailViewController?
@@ -47,10 +47,12 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
         //segmented control set up
         segmentedControl = UISegmentedControl(items: segmentItems)
         segmentedControl.selectedSegmentIndex = 0
+        selectedObjectiveTypeAsString = segmentedControl.titleForSegment(at: 0) ?? "No Selected Objective"
         segmentedControl.tintColor = AppColors.orangeHighlightColor
         segmentedControl.setTitleTextAttributes([NSAttributedStringKey.font: UIFont.systemFont(ofSize: 15, weight: .medium)],
                                                 for: .normal)
-        
+        objectiveTypeToFilter = .main
+
         super.init(nibName: nil, bundle: nil)
         
         //tell segmented control to update every time selected value is changed
@@ -210,8 +212,8 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
     }
     
     @objc func updateSelectedObjectiveType() {
-        selectedObjectiveTypeAsString = segmentedControl.titleForSegment(at: segmentedControl.selectedSegmentIndex)?.lowercased()
-        objectiveTypeToFilter = ObjectiveType(rawValue: selectedObjectiveTypeAsString!)
+        selectedObjectiveTypeAsString = segmentedControl.titleForSegment(at: segmentedControl.selectedSegmentIndex)!.lowercased()
+        objectiveTypeToFilter = ObjectiveType(rawValue: selectedObjectiveTypeAsString)!
         objectivesToDisplay = AppResources.ObjectiveData.sharedObjectives.objectives.filter({$0.objectiveType == objectiveTypeToFilter})
         if objectiveTypeToFilter == .main {
             buttonsView.resetMapButton.setImage(#imageLiteral(resourceName: "target").withRenderingMode(.alwaysTemplate), for: .normal)
@@ -276,13 +278,15 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
             //zoom to location on map
             if let coordinate = currentAnnotations[objectivesToDisplay[index].id]?.coordinate {
                 //make circle orange
-                let circle = currentAnnotations[objectivesToDisplay[index].id] as! MKCircle
-                for (overlay) in mapView.overlays as! [MKCircle] {
-                    let circleRenderer = (mapView.renderer(for: overlay) as! MKCircleRenderer)
-                    if overlay == circle {
-                        circleRenderer.fillColor = AppColors.orangeHighlightColor.withAlphaComponent(0.7)
-                    } else {
-                        circleRenderer.fillColor = AppColors.cellColor.withAlphaComponent(0.3)
+                if let circle = currentAnnotations[objectivesToDisplay[index].id] as? MKCircle {
+                    for (overlay) in mapView.overlays {
+                        guard let overlay = overlay as? MKCircle else { continue }
+                        guard let circleRenderer = mapView.renderer(for: overlay) as? MKCircleRenderer else { continue }
+                        if overlay == circle {
+                            circleRenderer.fillColor = AppColors.orangeHighlightColor.withAlphaComponent(0.7)
+                        } else {
+                            circleRenderer.fillColor = AppColors.cellColor.withAlphaComponent(0.3)
+                        }
                     }
                 }
                 
@@ -432,17 +436,17 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
         alert.addAction(okAction)
     }
     
-    func mapView(_ mapView: MKMapView!, rendererFor overlay: MKOverlay!) -> MKOverlayRenderer! {
-        
-        guard overlay is MKCircle else { return nil }
-        
+    func mapView(_ mapView: MKMapView, rendererFor overlay: MKOverlay) -> MKOverlayRenderer {
+
+        guard overlay is MKCircle else { return MKOverlayRenderer() }
+
         let circle = MKCircleRenderer(overlay: overlay)
         circle.strokeColor = AppColors.orangeHighlightColor
         circle.fillColor = AppColors.cellColor.withAlphaComponent(0.7)
         circle.lineWidth = 1
         return circle
     }
-    
+
     //MARK:- CollectionView delegate methods
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
@@ -771,8 +775,8 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
         if let cell = recognizer.view as? UICollectionViewCell {
             
             let cellFrame = view.convert(cell.frame, from: collectionView)
-            
-            growCellAnimationSetup(cell: cell)
+
+            guard growCellAnimationSetup(cell: cell) == true else { return }
             guard let detailView = detailViewController?.view else { return }
             
             totalYMovement = cellFrame.minY - detailView.frame.minY
@@ -879,7 +883,7 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
         }
         
         //if user swiping up from cell to DetailView
-        if let cell = recognizer.view as? UICollectionViewCell {
+        if recognizer.view is UICollectionViewCell {
             
             // if animation progress is over 50% complete finish animation or swiped with high velocity
             if ( translation.y <= -totalYMovement / 2 || velocity.y <= -100) {

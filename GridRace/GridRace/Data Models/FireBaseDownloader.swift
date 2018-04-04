@@ -24,6 +24,7 @@ class FireBaseDownloader {
         // Download in memory with a maximum allowed size of 1MB (1 * 1024 * 1024 bytes)
         jpgRef.getData(maxSize: 1 * 1024 * 1024) { data, error in
             if let error = error {
+                print(error)
                 pngRef.getData(maxSize: 1 * 1024 * 1024) { data, error in
                     if let error = error {
                         print(error)
@@ -44,8 +45,8 @@ class FireBaseDownloader {
         let imageFilePath = AppResources.documentsDirectory().appendingPathComponent("HintImage_\(objectiveID).jpeg")
         do {
             try imageData?.write(to: imageFilePath)
-            guard let obj = AppResources.ObjectiveData.sharedObjectives.objectives.first(where: {$0.id == objectiveID}) else { return }
-            obj.hintImageUrl = imageFilePath
+            guard let data = AppResources.ObjectiveData.sharedObjectives.data.first(where: {$0.objectiveID == objectiveID}) else { return }
+            data.hintImageURL = imageFilePath
 
         } catch {
             print("Failed to save image")

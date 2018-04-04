@@ -12,7 +12,7 @@ class ObjectiveUserData: Codable {
     
     let objectiveID: String
     var adjustedPoints: Int?
-   
+    var hintImageURL: URL?
     var imageResponseURL: URL?
     var textResponse: String?
 

@@ -143,7 +143,7 @@ class DetailViewController: UIViewController, PasswordResponseViewDelegate {
         case is TextResponseView :
 
             //assign TextViewDelegate
-            let answerView = self.answerView as! TextResponseView
+            guard let answerView = self.answerView as? TextResponseView else { return }
             answerView.textView.delegate = self
 
             answerView.submitButton.addTarget(self, action: #selector(dismissKeyboard), for: .touchUpInside)
@@ -321,7 +321,7 @@ class DetailViewController: UIViewController, PasswordResponseViewDelegate {
 
     private func presentClueViewController() {
 
-        let clueViewController = UINavigationController(rootViewController: EnlargenedImageViewController(hintText: objective.hintText, hintImageURL: objective.hintImageUrl))
+        let clueViewController = UINavigationController(rootViewController: EnlargenedImageViewController(hintText: objective.hintText, hintImageURL: data.hintImageURL))
         present(clueViewController, animated: true, completion: nil)
     }
     
