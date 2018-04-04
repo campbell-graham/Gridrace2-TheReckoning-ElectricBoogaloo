@@ -417,7 +417,7 @@ UIImagePickerControllerDelegate, UINavigationControllerDelegate {
     // MARK:- Image Picker Delegates
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : Any]) {
 
-        if let image = info[UIImagePickerControllerOriginalImage] as? UIImage {
+        if let image = (info[UIImagePickerControllerOriginalImage] as? UIImage)?.resized(withBounds: UIScreen.main.bounds.size) {
             saveImage(image: image)
             if let answerView = answerView as? ImageResponseView {
                 answerView.setImage(image: image)
