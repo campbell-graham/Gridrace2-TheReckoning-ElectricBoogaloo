@@ -63,11 +63,11 @@ class DataManager: NSObject {
         }
         
         //a download is always called at the end so that comparisons can be made, and local data overwritten if it is no longer valid
-        downloadObjectives()
+        downloadAndCompreObjectives()
        
     }
     
-    func downloadObjectives() {
+    func downloadAndCompreObjectives() {
         var returnAlert: UIAlertController?
         //wait until download is complete and then run comparisons with local data
         returnDownloadedObjectives() {tempObjectives in

@@ -45,8 +45,8 @@ class FireBaseDownloader {
         let imageFilePath = AppResources.documentsDirectory().appendingPathComponent("HintImage_\(objectiveID).jpeg")
         do {
             try imageData?.write(to: imageFilePath)
-            guard let obj = AppResources.ObjectiveData.sharedObjectives.objectives.first(where: {$0.id == objectiveID}) else { return }
-            obj.hintImageUrl = imageFilePath
+            guard let data = AppResources.ObjectiveData.sharedObjectives.data.first(where: {$0.objectiveID == objectiveID}) else { return }
+            data.hintImageURL = imageFilePath
 
         } catch {
             print("Failed to save image")

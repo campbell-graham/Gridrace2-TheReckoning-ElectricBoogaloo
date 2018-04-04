@@ -47,7 +47,6 @@ class Objective: Codable, Equatable {
     let id: String
     let name: String
     let desc: String
-    var hintImageUrl: URL?
     let hintText: String
     var points: Int
     let latitude: Double?
