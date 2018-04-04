@@ -12,7 +12,7 @@ class ObjectiveInformationCollectionViewCell: UICollectionViewCell {
     
     let titleLabel = UILabel()
     let pointsLabel = UILabel()
-    let tickImageView = UIImageView()
+    let cornerImageView = UIImageView()
     let descriptionLabel = UILabel()
     
     
@@ -50,13 +50,13 @@ class ObjectiveInformationCollectionViewCell: UICollectionViewCell {
         contentView.addSubview(titleLabel)
         contentView.addSubview(pointsLabel)
         contentView.addSubview(descriptionLabel)
-        contentView.addSubview(tickImageView)
+        contentView.addSubview(cornerImageView)
         
         //layout constraints
         titleLabel.translatesAutoresizingMaskIntoConstraints = false
         pointsLabel.translatesAutoresizingMaskIntoConstraints = false
         descriptionLabel.translatesAutoresizingMaskIntoConstraints = false
-        tickImageView.translatesAutoresizingMaskIntoConstraints = false
+        cornerImageView.translatesAutoresizingMaskIntoConstraints = false
         
         NSLayoutConstraint.activate([
             //title label
@@ -64,11 +64,11 @@ class ObjectiveInformationCollectionViewCell: UICollectionViewCell {
             titleLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 8),
             
             //tick image view
-            tickImageView.leadingAnchor.constraint(greaterThanOrEqualTo: titleLabel.trailingAnchor),
-            tickImageView.topAnchor.constraint(equalTo: topAnchor, constant: 8),
-            tickImageView.bottomAnchor.constraint(equalTo: titleLabel.bottomAnchor),
-            tickImageView.widthAnchor.constraint(equalTo: tickImageView.heightAnchor),
-            tickImageView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -8),
+            cornerImageView.leadingAnchor.constraint(greaterThanOrEqualTo: titleLabel.trailingAnchor),
+            cornerImageView.topAnchor.constraint(equalTo: topAnchor, constant: 8),
+            cornerImageView.bottomAnchor.constraint(equalTo: titleLabel.bottomAnchor),
+            cornerImageView.widthAnchor.constraint(equalTo: cornerImageView.heightAnchor),
+            cornerImageView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -8),
             
             //points label
             pointsLabel.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 8),

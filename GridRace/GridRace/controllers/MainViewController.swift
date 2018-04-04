@@ -494,14 +494,23 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
         guard let data = AppResources.ObjectiveData.sharedObjectives.data.first(where: {$0.objectiveID == objective.id}) else { return cell }
         
         cell.titleLabel.text = objective.name
-        
-        if let adjPoints = data.adjustedPoints {
-            cell.pointsLabel.text =  "\(adjPoints) Points"
-        } else {
-            cell.pointsLabel.text = "\(objective.points) Points"
-        }
         cell.descriptionLabel.text = objective.desc
-        cell.tickImageView.image = data.completed ? #imageLiteral(resourceName: "correct_selected"): #imageLiteral(resourceName: "correct_unselected")
+        
+        //check if last objective, if so, hide various items
+        if objective.objectiveType == .last {
+            cell.pointsLabel.text = "Finish Line"
+            cell.cornerImageView.image = #imageLiteral(resourceName: "finish-flag").withRenderingMode(.alwaysTemplate)
+            cell.cornerImageView.tintColor = AppColors.orangeHighlightColor
+        } else {
+            cell.pointsLabel.isHidden = false
+            cell.cornerImageView.isHidden = false
+            cell.cornerImageView.image = data.completed ? #imageLiteral(resourceName: "correct_selected") : #imageLiteral(resourceName: "correct_unselected")
+            if let adjPoints = data.adjustedPoints {
+                cell.pointsLabel.text =  "\(adjPoints) Points"
+            } else {
+                cell.pointsLabel.text = "\(objective.points) Points"
+            }
+        }
         
         //add panGesture recogniser to cell
         let panGestureRecogniser = UIPanGestureRecognizer(target: self, action: #selector(panAnimationHandler))
@@ -511,6 +520,8 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
         if cell == retrieveCurrentCell() {
             cell.transform = CGAffineTransform(scaleX: 1.5, y: 1.5)
         }
+        
+        
         return cell
     }
     

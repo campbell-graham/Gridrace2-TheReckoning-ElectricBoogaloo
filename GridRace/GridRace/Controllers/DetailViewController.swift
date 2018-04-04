@@ -7,6 +7,8 @@
 //
 
 import UIKit
+import Photos
+
 
 //MARK:- Protocols
 
@@ -401,12 +403,10 @@ UIImagePickerControllerDelegate, UINavigationControllerDelegate {
         }
     }
     
-    func saveImage(image: UIImage) {
-        
-        let imageData = UIImageJPEGRepresentation(image, 1)
+    func saveImage(imageData: NSData) {
         let imageFilePath = AppResources.documentsDirectory().appendingPathComponent("Photo_\(objective.id).jpeg")
         do {
-            try imageData?.write(to: imageFilePath)
+            try imageData.write(to: imageFilePath)
             data.imageResponseURL = imageFilePath
             delegate?.initiateSave()
         } catch {
@@ -416,14 +416,17 @@ UIImagePickerControllerDelegate, UINavigationControllerDelegate {
 
     // MARK:- Image Picker Delegates
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : Any]) {
-
-        if let image = info[UIImagePickerControllerOriginalImage] as? UIImage {
-            saveImage(image: image)
-            if let answerView = answerView as? ImageResponseView {
-                answerView.setImage(image: image)
-                completeImageView.image = #imageLiteral(resourceName: "correct_selected")
-            }
+        
+        if let imagePath: URL = info[UIImagePickerControllerImageURL] as? URL {
+                if let imageData = NSData(contentsOf: imagePath) {
+                    saveImage(imageData: imageData)
+                }
         }
+
+//            if let answerView = answerView as? ImageResponseView {
+//                answerView.setImage(image: image)
+//                completeImageView.image = #imageLiteral(resourceName: "correct_selected")
+//            }
         dismiss(animated: true, completion: nil)
     }
 }
