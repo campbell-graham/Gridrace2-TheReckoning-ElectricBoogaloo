@@ -21,8 +21,6 @@
 		37F2A7F22043DA7E00BA283B /* ObjectiveTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37F2A7F12043DA7E00BA283B /* ObjectiveTableViewCell.swift */; };
 		AA090A9D2050BFC60086C3CD /* ObjectiveSummaryCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA090A9C2050BFC60086C3CD /* ObjectiveSummaryCollectionViewCell.swift */; };
 		AA13276320685DFE0008D51A /* CLLocationCoordinate2D_extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA13276220685DFE0008D51A /* CLLocationCoordinate2D_extension.swift */; };
-		AA1CD2BE2044C6DA0007A0C1 /* ClueViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA1CD2BD2044C6DA0007A0C1 /* ClueViewController.swift */; };
-		AA1CD2C02044D29B0007A0C1 /* GradientView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA1CD2BF2044D29A0007A0C1 /* GradientView.swift */; };
 		AA1CD2C2204513820007A0C1 /* UIImageExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA1CD2C1204513820007A0C1 /* UIImageExtension.swift */; };
 		AA1FAC71206C50FE005D25E9 /* FireBaseDownloader.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA1FAC70206C50FE005D25E9 /* FireBaseDownloader.swift */; };
 		AA23AB21204E0A8300F6CCEF /* walking.gpx in Resources */ = {isa = PBXBuildFile; fileRef = AA23AB20204E0A8300F6CCEF /* walking.gpx */; };
@@ -58,8 +56,6 @@
 		37F2A7F12043DA7E00BA283B /* ObjectiveTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ObjectiveTableViewCell.swift; sourceTree = "<group>"; };
 		AA090A9C2050BFC60086C3CD /* ObjectiveSummaryCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ObjectiveSummaryCollectionViewCell.swift; sourceTree = "<group>"; };
 		AA13276220685DFE0008D51A /* CLLocationCoordinate2D_extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CLLocationCoordinate2D_extension.swift; sourceTree = "<group>"; };
-		AA1CD2BD2044C6DA0007A0C1 /* ClueViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClueViewController.swift; sourceTree = "<group>"; };
-		AA1CD2BF2044D29A0007A0C1 /* GradientView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GradientView.swift; sourceTree = "<group>"; };
 		AA1CD2C1204513820007A0C1 /* UIImageExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIImageExtension.swift; sourceTree = "<group>"; };
 		AA1FAC70206C50FE005D25E9 /* FireBaseDownloader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FireBaseDownloader.swift; sourceTree = "<group>"; };
 		AA23AB20204E0A8300F6CCEF /* walking.gpx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = walking.gpx; sourceTree = "<group>"; };
@@ -161,7 +157,6 @@
 			isa = PBXGroup;
 			children = (
 				AA29A1372043D0CF00DF3A1C /* DetailViewController.swift */,
-				AA1CD2BD2044C6DA0007A0C1 /* ClueViewController.swift */,
 				3712BDE82044D9A300B4C9B3 /* MainViewController.swift */,
 				377EFC24204FADD900B0D723 /* StartScreenViewController.swift */,
 				AAD4B5D9204FB5DA005FBB24 /* SummaryViewController.swift */,
@@ -174,7 +169,6 @@
 			isa = PBXGroup;
 			children = (
 				37F2A7F12043DA7E00BA283B /* ObjectiveTableViewCell.swift */,
-				AA1CD2BF2044D29A0007A0C1 /* GradientView.swift */,
 				AA29C93C2047644300BE0BAE /* TextResponseView.swift */,
 				370BBB01204E16D2005C4A56 /* TimerView.swift */,
 				AA3D6E782058DCF900D6632A /* ImageResponseView.swift */,
@@ -341,7 +335,6 @@
 				AA23AB23204E11FE00F6CCEF /* PasswordResponseView.swift in Sources */,
 				370BBB02204E16D2005C4A56 /* TimerView.swift in Sources */,
 				AA13276320685DFE0008D51A /* CLLocationCoordinate2D_extension.swift in Sources */,
-				AA1CD2BE2044C6DA0007A0C1 /* ClueViewController.swift in Sources */,
 				37F2A7EE2043CD0A00BA283B /* AppResources.swift in Sources */,
 				AA2683DE206B4FEE009B1C3F /* ObjectivesProgressView.swift in Sources */,
 				3712BDE92044D9A300B4C9B3 /* MainViewController.swift in Sources */,
@@ -349,7 +342,6 @@
 				37F2A7F22043DA7E00BA283B /* ObjectiveTableViewCell.swift in Sources */,
 				3712BDEF2045174100B4C9B3 /* Objective.swift in Sources */,
 				AA29A1382043D0CF00DF3A1C /* DetailViewController.swift in Sources */,
-				AA1CD2C02044D29B0007A0C1 /* GradientView.swift in Sources */,
 				AAD4B5DA204FB5DA005FBB24 /* SummaryViewController.swift in Sources */,
 				AAE63FA3206890DD0029DFE3 /* MapButtonsView.swift in Sources */,
 				AA29A12420438BC500DF3A1C /* AppDelegate.swift in Sources */,
