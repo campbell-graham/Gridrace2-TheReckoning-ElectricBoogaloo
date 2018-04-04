@@ -519,7 +519,7 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
         if let layer = collectionView.collectionViewLayout as? UICollectionViewFlowLayout {
             
             let pageWidth = layer.itemSize.width + layer.minimumInteritemSpacing
-            let cellIndex = collectionView.contentOffset.x / pageWidth
+            let cellIndex = (collectionView.contentOffset.x / pageWidth).rounded()
             return collectionView.cellForItem(at: IndexPath(row: Int(cellIndex), section: 0))
         }
         return nil
