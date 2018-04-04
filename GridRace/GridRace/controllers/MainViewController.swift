@@ -436,17 +436,17 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
         alert.addAction(okAction)
     }
     
-    func mapView(_ mapView: MKMapView!, rendererFor overlay: MKOverlay!) -> MKOverlayRenderer! {
-        
-        guard overlay is MKCircle else { return nil }
-        
+    func mapView(_ mapView: MKMapView, rendererFor overlay: MKOverlay) -> MKOverlayRenderer {
+
+        guard overlay is MKCircle else { return MKOverlayRenderer() }
+
         let circle = MKCircleRenderer(overlay: overlay)
         circle.strokeColor = AppColors.orangeHighlightColor
         circle.fillColor = AppColors.cellColor.withAlphaComponent(0.7)
         circle.lineWidth = 1
         return circle
     }
-    
+
     //MARK:- CollectionView delegate methods
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
@@ -775,8 +775,8 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
         if let cell = recognizer.view as? UICollectionViewCell {
             
             let cellFrame = view.convert(cell.frame, from: collectionView)
-            
-            growCellAnimationSetup(cell: cell)
+
+            guard growCellAnimationSetup(cell: cell) == true else { return }
             guard let detailView = detailViewController?.view else { return }
             
             totalYMovement = cellFrame.minY - detailView.frame.minY
@@ -883,7 +883,7 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
         }
         
         //if user swiping up from cell to DetailView
-        if let cell = recognizer.view as? UICollectionViewCell {
+        if recognizer.view is UICollectionViewCell {
             
             // if animation progress is over 50% complete finish animation or swiped with high velocity
             if ( translation.y <= -totalYMovement / 2 || velocity.y <= -100) {
