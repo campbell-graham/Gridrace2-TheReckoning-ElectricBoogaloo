@@ -411,30 +411,28 @@ UIImagePickerControllerDelegate, UINavigationControllerDelegate {
         }
     }
     
-    func saveImage(imageData: NSData) {
+    func saveImage(image: UIImage) {
+        
+        let imageData = UIImageJPEGRepresentation(image, 1)
         let imageFilePath = AppResources.documentsDirectory().appendingPathComponent("Photo_\(objective.id).jpeg")
         do {
-            try imageData.write(to: imageFilePath)
+            try imageData?.write(to: imageFilePath)
             data.imageResponseURL = imageFilePath
             delegate?.initiateSave()
         } catch {
             print("Failed to save image")
         }
     }
-
+    
     // MARK:- Image Picker Delegates
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : Any]) {
-        
-        if let imagePath: URL = info[UIImagePickerControllerImageURL] as? URL {
-                if let imageData = NSData(contentsOf: imagePath) {
-                    saveImage(imageData: imageData)
-                }
+        if let image = (info[UIImagePickerControllerOriginalImage] as? UIImage)?.resized(withBounds: UIScreen.main.bounds.size) {
+            saveImage(image: image)
+            if let answerView = answerView as? ImageResponseView {
+                answerView.setImage(image: image)
+                cornerImageView.image = #imageLiteral(resourceName: "correct_selected")
+            }
         }
-
-//            if let answerView = answerView as? ImageResponseView {
-//                answerView.setImage(image: image)
-//                completeImageView.image = #imageLiteral(resourceName: "correct_selected")
-//            }
         dismiss(animated: true, completion: nil)
     }
 }
