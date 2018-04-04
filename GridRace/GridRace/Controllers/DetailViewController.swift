@@ -125,11 +125,19 @@ class DetailViewController: UIViewController, PasswordResponseViewDelegate {
 
         // set view data
         titleLabel.text = objective.name
-        hintImageView.image = #imageLiteral(resourceName: "hint")
-        completeImageView.image = data.completed ? #imageLiteral(resourceName: "correct_selected") : #imageLiteral(resourceName: "correct_unselected")
         descTextView.text = objective.desc
-        pointLabel.text = (data.adjustedPoints != nil ? "\(data.adjustedPoints!)" : "\(objective.points)") + " Points"
-
+        
+        if objective.objectiveType == .last {
+            hintImageView.isHidden = true
+            completeImageView.image = #imageLiteral(resourceName: "finish-flag").withRenderingMode(.alwaysTemplate)
+            completeImageView.tintColor = AppColors.orangeHighlightColor
+            pointLabel.text = "Finish Line"
+        } else {
+            hintImageView.image = #imageLiteral(resourceName: "hint")
+            completeImageView.image = data.completed ? #imageLiteral(resourceName: "correct_selected") : #imageLiteral(resourceName: "correct_unselected")
+            pointLabel.text = (data.adjustedPoints != nil ? "\(data.adjustedPoints!)" : "\(objective.points)") + " Points"
+        }
+        
         responseTitleLabel.text = "Your Response"
 
         //gesture recognisers
