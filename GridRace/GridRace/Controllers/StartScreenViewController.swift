@@ -17,7 +17,7 @@ class StartScreenViewController: UIViewController {
         super.init(nibName: nil, bundle: nil)
         
         //button set up
-        startButton.backgroundColor = AppColors.greenHighlightColor
+        startButton.backgroundColor = AppColors.orangeHighlightColor
         startButton.setTitle("Start", for: .normal)
         startButton.setTitleColor(AppColors.backgroundColor, for: .normal)
         startButton.titleLabel?.font = UIFont.systemFont(ofSize: 20, weight: .semibold)
