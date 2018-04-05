@@ -502,8 +502,6 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
             cell.cornerImageView.image = #imageLiteral(resourceName: "finish-flag").withRenderingMode(.alwaysTemplate)
             cell.cornerImageView.tintColor = AppColors.orangeHighlightColor
         } else {
-            cell.pointsLabel.isHidden = false
-            cell.cornerImageView.isHidden = false
             cell.cornerImageView.image = data.completed ? #imageLiteral(resourceName: "correct_selected") : #imageLiteral(resourceName: "correct_unselected")
             if let adjPoints = data.adjustedPoints {
                 cell.pointsLabel.text =  "\(adjPoints) Points"
