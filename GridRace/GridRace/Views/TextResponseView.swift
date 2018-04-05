@@ -23,7 +23,7 @@ class TextResponseView: UIView {
 
         textView.backgroundColor = AppColors.textPrimaryColor
         textView.font = UIFont.systemFont(ofSize: 14)
-
+        
         let atribs: [NSAttributedStringKey : Any] = [NSAttributedStringKey.font : UIFont.boldSystemFont(ofSize: 16),
                                                      NSAttributedStringKey.foregroundColor : #colorLiteral(red: 0.0431372549, green: 0.1137254902, blue: 0.1921568627, alpha: 1) ]
         let atribString = NSAttributedString(string: "Submit", attributes: atribs)

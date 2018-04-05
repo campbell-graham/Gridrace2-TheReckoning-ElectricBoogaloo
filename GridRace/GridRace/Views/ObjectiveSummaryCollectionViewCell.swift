@@ -55,6 +55,7 @@ class ObjectiveSummaryCollectionViewCell: UICollectionViewCell {
         responseTextLabel.layer.masksToBounds = true
         responseTextLabel.backgroundColor = AppColors.cellColor
         responseTextLabel.textColor = AppColors.textPrimaryColor
+        responseTextLabel.numberOfLines = 0
         responseTextLabel.textAlignment = .center
         responseTextLabel.layer.cornerRadius = contentView.layer.cornerRadius
         responseTextLabel.layer.maskedCorners = [.layerMaxXMaxYCorner, .layerMinXMaxYCorner]
@@ -95,8 +96,8 @@ class ObjectiveSummaryCollectionViewCell: UICollectionViewCell {
             //response text view
             responseTextLabel.topAnchor.constraint(equalTo: nameLabel.bottomAnchor, constant: 12),
             responseTextLabel.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -4),
-            responseTextLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 4),
-            responseTextLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -4),
+            responseTextLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
+            responseTextLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
 
         ])
     }

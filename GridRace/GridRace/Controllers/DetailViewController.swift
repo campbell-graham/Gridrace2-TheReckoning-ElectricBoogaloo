@@ -7,6 +7,8 @@
 //
 
 import UIKit
+import Photos
+
 
 //MARK:- Protocols
 
@@ -24,7 +26,7 @@ class DetailViewController: UIViewController, PasswordResponseViewDelegate {
     private let panView = UIView()
     private let titleLabel = UILabel()
     private let hintImageView = UIImageView()
-    private let completeImageView = UIImageView()
+    private let cornerImageView = UIImageView()
     private let pointLabel = UILabel()
     private let descTextView = UITextView()
     private let responseTitleLabel = UILabel()
@@ -117,17 +119,25 @@ class DetailViewController: UIViewController, PasswordResponseViewDelegate {
         panView.layer.masksToBounds = false
         descTextView.isEditable = false
         hintImageView.contentMode = .scaleAspectFit
-        completeImageView.contentMode = .scaleAspectFit
+        cornerImageView.contentMode = .scaleAspectFit
         answerView.isUserInteractionEnabled = true
 
 
         // set view data
         titleLabel.text = objective.name
-        hintImageView.image = #imageLiteral(resourceName: "hint")
-        completeImageView.image = data.completed ? #imageLiteral(resourceName: "correct_selected") : #imageLiteral(resourceName: "correct_unselected")
         descTextView.text = objective.desc
-        pointLabel.text = (data.adjustedPoints != nil ? "\(data.adjustedPoints!)" : "\(objective.points)") + " Points"
-
+        
+        if objective.objectiveType == .last {
+            hintImageView.isHidden = true
+            cornerImageView.image = #imageLiteral(resourceName: "finish-flag").withRenderingMode(.alwaysTemplate)
+            cornerImageView.tintColor = AppColors.orangeHighlightColor
+            pointLabel.text = "Finish Line"
+        } else {
+            hintImageView.image = #imageLiteral(resourceName: "hint")
+            cornerImageView.image = data.completed ? #imageLiteral(resourceName: "correct_selected") : #imageLiteral(resourceName: "correct_unselected")
+            pointLabel.text = (data.adjustedPoints != nil ? "\(data.adjustedPoints!)" : "\(objective.points)") + " Points"
+        }
+        
         responseTitleLabel.text = "Your Response"
 
         //gesture recognisers
@@ -170,7 +180,7 @@ class DetailViewController: UIViewController, PasswordResponseViewDelegate {
 
     private func setUpLayout() {
 
-        for view in [panView, titleLabel, hintImageView, completeImageView, pointLabel, descTextView, responseTitleLabel, answerView] {
+        for view in [panView, titleLabel, hintImageView, cornerImageView, pointLabel, descTextView, responseTitleLabel, answerView] {
             view.translatesAutoresizingMaskIntoConstraints = false
             self.view.addSubview(view)
         }
@@ -194,10 +204,10 @@ class DetailViewController: UIViewController, PasswordResponseViewDelegate {
             hintImageView.widthAnchor.constraint(equalToConstant: 24),
             hintImageView.heightAnchor.constraint(equalTo: hintImageView.widthAnchor),
 
-            completeImageView.centerXAnchor.constraint(equalTo: view.trailingAnchor, constant: -60),
-            completeImageView.centerYAnchor.constraint(equalTo: titleLabel.centerYAnchor),
-            completeImageView.widthAnchor.constraint(equalToConstant: 44),
-            completeImageView.heightAnchor.constraint(equalTo: completeImageView.widthAnchor),
+            cornerImageView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
+            cornerImageView.centerYAnchor.constraint(equalTo: titleLabel.centerYAnchor),
+            cornerImageView.widthAnchor.constraint(equalToConstant: 44),
+            cornerImageView.heightAnchor.constraint(equalTo: cornerImageView.widthAnchor),
 
             pointLabel.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 8),
             pointLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
@@ -285,7 +295,7 @@ class DetailViewController: UIViewController, PasswordResponseViewDelegate {
 
             answerView.textView.text = ""
             data.textResponse = nil
-            completeImageView.image = #imageLiteral(resourceName: "correct_unselected")
+            cornerImageView.image = #imageLiteral(resourceName: "correct_unselected")
             delegate?.initiateSave()
         }
     }
@@ -413,15 +423,14 @@ UIImagePickerControllerDelegate, UINavigationControllerDelegate {
             print("Failed to save image")
         }
     }
-
+    
     // MARK:- Image Picker Delegates
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : Any]) {
-
-        if let image = info[UIImagePickerControllerOriginalImage] as? UIImage {
+        if let image = (info[UIImagePickerControllerOriginalImage] as? UIImage)?.resized(withBounds: UIScreen.main.bounds.size) {
             saveImage(image: image)
             if let answerView = answerView as? ImageResponseView {
                 answerView.setImage(image: image)
-                completeImageView.image = #imageLiteral(resourceName: "correct_selected")
+                cornerImageView.image = #imageLiteral(resourceName: "correct_selected")
             }
         }
         dismiss(animated: true, completion: nil)
@@ -434,7 +443,7 @@ extension DetailViewController: UITextViewDelegate {
         if let answerView = answerView as? TextResponseView {
 
             data.textResponse = answerView.textView.text
-            completeImageView.image = #imageLiteral(resourceName: "correct_selected")
+            cornerImageView.image = #imageLiteral(resourceName: "correct_selected")
             delegate?.initiateSave()
         }
     }
