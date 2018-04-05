@@ -10,7 +10,25 @@ import UIKit
 import MapKit
 
 class Objective: Codable, Equatable {
-   
+
+    let id: String
+    let name: String
+    let desc: String
+    let hintText: String
+    var points: Int
+    let latitude: Double?
+    let longitude: Double?
+    let answerType: AnswerType
+    let objectiveType: ObjectiveType
+    var coordinate: CLLocationCoordinate2D?
+    {
+        if let lat = latitude, let long = longitude {
+            let cord = CLLocationCoordinate2D(latitude: lat, longitude: long)
+            return cord
+        }
+        return nil
+    }
+
     static func ==(lhs: Objective, rhs: Objective) -> Bool {
         if lhs.id != rhs.id {
             return false
@@ -39,30 +57,8 @@ class Objective: Codable, Equatable {
         if lhs.objectiveType != rhs.objectiveType {
             return false
         }
-        
         return true
     }
-    
-   
-    let id: String
-    let name: String
-    let desc: String
-    let hintText: String
-    var points: Int
-    let latitude: Double?
-    let longitude: Double?
-    let answerType: AnswerType
-    let objectiveType: ObjectiveType
-    var coordinate: CLLocationCoordinate2D?
-    {
-        if let lat = latitude, let long = longitude {
-            let cord = CLLocationCoordinate2D(latitude: lat, longitude: long)
-            return cord
-        }
-        return nil
-    }
-    
-    
 }
 
 struct ObjectList: Codable {

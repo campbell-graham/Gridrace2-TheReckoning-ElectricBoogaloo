@@ -15,9 +15,7 @@ class ObjectiveUserData: Codable {
     var hintImageURL: URL?
     var imageResponseURL: URL?
     var textResponse: String?
-
     var correct = false
-    
     var completed: Bool {
 
         if imageResponseURL != nil || textResponse != nil {
@@ -30,7 +28,4 @@ class ObjectiveUserData: Codable {
     init(id: String) {
         objectiveID = id
     }
-
-    
-   
 }

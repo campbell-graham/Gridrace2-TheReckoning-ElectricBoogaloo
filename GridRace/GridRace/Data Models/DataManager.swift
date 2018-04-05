@@ -64,7 +64,6 @@ class DataManager: NSObject {
         
         //a download is always called at the end so that comparisons can be made, and local data overwritten if it is no longer valid
         downloadAndCompreObjectives()
-       
     }
     
     func downloadAndCompreObjectives() {
@@ -129,9 +128,6 @@ class DataManager: NSObject {
                 print(error)
             }
         })
-        
-        
-        
     }
 
     func deleteDocumentData() {
