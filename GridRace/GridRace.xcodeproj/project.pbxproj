@@ -18,7 +18,6 @@
 		37A6331F2064B47200E9FAA8 /* EnlargenedImageViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37A6331E2064B47200E9FAA8 /* EnlargenedImageViewController.swift */; };
 		37A8B93B20588E65000BC310 /* ObjectiveInformationCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37A8B93A20588E65000BC310 /* ObjectiveInformationCollectionViewCell.swift */; };
 		37F2A7EE2043CD0A00BA283B /* AppResources.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37F2A7ED2043CD0A00BA283B /* AppResources.swift */; };
-		37F2A7F22043DA7E00BA283B /* ObjectiveTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37F2A7F12043DA7E00BA283B /* ObjectiveTableViewCell.swift */; };
 		AA090A9D2050BFC60086C3CD /* ObjectiveSummaryCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA090A9C2050BFC60086C3CD /* ObjectiveSummaryCollectionViewCell.swift */; };
 		AA13276320685DFE0008D51A /* CLLocationCoordinate2D_extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA13276220685DFE0008D51A /* CLLocationCoordinate2D_extension.swift */; };
 		AA1CD2C2204513820007A0C1 /* UIImageExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA1CD2C1204513820007A0C1 /* UIImageExtension.swift */; };
@@ -53,7 +52,6 @@
 		37A6331E2064B47200E9FAA8 /* EnlargenedImageViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EnlargenedImageViewController.swift; sourceTree = "<group>"; };
 		37A8B93A20588E65000BC310 /* ObjectiveInformationCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ObjectiveInformationCollectionViewCell.swift; sourceTree = "<group>"; };
 		37F2A7ED2043CD0A00BA283B /* AppResources.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppResources.swift; sourceTree = "<group>"; };
-		37F2A7F12043DA7E00BA283B /* ObjectiveTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ObjectiveTableViewCell.swift; sourceTree = "<group>"; };
 		AA090A9C2050BFC60086C3CD /* ObjectiveSummaryCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ObjectiveSummaryCollectionViewCell.swift; sourceTree = "<group>"; };
 		AA13276220685DFE0008D51A /* CLLocationCoordinate2D_extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CLLocationCoordinate2D_extension.swift; sourceTree = "<group>"; };
 		AA1CD2C1204513820007A0C1 /* UIImageExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIImageExtension.swift; sourceTree = "<group>"; };
@@ -339,7 +337,6 @@
 				AA2683DE206B4FEE009B1C3F /* ObjectivesProgressView.swift in Sources */,
 				3712BDE92044D9A300B4C9B3 /* MainViewController.swift in Sources */,
 				AA3D6E792058DCF900D6632A /* ImageResponseView.swift in Sources */,
-				37F2A7F22043DA7E00BA283B /* ObjectiveTableViewCell.swift in Sources */,
 				3712BDEF2045174100B4C9B3 /* Objective.swift in Sources */,
 				AA29A1382043D0CF00DF3A1C /* DetailViewController.swift in Sources */,
 				AAD4B5DA204FB5DA005FBB24 /* SummaryViewController.swift in Sources */,

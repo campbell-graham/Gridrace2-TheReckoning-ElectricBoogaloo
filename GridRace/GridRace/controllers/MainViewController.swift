@@ -463,7 +463,7 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
             //if they've selected the last main objective (i.e. the final one with the PIN) then alert them to confirm they want to continue
             if objectivesToDisplay[indexPath.row].objectiveType == .last {
 
-                let refreshAlert = UIAlertController(title: "Continue?", message: "This is the end of the race, and once you finish you will be unable to get any more points. Are you sure you wish to continue?", preferredStyle: UIAlertControllerStyle.alert)
+                let refreshAlert = UIAlertController(title: "Finish Race?", message: "This is the end of the race, and once you finish you will be unable complete any more objectives. Are you sure you wish to continue?", preferredStyle: UIAlertControllerStyle.alert)
 
                 refreshAlert.addAction(UIAlertAction(title: "Yes", style: .default, handler: { (action: UIAlertAction!) in
                     self.playGrowCellAnimation(cell: cell)
@@ -494,14 +494,21 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
         guard let data = AppResources.ObjectiveData.sharedObjectives.data.first(where: {$0.objectiveID == objective.id}) else { return cell }
         
         cell.titleLabel.text = objective.name
-        
-        if let adjPoints = data.adjustedPoints {
-            cell.pointsLabel.text =  "\(adjPoints) Points"
-        } else {
-            cell.pointsLabel.text = "\(objective.points) Points"
-        }
         cell.descriptionLabel.text = objective.desc
-        cell.tickImageView.image = data.completed ? #imageLiteral(resourceName: "correct_selected"): #imageLiteral(resourceName: "correct_unselected")
+        
+        //check if last objective, if so, hide various items
+        if objective.objectiveType == .last {
+            cell.pointsLabel.text = "Finish Line"
+            cell.cornerImageView.image = #imageLiteral(resourceName: "finish-flag").withRenderingMode(.alwaysTemplate)
+            cell.cornerImageView.tintColor = AppColors.orangeHighlightColor
+        } else {
+            cell.cornerImageView.image = data.completed ? #imageLiteral(resourceName: "correct_selected") : #imageLiteral(resourceName: "correct_unselected")
+            if let adjPoints = data.adjustedPoints {
+                cell.pointsLabel.text =  "\(adjPoints) Points"
+            } else {
+                cell.pointsLabel.text = "\(objective.points) Points"
+            }
+        }
         
         //add panGesture recogniser to cell
         let panGestureRecogniser = UIPanGestureRecognizer(target: self, action: #selector(panAnimationHandler))
@@ -511,6 +518,8 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
         if cell == retrieveCurrentCell() {
             cell.transform = CGAffineTransform(scaleX: 1.5, y: 1.5)
         }
+        
+        
         return cell
     }
     
